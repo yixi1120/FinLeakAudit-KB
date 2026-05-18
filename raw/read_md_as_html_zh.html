@@ -1,0 +1,403 @@
+<!doctype html><html lang='zh-CN'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>三份中文润色版综述</title>
+<style>
+body{margin:0;font-family:'PingFang SC','Microsoft YaHei',sans-serif;background:#f5f7fb;color:#1f2937}
+.wrap{max-width:1100px;margin:24px auto;padding:0 16px}
+.doc{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:20px;margin:14px 0;box-shadow:0 2px 10px rgba(0,0,0,.04)}
+h1{font-size:26px} h2{font-size:18px;color:#1d4ed8} p,li{line-height:1.75}
+pre{overflow:auto;background:#111827;color:#f8fafc;padding:12px;border-radius:8px}
+code{background:#f3f4f6;padding:2px 5px;border-radius:4px}
+hr{border:none;border-top:1px solid #e5e7eb;margin:24px 0}
+table{border-collapse:collapse;width:100%;display:block;overflow:auto}
+th,td{border:1px solid #e5e7eb;padding:8px;white-space:nowrap}
+</style></head><body><div class='wrap'><h1>三份 MD 的中文润色版（HTML）</h1><p>已按分节结构重排，避免信息堆叠；尽量保持原文含义与关键数据不变。</p><section class='doc'><h2>Level1_Macro_Surveys_zh.md</h2><div class='content'><h1>第 1 层：宏观综述分析——用于时间序列与金融预测的 LLM（2024–2026）</h1>
+<p><strong>生成日期：</strong> 2026-05-14<br />
+<strong>数据来源：</strong> arXiv 检索（<code>Large Language Models Time Series Survey</code>、<code>LLM Financial Market Prediction Review</code>）<br />
+<strong>筛选条件：</strong> 仅保留 2024–2026 年的 survey/review 论文<br />
+<strong>分析论文数：</strong> 21</p>
+<hr />
+<h2>1. 论文清单</h2>
+<p>| # | 论文标题 | 作者 | 发表时间 | arXiv ID |
+|---|---|---|---|---|
+| 1 | FINRS: A Risk-Sensitive Trading Framework for Real Financial Markets | Bijia Liu, Ronghao Dang | 2025-11-16 | 2511.12599 |
+| 2 | Frequency Matters: When Time Series Foundation Models Fail Under Spectral Shift | Tianze Wang et al. | 2025-11-06 | 2511.05619 |
+| 3 | FinPos: A Position-Aware Trading Agent System for Real Financial Markets | Bijia Liu, Ronghao Dang | 2025-10-31 | 2510.27251 |
+| 4 | Pre-trained Forecasting Models... for Time Series Classification | Andreas Auer et al. | 2025-10-30 | 2510.26777 |
+| 5 | Towards Interpretable Time Series Foundation Models | Matthieu Boileau et al. | 2025-07-10 | 2507.07439 |
+| 6 | Can LLM-based Financial Investing Strategies Outperform the Market in Long Run? | Weixian Waylon Li et al. | 2025-05-11 | 2505.07078 |
+| 7 | Towards Cross-Modality Modeling for Time Series Analytics: A Survey in the LLM Era | Chenxi Liu et al. | 2025-05-05 | 2505.02583 |
+| 8 | Foundation Models for Time Series: A Survey | Siva R. K. Kottapalli et al. | 2025-04-05 | 2504.04011 |
+| 9 | Are LLMs Good In-context Learners for Financial Sentiment Analysis? | Xinyu Wei, Luojia Liu | 2025-03-06 | 2503.04873 |
+| 10 | Financial Named Entity Recognition: How Far Can LLM Go? | Yi-Te Lu, Yintong Huo | 2025-01-04 | 2501.02237 |
+| 11 | Large Language Models for Financial Aid in Financial Time-series Forecasting | Md Khairul Islam et al. | 2024-10-24 | 2410.19025 |
+| 12 | TimeSeriesExam: A time series understanding exam | Yifu Cai et al. | 2024-10-18 | 2410.14752 |
+| 13 | LLM-Mixer: Multiscale Mixing in LLMs for Time Series Forecasting | Md Kowsher et al. | 2024-10-15 | 2410.11674 |
+| 14 | Time Series Analysis for Education... | Shengzhong Mao et al. | 2024-08-25 | 2408.13960 |
+| 15 | Efficacy of Large Language Models in Systematic Reviews | Aaditya Shah et al. | 2024-08-03 | 2408.04646 |
+| 16 | Large Language Model Agent in Financial Trading: A Survey | Han Ding et al. | 2024-07-26 | 2408.06361 |
+| 17 | FinCon: A Synthesized LLM Multi-Agent System... | Yangyang Yu et al. | 2024-07-09 | 2407.06567 |
+| 18 | Empowering Time Series Analysis with Foundation Models... | Jiexia Ye et al. | 2024-05-03 | 2405.02358 |
+| 19 | Foundation Models for Time Series Analysis: A Tutorial and Survey | Yuxuan Liang et al. | 2024-03-21 | 2403.14735 |
+| 20 | Exploring the Frontier of Vision-Language Models... | Akash Ghosh et al. | 2024-02-20 | 2404.07214 |
+| 21 | Large Language Models for Time Series: A Survey | Xiyuan Zhang et al. | 2024-02-02 | 2402.01801 |</p>
+<hr />
+<h2>2. 主流研究分支（按关键词频次）</h2>
+<p>| 排名 | 研究分支 | 关键词得分 | 代表关键词 |
+|---|---|---:|---|
+| 1 | 时间序列预测 | 111 | forecasting, prediction, time series, temporal |
+| 2 | 金融市场/交易 | 75 | financial, stock, trading, market |
+| 3 | LLM 架构/微调 | 47 | fine-tuning, transformer, foundation model, prompt |
+| 4 | 分类/回归 | 12 | classification, regression, imputation, embedding |
+| 5 | 多模态/时空建模 | 12 | spatio-temporal, spatial, multi-modal, graph |</p>
+<h3>分支解读</h3>
+<h4>时间序列预测</h4>
+<p>这是当前核心应用方向。研究通常将 LLM 改造为通用预测器，并在标准基准上与统计模型和深度学习模型对比。关键问题是：LLM 是否能像建模语言依赖那样有效建模时间依赖。</p>
+<h4>金融市场/交易</h4>
+<p>这是高价值且高复杂度场景。重点包括股价方向预测、组合优化、情绪驱动交易和加密资产分析。常见模型有 FinBERT、FinGPT、BloombergGPT 与指令微调 LLaMA。价格+新闻+基本面的数据融合是高频主题。</p>
+<h4>LLM 架构/微调</h4>
+<p>这是最主流分支。典型做法包括 LoRA/Adapter 微调、in-context/zero/few-shot 提示学习，以及将连续时间序列离散化为 token 的编码策略。该分支与其他方向高度重叠。</p>
+<h4>分类/回归</h4>
+<p>覆盖异常检测、行为识别、缺失值填补、表征学习等任务。很多工作将 LLM 作为通用特征提取器，再接下游分类或回归模块。</p>
+<h4>多模态/时空建模</h4>
+<p>这是新兴前沿方向。研究尝试将时间序列与空间信息（图、地理）以及文本、图像等模态统一建模。LLM 主要作为跨模态对齐与融合中枢。</p>
+<hr />
+<h2>3. 常见基线模型</h2>
+<p>| 模型 | 提及次数 | 类别 |
+|---|---:|---|
+| GPT | 7 | LLM |
+| GPT-4 | 4 | LLM |
+| Transformer | 3 | Transformer |
+| LLaMA / Llama | 2 | LLM |</p>
+<h3>观察</h3>
+<ul>
+<li>LLM 明显占据讨论中心：GPT 系列、LLaMA 及金融专用模型（FinBERT、FinGPT）是最常见骨干。</li>
+<li>非 LLM 对照主要是 Informer、Autoformer、PatchTST 等 Transformer 时序模型。</li>
+<li>ARIMA、GARCH 这类统计模型仍常作为 sanity check，在金融场景里有时竞争力不弱。</li>
+<li>金融专用 LLM 与通用时序模型，逐渐形成相对独立的比较生态。</li>
+</ul>
+<hr />
+<h2>4. 当前痛点与局限</h2>
+<p>| # | 痛点 | 关键词得分 |
+|---|---|---:|
+| 1 | 基准与评估体系缺失 | 10 |
+| 2 | 泛化与鲁棒性不足 | 7 |
+| 3 | 多模态融合困难 | 7 |
+| 4 | 可解释性不足 | 3 |
+| 5 | 合规与伦理问题 | 2 |
+| 6 | 长上下文扩展压力 | 1 |
+| 7 | 数据稀缺与质量问题 | 0 |</p>
+<h3>详细说明</h3>
+<h4>基准与评估</h4>
+<p>目前缺乏统一基准。数据集、指标、划分方式差异很大，跨论文公平比较困难。金融基准尤其分散（股票、加密、宏观常各自为政）。</p>
+<h4>多模态融合</h4>
+<p>时间序列与新闻、报告、社媒文本，以及图像和结构化数据融合时，跨模态对齐容易引入噪声；简单后融合常不如专用单模态模型。</p>
+<h4>可解释性</h4>
+<p>LLM 属黑箱模型。在金融等强监管场景中，决策不仅要“对”，还要“说得清为什么”。现有注意力可视化/探针方法仍不够。</p>
+<h4>长上下文</h4>
+<p>金融高频时序跨度可能达数十年，超出上下文窗口。如何保留细节且建模长程依赖仍无统一优解。</p>
+<h4>数据稀缺与质量</h4>
+<p>很多金融数据私有、噪声高、周期短。文本预训练 LLM 对时序模式先验不足，加上市场 regime shift（崩盘、政策变化）会破坏平稳性假设。</p>
+<hr />
+<h2>5. 综合结论</h2>
+<ol>
+<li>2024–2026 年该方向进入显著增长阶段，综述数量本身说明领域正在成熟。</li>
+<li>金融预测是最强应用驱动分支，产业牵引明显（对冲基金、银行、金融科技）。</li>
+<li>可解释性、成本与幻觉问题共同构成落地三大障碍。</li>
+<li>缺少统一基准导致研究进展可比性偏弱。</li>
+<li>多模态融合与长上下文建模是最有前景、也最困难的开放问题。</li>
+</ol>
+<hr />
+<p><em>说明：以上为在不改变原意前提下的中文润色版。</em></p>
+</div></section><section class='doc'><h2>Related_Work_Agents_zh.md</h2><div class='content'><h1>相关工作：金融与时间序列中的多智能体 / Agentic RAG（2024–2026）</h1>
+<p><strong>生成日期：</strong> 2026-05-14<br />
+<strong>来源：</strong> arXiv（Agent + RAG + Finance/Trading/TS 组合检索）<br />
+<strong>相关论文数：</strong> 25</p>
+<hr />
+<h2>论文总览（核心集成机制）</h2>
+<p>| # | 论文 | 年份 | 核心机制（中文） |
+|---|---|---:|---|
+| 1 | Integrating Traditional Technical Analysis with AI | 2025 | 多智能体 + RAG，将艾略特波浪理论与 AI 结合做股市预测 |
+| 2 | The New Quant | 2025 | Agentic 工作流 + RAG + 情绪分析 + 多模态融合 + 工具调用 |
+| 3 | Enhancing Financial RAG with Agentic AI and Multi-HyDE | 2025 | Agentic RAG + Multi-HyDE，多视角检索，降低幻觉并提准 |
+| 4 | A Role-Aware Multi-Agent Framework for Financial Education QA | 2025 | 角色分工多智能体 + RAG + 微调骨干 |
+| 5 | Rethinking Retrieval... in Financial Domain | 2025 | 系统比较向量检索与非向量结构检索 |
+| 6 | Agentic RAG for Time Series Analysis | 2024 | 分层多智能体编排 + RAG + 小模型任务化微调 |
+| 7 | Agentic AI... Institutional Turn | 2026 | 讨论 Agentic AI 与 RAG 在法律与金融治理中的制度化框架 |
+| 8 | AI for Climate Finance | 2025 | Agentic 检索 + 多步推理 + 微调，用于气候金融资金追踪 |
+| 9 | Adaptive Query Routing | 2026 | 分层路由的混合检索（金融/法律/医疗） |
+| 10 | MarketSenseAI 2.0 | 2025 | 多智能体 + RAG 融合财报、财报电话会和宏观报告 |
+| 11 | Graph RAG-Tool Fusion | 2025 | 图检索 + 工具调用，显式建模工具依赖关系 |
+| 12 | Agentic RAG Survey | 2025 | Agentic RAG 全景综述与分类法 |
+| 13 | Learning to Route | 2025 | 规则驱动路由，混合源检索（文档+数据库） |
+| 14 | GlyRAG | 2026 | 上下文感知 RAG 用于血糖预测，多模态融合 |
+| 15 | FinAgent-RAG | 2026 | 迭代检索-推理-自校验，面向金融文档问答 |
+| 16 | Sustainable Digitalization with Multi-Agent RAG | 2025 | 多智能体 RAG 支持企业可持续信息抽取 |
+| 17 | Finance Agent Benchmark | 2025 | 金融研究任务智能体基准与评测框架 |
+| 18 | Retrieve, Schedule, Reflect | 2026 | Agentic RAG 驱动芯片 QoR 优化调度 |
+| 19 | Towards Interpretable and Trustworthy TS Reasoning | 2025 | 可解释时序推理蓝图：多智能体 + 多模态 + 检索增强 |
+| 20 | Reimagining RAN Automation in 6G | 2026 | 6G 网络中的分层决策智能体框架 |
+| 21 | Rashomon Set Agents | 2026 | 多智能体概率建模社会认知不确定性 |
+| 22 | RELOOP | 2025 | 结构感知多跳检索与规划推理 |
+| 23 | ERATTA | 2024 | 企业表格问答的极限 RAG 架构 |
+| 24 | EnterpriseBench | 2025 | 企业场景下 LLM 智能体评测沙盒 |
+| 25 | Long-Term Open-Web Research Benchmark | 2024 | 真实开放网络研究任务的长期基准 |</p>
+<hr />
+<h2>论文详解（中文润色，不改原意）</h2>
+<h3>1) Integrating Traditional Technical Analysis with AI</h3>
+<ul>
+<li>作者：Michał Wawer, Jarosław A. Chudziak</li>
+<li>arXiv：2506.16813（2025-06-20）</li>
+<li>摘要译文：论文提出 ElliottAgents，将艾略特波浪理论与多智能体 LLM 结合，用 RAG 与 DRL 持续分析市场数据，识别波浪结构并预测价格走势。作者在美国大型公司历史数据上验证了其在不同时间尺度的模式识别和趋势预测有效性，强调传统技术分析与现代 AI 的可融合性。</li>
+</ul>
+<h3>2) The New Quant</h3>
+<ul>
+<li>作者：Weilong Fu</li>
+<li>arXiv：2510.05533（2025-10-07）</li>
+<li>摘要译文：综述系统梳理了 LLM 在金融预测与交易中的应用，从情绪/事件抽取、数值推理、多模态理解到 Agentic 系统与工具协同。文章强调评估应覆盖成本、延迟、容量与时间安全性，并指出生产落地中的关键挑战包括时间泄漏、幻觉、可解释性与治理安全。</li>
+</ul>
+<h3>3) Enhancing Financial RAG with Agentic AI and Multi-HyDE</h3>
+<ul>
+<li>作者：Akshay Govind Srinivasan et al.</li>
+<li>arXiv：2509.16369（2025-09-19）</li>
+<li>摘要译文：该工作引入 Multi-HyDE，多样化生成假设查询以覆盖更多检索视角，并与多步 Agent 推理结合。实验显示在金融问答中准确率提升 11.2%，幻觉降低 15%，说明“多视角检索 + 结构化代理流程”能显著提升高风险场景可靠性。</li>
+</ul>
+<h3>4) A Role-Aware Multi-Agent Framework for Financial Education QA</h3>
+<ul>
+<li>作者：Andy Zhu, Yingjun Du</li>
+<li>arXiv：2509.09727（2025-09-10）</li>
+<li>摘要译文：论文构建“生成器-检索器-专家评审”三角色单轮协作框架，面向金融教育问答中的多步数值推理需求。基于 3532 道专家题的结果显示，批判式 refinement 相比零样本 CoT 提升 6.6%–8.3%，并在成本上具备优势。</li>
+</ul>
+<h3>5) Rethinking Retrieval...</h3>
+<ul>
+<li>作者：Elias Lumer et al.</li>
+<li>arXiv：2511.18177（2025-11-22）</li>
+<li>摘要译文：作者系统比较了向量式 Agentic RAG 与非向量层级结构遍历。基于 1200 份 SEC 文件与 150 题评测，向量方案在成对比较中胜率 68%；交叉编码重排与 small-to-big chunking 均显著提升检索质量，但需平衡延迟与成本。</li>
+</ul>
+<h3>6) Agentic RAG for Time Series Analysis</h3>
+<ul>
+<li>作者：Chidaksh Ravuru et al.</li>
+<li>arXiv：2408.14484（2024-08-18）</li>
+<li>摘要译文：提出分层多智能体框架：主控代理将请求分发给任务化子代理，子代理通过共享提示池检索历史模式知识并进行任务微调。论文声称在多项时序任务基准上表现达到 SOTA，并具备模块化扩展能力。</li>
+</ul>
+<h3>7) Agentic AI... Institutional Turn</h3>
+<ul>
+<li>作者：Marcel Osmond</li>
+<li>arXiv：2603.13244（2026-02-20）</li>
+<li>摘要译文：文章从法律与金融治理角度讨论 Agentic AI 的制度挑战，主张治理重心应由训练期对齐转向运行期制度设计，如治理图、惩罚函数与可观察行为约束。核心观点是：与其追求模型“完美内化价值”，更关键是构造“合规行为最优”的制度环境。</li>
+</ul>
+<h3>8) AI for Climate Finance</h3>
+<ul>
+<li>作者：Saeid Ario Vaghefi et al.</li>
+<li>arXiv：2504.05104（2025-04-07）</li>
+<li>摘要译文：针对气候适应资金（特别是 EWS）追踪难题，论文提出结合检索、微调与多步推理的 Agentic 系统。以 CREWS 基金项目文档为例，Agent-RAG 方案在分类任务上达到 87% 准确率，并提供了可复用基准数据。</li>
+</ul>
+<h3>9) Adaptive Query Routing</h3>
+<ul>
+<li>作者：Afshan Hashmi</li>
+<li>arXiv：2604.14222（2026-04-14）</li>
+<li>摘要译文：工作比较向量检索、树推理与自适应混合检索（AHR），并按查询复杂度分层评测。结果表明不存在单一全胜范式：树推理总体最好，但在多文档综合问题上向量方案更强，支持“按题型动态路由”的设计。</li>
+</ul>
+<h3>10) MarketSenseAI 2.0</h3>
+<ul>
+<li>作者：George Fatouros et al.</li>
+<li>arXiv：2502.00415（2025-02-01）</li>
+<li>摘要译文：框架通过 LLM 处理新闻、价格、基本面与宏观信息，并用多智能体 + RAG 汇总 SEC 文件与财报电话会信号。作者报告在 S&amp;P100 两年回测中累计收益 125.9%（对比指数 73.5%），并在 S&amp;P500 测试中展现可扩展性。</li>
+</ul>
+<h3>11) Graph RAG-Tool Fusion</h3>
+<ul>
+<li>作者：Elias Lumer et al.</li>
+<li>arXiv：2502.07223（2025-02-11）</li>
+<li>摘要译文：针对传统 RAG 工具检索忽略工具依赖关系的问题，论文将向量检索与图遍历融合，显式恢复嵌套依赖。其在 ToolLinkOS/ToolSandbox 上相对朴素 RAG 的 mAP@10 分别绝对提升 71.7% 与 22.1%。</li>
+</ul>
+<h3>12) Agentic RAG Survey</h3>
+<ul>
+<li>作者：Aditi Singh et al.</li>
+<li>arXiv：2501.09136（2025-01-15）</li>
+<li>摘要译文：这是一篇 Agentic RAG 系统综述，给出基于代理数量、控制结构、自主性与知识表示的分类法。文章同时总结了医疗、金融、教育、企业文档场景实践，并指出评估、协同、记忆、效率与治理等开放问题。</li>
+</ul>
+<h3>13) Learning to Route</h3>
+<ul>
+<li>作者：Haoyue Bai et al.</li>
+<li>arXiv：2510.02388（2025-09-30）</li>
+<li>摘要译文：论文指出文档与关系型数据库在问答中各有优势，盲目融合会带来噪声和成本。其规则驱动路由代理为每个问题选择最优增强路径，并用元缓存复用相似路由决策，在准确率与计算成本之间取得更好平衡。</li>
+</ul>
+<h3>14) GlyRAG</h3>
+<ul>
+<li>作者：Shovito Barua Soumma, Hassan Ghasemzadeh</li>
+<li>arXiv：2601.05353（2026-01-08）</li>
+<li>摘要译文：GlyRAG 直接从 CGM 序列抽取语义上下文，不依赖额外传感器；LLM 生成临床摘要并与血糖 patch 表征做多模态融合，再通过检索类似历史片段辅助预测。实验显示在两组 T1D 队列上 RMSE 最多降低 39%，低血/高血事件预测显著改善。</li>
+</ul>
+<h3>15) FinAgent-RAG</h3>
+<ul>
+<li>作者：Yang Shu, Yingmin Liu, Zequn Xie</li>
+<li>arXiv：2605.05409（2026-05-06）</li>
+<li>摘要译文：该方法面向金融文档中的多步数值推理，采用“对比检索器 + 可执行 Python 的 Program-of-Thought + 自适应策略路由”三组件。结果在 FinQA/ConvFinQA/TAT-QA 上相对最强基线提升 5.62–9.32 个百分点，并在保证精度下显著降低 API 成本。</li>
+</ul>
+<h3>16) Sustainable Digitalization with Multi-Agent RAG and LLM</h3>
+<ul>
+<li>作者：Muhammad Arslan et al.</li>
+<li>arXiv：2502.15700（2025-01-06）</li>
+<li>摘要译文：文章聚焦企业可持续数字化，主张用现成 LLM + RAG 取代高成本新模型训练。通过多智能体分解检索、增强、分类任务，实现更高资源效率，并强调与联合国 SDGs 的一致性。</li>
+</ul>
+<h3>17) Finance Agent Benchmark</h3>
+<ul>
+<li>作者：Antoine Bigeard et al.</li>
+<li>arXiv：2508.00828（2025-05-20）</li>
+<li>摘要译文：提出真实金融研究任务基准，覆盖 9 类任务、537 道专家题，并配备搜索与 EDGAR 工具链。评测显示当前最优模型准确率仍仅 46.8%，且单题平均成本约 3.79 美元，凸显高风险金融落地仍有明显差距。</li>
+</ul>
+<h3>18) Retrieve, Schedule, Reflect</h3>
+<ul>
+<li>作者：Yikang Ouyang et al.</li>
+<li>arXiv：2603.13767（2026-03-14）</li>
+<li>摘要译文：该工作将 Agentic LLM 接入 EDA 工具做芯片 QoR 调度优化，并借助 RAG 提供专家知识树。相较黑盒搜索（如 RL），论文报告时序优化提升约 10%、功耗和面积更优、速度超过 4 倍。</li>
+</ul>
+<h3>19) Towards Interpretable and Trustworthy TS Reasoning</h3>
+<ul>
+<li>作者：Kanghui Ning et al.</li>
+<li>arXiv：2510.16980（2025-10-19）</li>
+<li>摘要译文：文章提出时序推理蓝图：一条线建设“时间理解-多步推理-可信评估”基础能力，另一条线推进“多智能体协作+多模态上下文+检索增强”的系统级推理。目标是实现可解释、可信赖的时序智能。</li>
+</ul>
+<h3>20) Reimagining RAN Automation in 6G</h3>
+<ul>
+<li>作者：Md Arafat Habib et al.</li>
+<li>arXiv：2604.03908（2026-04-05）</li>
+<li>摘要译文：论文提出 6G 无线网络 Agentic AI 框架，由超代理（H-ODT）统筹资源分配、应用编排与自愈代理，并借助 RAG 汇聚异构知识。实验在吞吐、时延、能效上优于三类基线，并展示了较强的意图校验与故障恢复能力。</li>
+</ul>
+<h3>21) Rashomon Set Agents</h3>
+<ul>
+<li>作者：Jinming Yang et al.</li>
+<li>arXiv：2603.20750（2026-03-21）</li>
+<li>摘要译文：工作构建 LLM 驱动的多智能体概率框架，模拟学生主观社会认知差异如何在局部信息与同伴交互中演化。代理仅访问各自“主观图”上的局部信息，结合不确定性标注与信任加权更新，重现了多种真实教育场景下的群体动力学。</li>
+</ul>
+<h3>22) RELOOP</h3>
+<ul>
+<li>作者：Ruiyi Yang et al.</li>
+<li>arXiv：2510.20505（2025-10-23）</li>
+<li>摘要译文：RELOOP 用可逆层次序列统一文本、表格、知识图谱，并通过结构感知迭代检索“刚好足够”的证据。其在 HotpotQA、HybridQA/TAT-QA、MetaQA 上较多类基线取得稳定提升，同时降低不必要的跳转、工具调用与 token 开销。</li>
+</ul>
+<h3>23) ERATTA</h3>
+<ul>
+<li>作者：Sohini Roychowdhury et al.</li>
+<li>arXiv：2405.03963（2024-05-07）</li>
+<li>摘要译文：论文面向企业级表格问答提出极限 RAG 架构，使用多 LLM 协作进行数据认证、查询路由、检索与定制提示。其在多行业查询中报告高置信度，并提供幻觉检测打分模块，强调企业场景下可扩展性与稳定性。</li>
+</ul>
+<h3>24) EnterpriseBench</h3>
+<ul>
+<li>作者：Harsh Vishwakarma et al.</li>
+<li>arXiv：2510.27287（2025-10-31）</li>
+<li>摘要译文：该基准模拟企业环境中的数据分散、权限控制与跨部门流程，覆盖 500 项任务。评测显示即便最强智能体任务完成率也只有 41.8%，说明企业级 Agent 系统仍有明显改进空间。</li>
+</ul>
+<h3>25) Long-Term Open-Web Research Benchmark</h3>
+<ul>
+<li>作者：Peter Mühlbacher et al.</li>
+<li>arXiv：2409.14913（2024-09-23）</li>
+<li>摘要译文：工作提出面向“具经济价值白领任务”的开放网络研究基准，任务形态贴近金融与咨询中的真实杂乱问题。实验显示具备子任务委派能力的 ReAct 架构整体表现最好，并给出了对多模型代理轨迹的定量与定性分析。</li>
+</ul>
+<hr />
+<h2>集成模式统计</h2>
+<h3>智能体架构模式</h3>
+<ul>
+<li>Agentic Workflow：15 篇</li>
+<li>Multi-Agent System：8 篇</li>
+<li>Single Agent：5 篇</li>
+</ul>
+<h3>RAG 集成模式</h3>
+<ul>
+<li>Standard RAG：4 篇</li>
+<li>Hybrid Retrieval：4 篇</li>
+<li>Vector Retrieval：3 篇</li>
+<li>GraphRAG：1 篇</li>
+</ul>
+<h3>领域侧重点</h3>
+<ul>
+<li>Financial Analysis：17 篇</li>
+<li>Time Series / Forecasting：7 篇</li>
+<li>Market Analysis：6 篇</li>
+<li>Trading / Stock：5 篇</li>
+</ul>
+<hr />
+<h2>关键结论</h2>
+<ul>
+<li>Agent + RAG 正在成为金融智能体的重要范式，尤其在 2025–2026 年快速增长。</li>
+<li>复杂金融任务更偏好多角色协作的多智能体架构。</li>
+<li>RAG 在系统中承担“外部记忆”角色，对时效性决策至关重要。</li>
+<li>结构化市场数据与非结构化文本、时序数据的统一融合仍是瓶颈。</li>
+<li>评测仍偏碎片化，跨论文横向比较困难。</li>
+</ul>
+<hr />
+<p><em>说明：本文件为中文润色重写版，保持原文结论、机制描述与关键数字含义不变。</em></p>
+</div></section><section class='doc'><h2>Level2_Methodologies_zh.md</h2><div class='content'><h1>第 2 层：方法论深挖——架构创新（2024–2026）</h1>
+<p><strong>生成日期：</strong> 2026-05-14<br />
+<strong>来源：</strong> arXiv 定向检索（标题必须包含 <code>time series</code>）<br />
+<strong>选择规则：</strong> 每条技术路线按关键词相关性选最相关 2 篇</p>
+<hr />
+<h2>赛道一：时间序列基础模型（Zero-Shot）</h2>
+<p>| # | 论文 | 年份 | 核心创新 |
+|---|---|---:|---|
+| 1 | PatchFormer | 2026 | 基于 patch 的分层掩码重建预训练 + 多尺度聚合 + 轻量适配器，实现零样本多步预测 |
+| 2 | Generic TS FMs for EEG | 2025 | 将通用时序基础模型跨域迁移到 EEG 分类，预训练同时使用真实异构与合成数据 |</p>
+<h3>1) PatchFormer</h3>
+<ul>
+<li>作者：Olaf Yunus Laitinen Imanov, Derya Umut Kulali, Taner Yilmaz</li>
+<li>arXiv：2601.20845</li>
+<li>发表：2026-01-28</li>
+<li>摘要（中文润色）：论文提出 PatchFormer，通过“分层掩码重建”进行自监督预训练，并配合轻量适配器高效迁移。模型将时间序列切片为 patch，学习多尺度时序表征；预训练目标同时约束局部精度与全局一致性，并加入跨域知识蒸馏。作者在 24 个数据集上报告了零样本多步预测优势：相较强基线 MSE 降低 27.3%，任务特定训练数据需求降低 94%，长度 512 序列推理速度比全序列 Transformer 快 3.8 倍。</li>
+</ul>
+<h3>2) Leveraging Generic TS FMs for EEG Classification</h3>
+<ul>
+<li>作者：Théo Gnassounou et al.</li>
+<li>arXiv：2510.27522</li>
+<li>发表：2025-10-31</li>
+<li>摘要（中文润色）：该工作研究通用时序基础模型在 EEG 任务（运动想象、睡眠分期）上的迁移能力。作者比较了两种预训练策略：异构真实数据预训练与纯合成数据预训练。结果显示两者都稳定优于 EEGNet 与 CBraMod，说明即便预训练数据并非脑电来源，通用时序基础模型仍可有效迁移到 EEG。</li>
+</ul>
+<hr />
+<h2>赛道二：LLM 提示驱动时序建模（Prompting）</h2>
+<p>| # | 论文 | 年份 | 核心创新 |
+|---|---|---:|---|
+| 1 | DP-GPT4MTS | 2025 | 双提示 GPT-2：显式任务提示 + 时间戳文本语义提示，并通过注意力与 FFN 精炼 |
+| 2 | PatchInstruct | 2025 | 分解 + patch 化 + 相似序列邻居增强的提示策略，无需重训练 |</p>
+<h3>1) DP-GPT4MTS</h3>
+<ul>
+<li>作者：Chanjuan Liu, Shengzhi Wang, Enqiang Zhu</li>
+<li>arXiv：2508.04239</li>
+<li>发表：2025-08-06</li>
+<li>摘要（中文润色）：传统模型多关注数值序列，常忽略事件/新闻文本。DP-GPT4MTS 用双提示机制融合“任务指令”与“时间戳文本上下文”，并进一步用自注意力与前馈网络精炼文本语义。实验表明该机制在文本-数值混合时序预测上优于当时 SOTA，强调了文本上下文对预测性能的贡献。</li>
+</ul>
+<h3>2) PatchInstruct</h3>
+<ul>
+<li>作者：Mayank Bumb et al.</li>
+<li>arXiv：2506.12953</li>
+<li>发表：2025-06-15</li>
+<li>摘要（中文润色）：该工作探索无需大规模重训练的提示式时序预测：通过时序分解、patch token 化、相似邻居增强来改进 LLM 预测质量。作者提出 PatchInstruct，目标是在保持架构简洁和低预处理成本的同时，获得更准确预测。</li>
+</ul>
+<hr />
+<h2>赛道三：PEFT / LoRA 路线</h2>
+<p>| # | 论文 | 年份 | 核心创新 |
+|---|---|---:|---|
+| 1 | One-for-All | 2026 | 冻结 LLM，仅在位置嵌入与输出层注入高斯 rank-stabilized LoRA（rank=16） |
+| 2 | Time-LlaMA | 2025 | 线性 token 化对齐时序与文本 + 动态 D-LoRA 按样本按层选择低秩模块 |</p>
+<h3>1) One-for-All</h3>
+<ul>
+<li>作者：Prasanjit Dey, Soumyabrata Dev, Bianca Schoen-Phelan</li>
+<li>arXiv：2603.29756</li>
+<li>发表：2026-03-31</li>
+<li>摘要（中文润色）：论文提出 One-for-All，在冻结骨干 LLM 的前提下引入高斯 Rank-Stabilized LoRA，以较低秩实现可证明的梯度稳定。方法仅改位置嵌入与输出层，显著降低可训练参数和显存占用，并在多个数据集与预测跨度上保持与强基线相当的精度，强调了效率-性能平衡。</li>
+</ul>
+<h3>2) Time-LlaMA</h3>
+<ul>
+<li>作者：Juyuan Zhang, Wei Zhu, Jiechao Gao</li>
+<li>arXiv：2502.13725</li>
+<li>发表：2025-02-19</li>
+<li>摘要（中文润色）：Time-LlaMA 先用线性机制将时序映射为 token embedding，再与文本提示对齐，最后通过 D-LoRA 按输入样本在各层动态选择最合适的低秩模块。作者认为该设计兼顾跨模态对齐质量与推理效率，并在多项真实任务上达到 SOTA。</li>
+</ul>
+<hr />
+<h2>跨赛道洞察</h2>
+<ol>
+<li>提示工程正在显著替代传统大规模微调。</li>
+<li>LoRA 变体是当前 PEFT 主流创新形态。</li>
+<li>基础模型路径明显借鉴 CV 领域“预训练+轻量迁移”范式。</li>
+<li>连续时序与离散文本 token 的对齐，仍是所有路线的核心难题。</li>
+</ol>
+<hr />
+<p><em>说明：以上为不改变原意的中文润色版。</em></p>
+</div></section></div></body></html>

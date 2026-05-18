@@ -1,0 +1,31 @@
+# Large binary files — keep in raw/papers/ for reference
+# *.pdf  ← 保留 PDF 引用
+
+# macOS
+.DS_Store
+.AppleDouble
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# Model files (large)
+*.gguf
+*.bin
+*.safetensors
+*.pth
+*.ckpt
+
+# Results (generated, large)
+experiments/results/*.jsonl
+experiments/results/*.csv
+
+# Secrets
+.env
+*.key
