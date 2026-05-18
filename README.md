@@ -53,3 +53,23 @@ FinLeakAudit-KB/
 而不是：
 
 > "帮我找 CARAG 和我有什么区别"
+
+## 分支协作规范
+
+```
+main     ← 稳定版本，通过 PR 从 develop 合并
+develop  ← 日常开发分支，所有改动先推到这里
+```
+
+队员协作流程：
+
+```bash
+git clone git@github.com:yixi1120/FinLeakAudit-KB.git
+cd FinLeakAudit-KB
+git checkout develop
+# 修改文件...
+git add -A && git commit -m "做了什么改动"
+git push origin develop
+```
+
+> ⚠️ 中国内地网络 HTTPS 推不了 GitHub，用 SSH。需要先把你的 SSH 公钥发给我加到仓库 deploy key。
