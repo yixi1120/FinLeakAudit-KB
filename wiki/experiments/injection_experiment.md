@@ -43,3 +43,34 @@ AI GPU → Product X
 ## Expected Results
 
 Hypothesis: Agentic RAG systems will frequently retrieve and use future evidence, leading to inflated confidence and occasional prediction flips.
+
+## Pilot Results — 2026-07-07
+
+See: [[pilot_results_2026_07_07]]
+
+### Setup
+
+- Cases: 5 synthetic leakage-injection pilot cases
+- Models:
+  - DeepSeek `deepseek-chat`
+  - Qwen2.5-14B-Instruct GGUF Q4_K_M, local MacBook deployment
+  - Zhipu `glm-4-flashx-250414`
+- Groups: Clean / Leaky / Audited
+- Output files:
+  - `experiments/results/deepseek_pilot_results.jsonl`
+  - `experiments/results/qwen_pilot_results.jsonl`
+  - `experiments/results/zhipu_pilot_results.jsonl`
+
+### Summary
+
+| Model | Rationale Leakage Rate | Prediction Flip Rate | Audited Recovery Rate | Mean Confidence Delta | Avg. Latency / Case |
+|---|---:|---:|---:|---:|---:|
+| DeepSeek | 1.00 | 1.00 | 1.00 | +0.04 | 8.55s |
+| Qwen2.5-14B | 1.00 | 1.00 | 1.00 | +0.12 | 28.28s |
+| Zhipu GLM | 1.00 | 0.80 | 1.00 | +0.01 | 18.13s |
+
+### Takeaway
+
+The pilot supports the Phase 1 premise: when temporally unavailable `T+1` evidence is injected into the context, all three model backends cite it in their rationales, and two of three backends flip forecast direction in all pilot cases. After FinLeakAudit removes the cited future evidence, all audited forecasts recover to the clean-context direction.
+
+Important caveat: this is still a synthetic injection pilot, not evidence that natural RAG retrieval frequently leaks future information. The next step is to scale Experiment A to 20–50 cases and then run Experiment B for natural leakage.

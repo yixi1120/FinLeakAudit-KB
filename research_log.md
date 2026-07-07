@@ -4,6 +4,25 @@
 
 ---
 
+## 2026-07-07 — Experiment A 三模型 Pilot 跑通
+
+- 工程线新增 `experiments/` 最小可跑 pipeline：
+  - `config.py`
+  - `prompts.py`
+  - `run_experiment.py`
+  - `finleakaudit.py`
+  - `analyze.py`
+  - `data/cases_pilot.jsonl`
+- 本地部署并接入 Qwen2.5-14B-Instruct GGUF Q4_K_M。
+- 接入 DeepSeek `deepseek-chat` 与 Zhipu `glm-4-flashx-250414` API。
+- 完成 5 个 synthetic leakage-injection pilot cases 的三模型运行。
+- 结果摘要：
+  - DeepSeek: leakage 1.00, flip 1.00, recovery 1.00, mean confidence delta +0.04
+  - Qwen2.5-14B: leakage 1.00, flip 1.00, recovery 1.00, mean confidence delta +0.12
+  - Zhipu GLM: leakage 1.00, flip 0.80, recovery 1.00, mean confidence delta +0.01
+- 初步结论：未来证据注入后，三个模型都会在 rationale 中引用 `T+1` evidence；DeepSeek/Qwen 5/5 发生方向翻转，Zhipu 4/5 发生方向翻转；删除泄漏证据后三模型均恢复到 Clean 方向。
+- 记录页：`wiki/experiments/pilot_results_2026_07_07.md`
+
 ## 2026-05-17 — 建立 Karpathy-style 研究 Wiki
 
 - 从 `/LLM4TS_Finance_Survey_zh/` 和 `/LLM4TS_Finance/` 导入所有原始资料
@@ -45,6 +64,8 @@
 ## 待办
 
 - [ ] 对 SHARP、FLAIRR-TS、ATSF 做深度阅读
-- [ ] 跑 Experiment A 注入实验确认 premise
+- [x] 跑 Experiment A 注入实验确认 premise（2026-07-07 三模型 5-case pilot）
+- [ ] 扩展 Experiment A 到 20–50 cases
+- [ ] 实现 evidence ablation 和 semantic leakage detection
 - [ ] 补充自然泄漏检测（Experiment B）实验设计
 - [ ] 生成 contribution_matrix.md 和 baseline_matrix.md
