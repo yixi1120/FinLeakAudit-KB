@@ -5,12 +5,14 @@ from __future__ import annotations
 import argparse
 import json
 import random
+import re
 import sys
 import time
+import traceback
 import urllib.error
 import urllib.request
 from pathlib import Path
-from typing import Any
+from typing import Optional
 
 from config import DEFAULT_CASES_PATH, MODELS, RESULTS_DIR, ModelConfig
 from finleakaudit import audit_prediction
@@ -18,6 +20,8 @@ from prompts import SYSTEM_PROMPT, build_prediction_prompt
 
 
 def read_jsonl(path: Path) -> list[dict]:
+    if not path.exists():
+        return []
     records = []
     with path.open("r", encoding="utf-8") as fh:
         for line in fh:
@@ -31,6 +35,22 @@ def append_jsonl(path: Path, record: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("a", encoding="utf-8") as fh:
         fh.write(json.dumps(record, ensure_ascii=False) + "\n")
+
+
+def completed_case_ids(path: Path) -> set[str]:
+    """Return case IDs already present in a result file for resume support."""
+    completed = set()
+    for record in read_jsonl(path):
+        case_id = record.get("case_id")
+        if case_id:
+            completed.add(case_id)
+    return completed
+
+
+def default_run_name(cases_path: Path) -> str:
+    """Derive a stable run name from the cases file name."""
+    stem = cases_path.stem
+    return re.sub(r"[^A-Za-z0-9_.-]+", "_", stem).strip("_") or "cases"
 
 
 def extract_json(text: str) -> dict:
@@ -161,12 +181,63 @@ def run_case(case: dict, model_config: ModelConfig, seed: int) -> dict:
     }
 
 
+def run_case_with_retry(
+    case: dict,
+    model_config: ModelConfig,
+    seed: int,
+    retries: int,
+    retry_delay: float,
+) -> tuple[Optional[dict], list[dict]]:
+    """Run one case, retrying transient API and parsing failures."""
+    errors = []
+    total_attempts = retries + 1
+    for attempt in range(1, total_attempts + 1):
+        try:
+            result = run_case(case, model_config, seed=seed)
+            result["attempt"] = attempt
+            return result, errors
+        except Exception as exc:  # noqa: BLE001 - record experiment failures.
+            error = {
+                "case_id": case.get("case_id"),
+                "model": model_config.name,
+                "attempt": attempt,
+                "max_attempts": total_attempts,
+                "error_type": type(exc).__name__,
+                "error": str(exc),
+                "traceback": traceback.format_exc(limit=3),
+            }
+            errors.append(error)
+            if attempt < total_attempts:
+                sleep_seconds = retry_delay * attempt
+                print(
+                    f"  attempt {attempt}/{total_attempts} failed: {exc}; "
+                    f"retrying in {sleep_seconds:.1f}s",
+                    flush=True,
+                )
+                time.sleep(sleep_seconds)
+            else:
+                print(
+                    f"  failed after {total_attempts} attempts: {exc}",
+                    flush=True,
+                )
+    return None, errors
+
+
 def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", default="qwen", choices=sorted(MODELS))
     parser.add_argument("--cases", type=Path, default=DEFAULT_CASES_PATH)
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--seed", type=int, default=17)
+    parser.add_argument("--retries", type=int, default=2)
+    parser.add_argument("--retry-delay", type=float, default=3.0)
+    parser.add_argument(
+        "--run-name",
+        default=None,
+        help="Name used in result files. Defaults to the cases file stem.",
+    )
+    parser.add_argument("--output", type=Path, default=None)
+    parser.add_argument("--errors", type=Path, default=None)
     parser.add_argument("--overwrite", action="store_true")
     args = parser.parse_args(argv)
 
@@ -175,14 +246,50 @@ def main(argv: list[str]) -> int:
     if args.limit is not None:
         cases = cases[: args.limit]
 
-    output_path = RESULTS_DIR / f"{args.model}_pilot_results.jsonl"
+    run_name = args.run_name or default_run_name(args.cases)
+    output_path = args.output or RESULTS_DIR / f"{args.model}_{run_name}_results.jsonl"
+    error_path = args.errors or RESULTS_DIR / f"{args.model}_{run_name}_errors.jsonl"
     if args.overwrite and output_path.exists():
         output_path.unlink()
+    if args.overwrite and error_path.exists():
+        error_path.unlink()
 
+    print(f"results: {output_path}")
+    print(f"errors:  {error_path}")
+
+    completed = completed_case_ids(output_path)
+    if completed:
+        print(f"resume: found {len(completed)} completed case(s) in {output_path}")
+
+    failures = 0
+    skipped = 0
     for idx, case in enumerate(cases, start=1):
+        if case["case_id"] in completed:
+            skipped += 1
+            print(
+                f"[{idx}/{len(cases)}] skipping {case['case_id']} "
+                f"(already completed)",
+                flush=True,
+            )
+            continue
+
         started = time.time()
         print(f"[{idx}/{len(cases)}] running {case['case_id']} with {args.model}", flush=True)
-        result = run_case(case, model_config, seed=args.seed + idx)
+        result, errors = run_case_with_retry(
+            case,
+            model_config,
+            seed=args.seed + idx,
+            retries=args.retries,
+            retry_delay=args.retry_delay,
+        )
+        for error in errors:
+            error["elapsed_seconds"] = round(time.time() - started, 3)
+            append_jsonl(error_path, error)
+
+        if result is None:
+            failures += 1
+            continue
+
         result["elapsed_seconds"] = round(time.time() - started, 3)
         append_jsonl(output_path, result)
         print(
@@ -195,8 +302,11 @@ def main(argv: list[str]) -> int:
             flush=True,
         )
 
-    print(f"wrote {output_path}")
-    return 0
+    print(
+        f"wrote {output_path}; errors={failures}; skipped={skipped}; "
+        f"error_log={error_path if error_path.exists() else 'none'}"
+    )
+    return 1 if failures else 0
 
 
 if __name__ == "__main__":

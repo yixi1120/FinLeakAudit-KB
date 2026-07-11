@@ -65,22 +65,29 @@ def write_summary(path: Path, summary: dict) -> None:
         writer.writerow(summary)
 
 
+def default_summary_path(input_path: Path) -> Path:
+    stem = input_path.stem
+    if stem.endswith("_results"):
+        stem = stem[: -len("_results")]
+    return input_path.with_name(f"{stem}_summary.csv")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--input", type=Path, default=RESULTS_DIR / "qwen_pilot_results.jsonl"
+        "--input", type=Path, default=RESULTS_DIR / "qwen_cases_pilot_results.jsonl"
     )
-    parser.add_argument("--output", type=Path, default=RESULTS_DIR / "summary.csv")
+    parser.add_argument("--output", type=Path, default=None)
     args = parser.parse_args()
 
     rows = read_jsonl(args.input)
     summary = summarize(rows)
-    write_summary(args.output, summary)
+    output_path = args.output or default_summary_path(args.input)
+    write_summary(output_path, summary)
     print(json.dumps(summary, indent=2, ensure_ascii=False))
-    print(f"wrote {args.output}")
+    print(f"wrote {output_path}")
     return 0
 
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
