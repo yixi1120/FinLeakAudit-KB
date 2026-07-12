@@ -73,4 +73,8 @@ See: [[pilot_results_2026_07_07]]
 
 The pilot supports the Phase 1 premise: when temporally unavailable `T+1` evidence is injected into the context, all three model backends cite it in their rationales, and two of three backends flip forecast direction in all pilot cases. After FinLeakAudit removes the cited future evidence, all audited forecasts recover to the clean-context direction.
 
-Important caveat: this is still a synthetic injection pilot, not evidence that natural RAG retrieval frequently leaks future information. The next step is to scale Experiment A to 20–50 cases and then run Experiment B for natural leakage.
+### Evidence Ablation Follow-up — 2026-07-12
+
+The first leave-one-evidence-out run is recorded in [[ablation_pilot_results_2026_07_12]]. Across the same five cases, the future `e4` item was a direction flip driver in 5/5 DeepSeek cases and 4/5 Zhipu cases. This provides an initial marginal-impact signal beyond citation-based leakage detection.
+
+Important caveat: this remains a synthetic injection pilot, not evidence that natural RAG retrieval frequently leaks future information. The next step is to scale Experiment A to 20–50 cases, add Qwen ablation when the local server is intentionally restarted, and then run Experiment B for natural leakage.

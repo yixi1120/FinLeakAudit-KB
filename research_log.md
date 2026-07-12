@@ -23,6 +23,16 @@
 - 初步结论：未来证据注入后，三个模型都会在 rationale 中引用 `T+1` evidence；DeepSeek/Qwen 5/5 发生方向翻转，Zhipu 4/5 发生方向翻转；删除泄漏证据后三模型均恢复到 Clean 方向。
 - 记录页：`wiki/experiments/pilot_results_2026_07_07.md`
 
+## 2026-07-12 — Experiment A Evidence Ablation Pilot
+
+- 为实验运行器加入 leave-one-evidence-out ablation：对 Leaky context 中每条证据逐条删除并重新预测。
+- 完成 DeepSeek 与 Zhipu 各 5 个 case 的消融运行，共 20 个 evidence-item ablation / model，0 errors。
+- 结果摘要：
+  - DeepSeek: future evidence flip-driver rate 1.00，prediction flip 1.00，audited recovery 1.00。
+  - Zhipu GLM: future evidence flip-driver rate 0.80，prediction flip 0.80，audited recovery 1.00。
+- 关键观察：未来证据 `e4` 在 DeepSeek 5/5、Zhipu 4/5 个 case 中是方向翻转驱动项；Zhipu `pilot_004` 再次显示“引用未来证据”不必然等于“方向翻转”。
+- 结果页：`wiki/experiments/ablation_pilot_results_2026_07_12.md`
+
 ## 2026-05-17 — 建立 Karpathy-style 研究 Wiki
 
 - 从 `/LLM4TS_Finance_Survey_zh/` 和 `/LLM4TS_Finance/` 导入所有原始资料
@@ -66,6 +76,7 @@
 - [ ] 对 SHARP、FLAIRR-TS、ATSF 做深度阅读
 - [x] 跑 Experiment A 注入实验确认 premise（2026-07-07 三模型 5-case pilot）
 - [ ] 扩展 Experiment A 到 20–50 cases
-- [ ] 实现 evidence ablation 和 semantic leakage detection
+- [x] 实现 evidence ablation（2026-07-12，DeepSeek/Zhipu 5-case pilot）
+- [ ] 实现 semantic leakage detection
 - [ ] 补充自然泄漏检测（Experiment B）实验设计
 - [ ] 生成 contribution_matrix.md 和 baseline_matrix.md

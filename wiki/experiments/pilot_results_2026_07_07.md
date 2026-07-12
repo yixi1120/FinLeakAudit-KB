@@ -80,18 +80,22 @@ This case can illustrate why FinLeakAudit should track multiple leakage effects:
 - direction flip
 - revision recovery
 
+## Evidence Ablation Follow-up — 2026-07-12
+
+The first leave-one-evidence-out ablation run is recorded in [[ablation_pilot_results_2026_07_12]]. On the same five cases, the future `T+1` item `e4` was a direction flip driver in all DeepSeek cases and 4 of 5 Zhipu cases. This separates the presence or citation of future evidence from its marginal influence on the forecast.
+
 ## Caveats
 
 - Only 5 pilot cases; statistical conclusions are not stable.
 - Synthetic injection tests context contamination, not natural retrieval leakage.
 - Current leakage detection is citation-based; semantic leakage remains unimplemented.
-- Current audit is not yet full evidence ablation. It removes cited leaked evidence and revises, but does not yet estimate marginal impact for every evidence item.
+- The ablation follow-up still uses only 5 synthetic cases per backend; its sensitivity estimates are not stable enough for a general claim.
 
 ## Next Steps
 
 - Expand Experiment A to 20 then 50 cases.
 - Add retry/resume for API runs.
-- Implement leave-one-out evidence ablation.
+- ~~Implement leave-one-out evidence ablation.~~ Done for DeepSeek and Zhipu on the 5-case pilot; Qwen and larger samples remain.
 - Add semantic leakage detection or manual semantic leakage annotation.
 - Add calibration cases with irrelevant evidence.
 - Update analysis metrics for model-level comparison tables.

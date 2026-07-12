@@ -70,6 +70,37 @@ python3 experiments/run_experiment.py --model deepseek --run-name cases_20
 python3 experiments/run_experiment.py --model deepseek --output experiments/results/debug.jsonl
 ```
 
+## Run Evidence Ablation
+
+Add `--with-ablation` to run leave-one-evidence-out ablation after the Leaky
+prediction. This adds one model call per evidence item in each case.
+
+```bash
+python3 experiments/run_experiment.py --model deepseek --limit 1 --with-ablation --overwrite
+```
+
+Default ablation outputs are separated from normal runs:
+
+```text
+experiments/results/deepseek_cases_pilot_ablation_results.jsonl
+experiments/results/deepseek_cases_pilot_ablation_errors.jsonl
+```
+
+Each ablation item records whether removing that evidence changed the forecast
+direction and how confidence changed:
+
+```json
+{
+  "evidence_id": "e4",
+  "is_future_leakage": true,
+  "full_prediction": "UP",
+  "removed_prediction": "DOWN",
+  "direction_changed": true,
+  "confidence_delta_removed_minus_full": -0.20,
+  "is_flip_driver": true
+}
+```
+
 ## Analyze
 
 ```bash
