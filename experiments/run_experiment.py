@@ -5,12 +5,14 @@ from __future__ import annotations
 import argparse
 import json
 import random
+import re
 import sys
 import time
+import traceback
 import urllib.error
 import urllib.request
 from pathlib import Path
-from typing import Any
+from typing import Optional
 
 from config import DEFAULT_CASES_PATH, MODELS, RESULTS_DIR, ModelConfig
 from finleakaudit import audit_prediction
@@ -18,6 +20,8 @@ from prompts import SYSTEM_PROMPT, build_prediction_prompt
 
 
 def read_jsonl(path: Path) -> list[dict]:
+    if not path.exists():
+        return []
     records = []
     with path.open("r", encoding="utf-8") as fh:
         for line in fh:
@@ -31,6 +35,22 @@ def append_jsonl(path: Path, record: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("a", encoding="utf-8") as fh:
         fh.write(json.dumps(record, ensure_ascii=False) + "\n")
+
+
+def completed_case_ids(path: Path) -> set[str]:
+    """Return case IDs already present in a result file for resume support."""
+    completed = set()
+    for record in read_jsonl(path):
+        case_id = record.get("case_id")
+        if case_id:
+            completed.add(case_id)
+    return completed
+
+
+def default_run_name(cases_path: Path) -> str:
+    """Derive a stable run name from the cases file name."""
+    stem = cases_path.stem
+    return re.sub(r"[^A-Za-z0-9_.-]+", "_", stem).strip("_") or "cases"
 
 
 def extract_json(text: str) -> dict:
@@ -116,7 +136,67 @@ def insert_leaked_evidence(clean_evidence: list[dict], leaked_evidence: list[dic
     return result
 
 
-def run_case(case: dict, model_config: ModelConfig, seed: int) -> dict:
+def is_future_evidence(evidence: dict) -> bool:
+    return bool(re.match(r"^T\+\d+", str(evidence.get("time", ""))))
+
+
+def run_evidence_ablation(
+    case: dict,
+    model_config: ModelConfig,
+    full_evidence: list[dict],
+    full_prediction: dict,
+) -> list[dict]:
+    """Leave-one-evidence-out ablation against the leaky prediction."""
+    ablations = []
+    for removed in full_evidence:
+        remaining = [ev for ev in full_evidence if ev["id"] != removed["id"]]
+        prediction = normalize_prediction(
+            call_chat(model_config, build_prediction_prompt(case, remaining))
+        )
+        direction_changed = prediction["prediction"] != full_prediction["prediction"]
+        confidence_delta = prediction["confidence"] - full_prediction["confidence"]
+        ablations.append(
+            {
+                "evidence_id": removed["id"],
+                "time": removed.get("time"),
+                "sentiment": removed.get("sentiment"),
+                "is_future_leakage": is_future_evidence(removed),
+                "full_prediction": full_prediction["prediction"],
+                "full_confidence": full_prediction["confidence"],
+                "removed_prediction": prediction["prediction"],
+                "removed_confidence": prediction["confidence"],
+                "direction_changed": direction_changed,
+                "confidence_delta_removed_minus_full": confidence_delta,
+                "abs_confidence_delta": abs(confidence_delta),
+                "is_flip_driver": direction_changed,
+                "remaining_evidence_order": [ev["id"] for ev in remaining],
+                "prediction_output": prediction,
+            }
+        )
+    return ablations
+
+
+def summarize_ablation(ablation: list[dict]) -> dict:
+    future_items = [item for item in ablation if item["is_future_leakage"]]
+    flip_drivers = [item for item in ablation if item["is_flip_driver"]]
+    future_flip_drivers = [
+        item for item in future_items if item["is_flip_driver"]
+    ]
+    return {
+        "ablation_items": len(ablation),
+        "future_ablation_items": len(future_items),
+        "ablation_flip_driver_count": len(flip_drivers),
+        "future_ablation_flip_driver_count": len(future_flip_drivers),
+        "has_future_flip_driver": bool(future_flip_drivers),
+    }
+
+
+def run_case(
+    case: dict,
+    model_config: ModelConfig,
+    seed: int,
+    with_ablation: bool = False,
+) -> dict:
     clean_evidence = shuffled(case["clean_evidence"], seed)
     leaky_evidence = insert_leaked_evidence(
         clean_evidence,
@@ -138,7 +218,7 @@ def run_case(case: dict, model_config: ModelConfig, seed: int) -> dict:
         call_chat(model_config, build_prediction_prompt(case, audited_evidence))
     )
 
-    return {
+    result = {
         "case_id": case["case_id"],
         "case_type": case.get("case_type"),
         "label": case.get("label"),
@@ -159,6 +239,64 @@ def run_case(case: dict, model_config: ModelConfig, seed: int) -> dict:
             - clean["confidence"],
         },
     }
+    if with_ablation:
+        ablation = run_evidence_ablation(
+            case,
+            model_config,
+            full_evidence=leaky_evidence,
+            full_prediction=leaky,
+        )
+        result["ablation"] = ablation
+        result["metrics"].update(summarize_ablation(ablation))
+    return result
+
+
+def run_case_with_retry(
+    case: dict,
+    model_config: ModelConfig,
+    seed: int,
+    retries: int,
+    retry_delay: float,
+    with_ablation: bool,
+) -> tuple[Optional[dict], list[dict]]:
+    """Run one case, retrying transient API and parsing failures."""
+    errors = []
+    total_attempts = retries + 1
+    for attempt in range(1, total_attempts + 1):
+        try:
+            result = run_case(
+                case,
+                model_config,
+                seed=seed,
+                with_ablation=with_ablation,
+            )
+            result["attempt"] = attempt
+            return result, errors
+        except Exception as exc:  # noqa: BLE001 - record experiment failures.
+            error = {
+                "case_id": case.get("case_id"),
+                "model": model_config.name,
+                "attempt": attempt,
+                "max_attempts": total_attempts,
+                "error_type": type(exc).__name__,
+                "error": str(exc),
+                "traceback": traceback.format_exc(limit=3),
+            }
+            errors.append(error)
+            if attempt < total_attempts:
+                sleep_seconds = retry_delay * attempt
+                print(
+                    f"  attempt {attempt}/{total_attempts} failed: {exc}; "
+                    f"retrying in {sleep_seconds:.1f}s",
+                    flush=True,
+                )
+                time.sleep(sleep_seconds)
+            else:
+                print(
+                    f"  failed after {total_attempts} attempts: {exc}",
+                    flush=True,
+                )
+    return None, errors
 
 
 def main(argv: list[str]) -> int:
@@ -167,6 +305,20 @@ def main(argv: list[str]) -> int:
     parser.add_argument("--cases", type=Path, default=DEFAULT_CASES_PATH)
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--seed", type=int, default=17)
+    parser.add_argument("--retries", type=int, default=2)
+    parser.add_argument("--retry-delay", type=float, default=3.0)
+    parser.add_argument(
+        "--with-ablation",
+        action="store_true",
+        help="Run leave-one-evidence-out ablation for each case.",
+    )
+    parser.add_argument(
+        "--run-name",
+        default=None,
+        help="Name used in result files. Defaults to the cases file stem.",
+    )
+    parser.add_argument("--output", type=Path, default=None)
+    parser.add_argument("--errors", type=Path, default=None)
     parser.add_argument("--overwrite", action="store_true")
     args = parser.parse_args(argv)
 
@@ -175,14 +327,57 @@ def main(argv: list[str]) -> int:
     if args.limit is not None:
         cases = cases[: args.limit]
 
-    output_path = RESULTS_DIR / f"{args.model}_pilot_results.jsonl"
+    run_name = args.run_name or default_run_name(args.cases)
+    result_kind = "ablation_results" if args.with_ablation else "results"
+    error_kind = "ablation_errors" if args.with_ablation else "errors"
+    output_path = (
+        args.output or RESULTS_DIR / f"{args.model}_{run_name}_{result_kind}.jsonl"
+    )
+    error_path = (
+        args.errors or RESULTS_DIR / f"{args.model}_{run_name}_{error_kind}.jsonl"
+    )
     if args.overwrite and output_path.exists():
         output_path.unlink()
+    if args.overwrite and error_path.exists():
+        error_path.unlink()
 
+    print(f"results: {output_path}")
+    print(f"errors:  {error_path}")
+
+    completed = completed_case_ids(output_path)
+    if completed:
+        print(f"resume: found {len(completed)} completed case(s) in {output_path}")
+
+    failures = 0
+    skipped = 0
     for idx, case in enumerate(cases, start=1):
+        if case["case_id"] in completed:
+            skipped += 1
+            print(
+                f"[{idx}/{len(cases)}] skipping {case['case_id']} "
+                f"(already completed)",
+                flush=True,
+            )
+            continue
+
         started = time.time()
         print(f"[{idx}/{len(cases)}] running {case['case_id']} with {args.model}", flush=True)
-        result = run_case(case, model_config, seed=args.seed + idx)
+        result, errors = run_case_with_retry(
+            case,
+            model_config,
+            seed=args.seed + idx,
+            retries=args.retries,
+            retry_delay=args.retry_delay,
+            with_ablation=args.with_ablation,
+        )
+        for error in errors:
+            error["elapsed_seconds"] = round(time.time() - started, 3)
+            append_jsonl(error_path, error)
+
+        if result is None:
+            failures += 1
+            continue
+
         result["elapsed_seconds"] = round(time.time() - started, 3)
         append_jsonl(output_path, result)
         print(
@@ -195,8 +390,11 @@ def main(argv: list[str]) -> int:
             flush=True,
         )
 
-    print(f"wrote {output_path}")
-    return 0
+    print(
+        f"wrote {output_path}; errors={failures}; skipped={skipped}; "
+        f"error_log={error_path if error_path.exists() else 'none'}"
+    )
+    return 1 if failures else 0
 
 
 if __name__ == "__main__":

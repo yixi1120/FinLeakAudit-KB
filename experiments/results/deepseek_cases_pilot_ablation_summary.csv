@@ -1,0 +1,2 @@
+n_cases,rationale_leakage_rate,prediction_flip_rate,prediction_flip_wilson_low,prediction_flip_wilson_high,audited_recovery_rate,mean_confidence_delta,ablation_case_rate,ablation_items,ablation_flip_driver_rate,future_ablation_items,future_evidence_flip_driver_rate,mean_future_confidence_delta_removed_minus_full,mean_clean_confidence_delta_removed_minus_full
+5,1.0,1.0,0.5655085052479191,1.0,1.0,0.039999999999999994,1.0,20,0.25,5,1.0,-0.039999999999999994,-0.010000000000000002

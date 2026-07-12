@@ -8,7 +8,7 @@
 ## Attack 2: "Synthetic leakage is artificial."
 
 **Risk:** Medium
-**Response:** We include BOTH synthetic leakage injection (Experiment A) and natural leakage audit on real RAG outputs (Experiment B). Synthetic experiments establish causality; natural audits establish ecological validity.
+**Response:** Synthetic injection is only a controlled premise test. Experiment B must add real timestamped retrieval outputs and manual semantic-leakage labels for ecological validity. We describe leave-one-out changes as marginal sensitivity, not as a causal estimate.
 
 ## Attack 3: "LLM may memorize historical events, confusing your results."
 
@@ -23,7 +23,7 @@
 ## Attack 5: "CARAG already does leakage-free evaluation."
 
 **Risk:** High
-**Response:** CARAG evaluates leakage at the system level (post-cutoff evaluation). FinLeakAudit audits leakage at the evidence level — identifying WHICH specific pieces of evidence caused leakage, WHICH prediction claims they supported, and HOW removing them changes the forecast.
+**Response:** CARAG is the financial Agentic RAG host-system prior and includes temporal structure in its forecasting setup. FinLeakAudit targets a different output: an evidence-level audit report that identifies which retrieved items were unavailable, which claims they were linked to, how sensitive the forecast was to their removal, and how the forecast was revised.
 
 ## Attack 6: "Why not just filter by timestamp?"
 
@@ -34,3 +34,23 @@
 
 **Risk:** Medium
 **Response:** We report the computational cost of ablation and discuss cost-reliability trade-offs. For production use, ablation can be selective (only when leakage is detected) or approximated (using lightweight reranking instead of full re-prediction).
+
+## Attack 8: "Profit Mirage already studies financial-agent leakage."
+
+**Risk:** Critical
+**Response:** Profit Mirage is essential prior art and must be cited. Its central leakage lens is agent-level/model-knowledge contamination and leakage-robust financial evaluation. FinLeakAudit narrows the unit of audit to retrieved evidence items and links point-in-time validity to claim attribution, marginal forecast sensitivity, and revision. We do not claim to be the first financial-agent leakage study.
+
+## Attack 9: "Look-Ahead-Bench and leakage-aware forecasting already solve this."
+
+**Risk:** High
+**Response:** These works establish the importance of point-in-time and decision-time constraints at the benchmark or forecasting-system level. Our claim is narrower: measure whether a specific retrieved item was unavailable, cited, supportive or contradictory, influential, and removable through an auditable revision. We must include them as baselines or related work rather than presenting temporal validity as an untouched problem.
+
+## Attack 10: "Evidence ablation is already known."
+
+**Risk:** High
+**Response:** Correct. Evidence ablation is not our standalone method novelty. The candidate contribution is its integration with financial publication availability, claim-evidence attribution, support/contradiction labels, and leakage-driven forecast revision. We must cite recent forecasting-faithfulness work that already uses ablation and diversionary injection.
+
+## Attack 11: "The 5-case pilot is too artificial to support a paper."
+
+**Risk:** Critical
+**Response:** Agree. The pilot only validates the engineering premise. The paper requires a larger timestamped dataset, natural leakage cases, semantic-leakage annotation, filtering baselines, and uncertainty-aware model comparisons. The pilot should be presented as a preliminary study, not the main evidence.

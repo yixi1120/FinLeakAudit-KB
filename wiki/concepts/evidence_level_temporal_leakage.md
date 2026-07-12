@@ -6,6 +6,10 @@
 
 与传统的 look-ahead bias 不同：evidence-level leakage 聚焦于 RAG pipeline 中 **单条 retrieved evidence** 的时间有效性。
 
+## 2026 研究边界更新
+
+Look-Ahead-Bench 和 Leakage-Aware Benchmarking 已经把 point-in-time / decision-time 约束带入金融 LLM 预测评估。FinLeakAudit 不应把“时间可用性检查”单独包装成完整 novelty，而应研究更窄的组合问题：单条证据的可用性如何连接到 claim attribution、support/contradiction、forecast sensitivity 和 revision。
+
 ## 为什么重要
 
 - 金融预测中，未来信息会虚高回测收益 → forecast inflation / profit mirage
@@ -16,6 +20,8 @@
 
 - [[CARAG]] — 做了 leakage-free evaluation
 - [[Profit_Mirage]] — 定义了 profit mirage 问题
+- [Look-Ahead-Bench](https://arxiv.org/abs/2601.13770) — benchmark-level look-ahead bias evaluation
+- [Leakage-Aware Benchmarking](https://arxiv.org/abs/2606.22719) — decision-time constrained financial forecasting
 - [[FinLeakAudit]] — 本文的审计目标
 
 ## 与相近概念的区别

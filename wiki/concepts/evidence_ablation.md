@@ -18,7 +18,8 @@
 ## 为什么重要
 
 - 把 "删掉泄漏证据" 从 simple filter 升级为定量归因框架
-- 这是 FinLeakAudit 的 technical novelty 关键所在
+- 这不是可以单独宣称的新方法；它的价值在于和 financial point-in-time availability、claim attribution 以及 forecast revision 组合。
+- 最新 forecasting-faithfulness 工作已经使用 evidence ablation，因此论文中必须将其作为已有技术并清楚说明 FinLeakAudit 的集成边界。
 - 审稿人说 "这不就是 if statement 吗" → ablation 回答这个问题
 
 ## 与 feature attribution / SHAP 的区别
@@ -33,3 +34,7 @@
 
 - RQ3/RQ4 的核心实验方法
 - Contribution 2 的关键组成部分
+
+## 论文定位提醒
+
+将 leave-one-out change 称为 **marginal forecast sensitivity**，不要称为 causal effect。必须加入 delete-all-future-evidence、timestamp-only 和 citation-only baselines，避免 ablation 看起来只是一个更昂贵的过滤器。

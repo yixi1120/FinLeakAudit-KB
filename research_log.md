@@ -23,6 +23,24 @@
 - 初步结论：未来证据注入后，三个模型都会在 rationale 中引用 `T+1` evidence；DeepSeek/Qwen 5/5 发生方向翻转，Zhipu 4/5 发生方向翻转；删除泄漏证据后三模型均恢复到 Clean 方向。
 - 记录页：`wiki/experiments/pilot_results_2026_07_07.md`
 
+## 2026-07-12 — Experiment A Evidence Ablation Pilot
+
+- 为实验运行器加入 leave-one-evidence-out ablation：对 Leaky context 中每条证据逐条删除并重新预测。
+- 完成 DeepSeek 与 Zhipu 各 5 个 case 的消融运行，共 20 个 evidence-item ablation / model，0 errors。
+- 结果摘要：
+  - DeepSeek: future evidence flip-driver rate 1.00，prediction flip 1.00，audited recovery 1.00。
+  - Zhipu GLM: future evidence flip-driver rate 0.80，prediction flip 0.80，audited recovery 1.00。
+- 关键观察：未来证据 `e4` 在 DeepSeek 5/5、Zhipu 4/5 个 case 中是方向翻转驱动项；Zhipu `pilot_004` 再次显示“引用未来证据”不必然等于“方向翻转”。
+- 结果页：`wiki/experiments/ablation_pilot_results_2026_07_12.md`
+
+## 2026-07-12 — Literature Review and Publishability Repositioning
+
+- 联网复核 2025-2026 年相关工作：CARAG 已发表金融 Agentic RAG 预测，Profit Mirage 已系统研究金融 Agent 泄漏，Look-Ahead-Bench 和 Leakage-Aware Benchmarking 已覆盖金融 point-in-time / decision-time 评估，OpenFinGym 已加入量化 Agent 验证器和 runtime leakage prevention，最新 forecasting-faithfulness 工作已使用 evidence ablation。
+- 方向结论：仍然可以发，但不能再声称“首次 Agentic RAG 金融预测”“首次金融 Agent 泄漏研究”或“首次 evidence ablation”。
+- 新定位：FinLeakAudit 是一个 financial Agentic RAG 的 evidence-level、point-in-time audit protocol，把证据可用性、claim attribution、support/contradiction、marginal forecast sensitivity 和 leakage-driven revision 连接起来。
+- 当前 pilot 的定位降级为 premise check；主论文必须补充 20-50 个以上 case、真实发布时间/可用时间、自然泄漏、semantic leakage 标注、过滤 baseline 和 uncertainty-aware metrics。
+- 详细记录：`wiki/writing/research_positioning_2026_07_12.md`
+
 ## 2026-05-17 — 建立 Karpathy-style 研究 Wiki
 
 - 从 `/LLM4TS_Finance_Survey_zh/` 和 `/LLM4TS_Finance/` 导入所有原始资料
@@ -66,6 +84,7 @@
 - [ ] 对 SHARP、FLAIRR-TS、ATSF 做深度阅读
 - [x] 跑 Experiment A 注入实验确认 premise（2026-07-07 三模型 5-case pilot）
 - [ ] 扩展 Experiment A 到 20–50 cases
-- [ ] 实现 evidence ablation 和 semantic leakage detection
+- [x] 实现 evidence ablation（2026-07-12，DeepSeek/Zhipu 5-case pilot）
+- [ ] 实现 semantic leakage detection
 - [ ] 补充自然泄漏检测（Experiment B）实验设计
 - [ ] 生成 contribution_matrix.md 和 baseline_matrix.md
