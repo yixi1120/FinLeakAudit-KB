@@ -41,6 +41,15 @@
 - 当前 pilot 的定位降级为 premise check；主论文必须补充 20-50 个以上 case、真实发布时间/可用时间、自然泄漏、semantic leakage 标注、过滤 baseline 和 uncertainty-aware metrics。
 - 详细记录：`wiki/writing/research_positioning_2026_07_12.md`
 
+## 2026-07-13 — 修复 Audited 输入逻辑并重跑 Pilot
+
+- 修复 `experiments/run_experiment.py`：Audited 现在从实际 `leaky_evidence` 中删除 auditor 返回的 `removed_evidence_ids`，不再从 Clean evidence 构造。
+- 新增两个不调用模型的回归测试：覆盖 auditor 漏检时未来证据仍保留，以及 auditor 识别后未来证据被删除。
+- DeepSeek 与 Zhipu 各重跑 5 个 pilot case，均 0 errors：
+  - DeepSeek: leakage 1.00, flip 1.00, recovery 1.00, mean confidence delta +0.04。
+  - Zhipu: leakage 1.00, flip 0.80, recovery 1.00, mean confidence delta +0.02。
+- Qwen 未重跑，仍保持关闭；旧 Qwen 结果标记为 pre-fix，不与本次修复后结果混合比较。
+
 ## 2026-05-17 — 建立 Karpathy-style 研究 Wiki
 
 - 从 `/LLM4TS_Finance_Survey_zh/` 和 `/LLM4TS_Finance/` 导入所有原始资料

@@ -1,2 +1,2 @@
 n_cases,rationale_leakage_rate,prediction_flip_rate,prediction_flip_wilson_low,prediction_flip_wilson_high,audited_recovery_rate,mean_confidence_delta
-5,1.0,0.8,0.3755282641185388,0.9637768390302125,1.0,0.010000000000000009
+5,1.0,0.8,0.3755282641185388,0.9637768390302125,1.0,0.020000000000000018

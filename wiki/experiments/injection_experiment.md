@@ -77,4 +77,8 @@ The pilot supports the Phase 1 premise: when temporally unavailable `T+1` eviden
 
 The first leave-one-evidence-out run is recorded in [[ablation_pilot_results_2026_07_12]]. Across the same five cases, the future `e4` item was a direction flip driver in 5/5 DeepSeek cases and 4/5 Zhipu cases. This provides an initial marginal-impact signal beyond citation-based leakage detection.
 
+### Audited Logic Fix and Re-run — 2026-07-13
+
+The implementation now starts the Audited condition from the actual Leaky evidence set and removes only `removed_evidence_ids` returned by the auditor. DeepSeek and Zhipu were re-run on all five pilot cases after this correction, with 0 errors. The post-fix results were DeepSeek: flip 1.00, recovery 1.00; Zhipu: flip 0.80, recovery 1.00. Qwen remains an older pre-fix result because the local server was intentionally kept off.
+
 Important caveat: this remains a synthetic injection pilot, not evidence that natural RAG retrieval frequently leaks future information. The next step is to scale Experiment A to 20–50 cases, add Qwen ablation when the local server is intentionally restarted, and then run Experiment B for natural leakage.

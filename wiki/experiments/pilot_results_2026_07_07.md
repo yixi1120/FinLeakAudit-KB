@@ -84,12 +84,25 @@ This case can illustrate why FinLeakAudit should track multiple leakage effects:
 
 The first leave-one-evidence-out ablation run is recorded in [[ablation_pilot_results_2026_07_12]]. On the same five cases, the future `T+1` item `e4` was a direction flip driver in all DeepSeek cases and 4 of 5 Zhipu cases. This separates the presence or citation of future evidence from its marginal influence on the forecast.
 
+## Audited Logic Fix and Re-run — 2026-07-13
+
+The original runner reconstructed `Audited` from `clean_evidence`, which could make recovery appear successful even when the auditor missed a leaked item. The runner now reconstructs `Audited` from `leaky_evidence` after removing only the IDs returned by the auditor. Two offline regression tests cover both missed-leakage and detected-leakage paths.
+
+DeepSeek and Zhipu were re-run on all five pilot cases after the fix:
+
+| Model | N | Rationale Leakage Rate | Prediction Flip Rate | Audited Recovery Rate | Mean Confidence Delta |
+|---|---:|---:|---:|---:|---:|
+| DeepSeek | 5 | 1.00 | 1.00 | 1.00 | +0.04 |
+| Zhipu GLM | 5 | 1.00 | 0.80 | 1.00 | +0.02 |
+
+Qwen was not restarted because it is not currently on the critical path and consumes substantial local power. Its earlier result file should not be treated as a post-fix rerun.
+
 ## Caveats
 
 - Only 5 pilot cases; statistical conclusions are not stable.
 - Synthetic injection tests context contamination, not natural retrieval leakage.
 - Current leakage detection is citation-based; semantic leakage remains unimplemented.
-- The ablation follow-up still uses only 5 synthetic cases per backend; its sensitivity estimates are not stable enough for a general claim.
+- The corrected rerun still uses only 5 synthetic cases per backend; its sensitivity estimates are not stable enough for a general claim.
 
 ## Next Steps
 

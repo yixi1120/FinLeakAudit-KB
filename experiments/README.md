@@ -86,6 +86,11 @@ experiments/results/deepseek_cases_pilot_ablation_results.jsonl
 experiments/results/deepseek_cases_pilot_ablation_errors.jsonl
 ```
 
+The Audited prediction is reconstructed from the Leaky evidence set minus the
+IDs actually returned by the auditor. It must not be reconstructed from the
+Clean evidence set, because that would make recovery look successful even
+when the auditor misses the future evidence.
+
 Each ablation item records whether removing that evidence changed the forecast
 direction and how confidence changed:
 
@@ -111,3 +116,11 @@ Outputs:
 
 - `experiments/results/qwen_cases_pilot_results.jsonl`
 - `experiments/results/qwen_cases_pilot_summary.csv`
+
+## Run Offline Logic Tests
+
+The regression tests do not start a model server or call an API:
+
+```bash
+python3 -m unittest discover -s tests -p 'test_*.py'
+```

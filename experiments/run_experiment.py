@@ -211,8 +211,11 @@ def run_case(
         call_chat(model_config, build_prediction_prompt(case, leaky_evidence))
     )
     audit = audit_prediction(case, leaky)
+    # Revision must start from the evidence the leaky forecast actually saw.
     audited_evidence = [
-        ev for ev in clean_evidence if ev["id"] not in audit["removed_evidence_ids"]
+        ev
+        for ev in leaky_evidence
+        if ev["id"] not in audit["removed_evidence_ids"]
     ]
     audited = normalize_prediction(
         call_chat(model_config, build_prediction_prompt(case, audited_evidence))
