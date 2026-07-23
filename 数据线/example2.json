@@ -1,0 +1,112 @@
+{
+  "case_id": "natural_001",
+  // 每个案例的唯一编号，便于追踪、运行和统计。
+
+  "dataset_tier": "natural_point_in_time",
+  // 数据层级：这里表示真实金融事件、带有真实时间信息的案例。
+
+  "company": "Company A",
+  // 公司名称。正式数据中应使用真实公司；示例中可以先匿名化。
+
+  "sector": "Semiconductors",
+  // 公司所属行业，方便后续分析不同领域的泄漏情况。
+
+  "prediction_cutoff": "2025-10-28T13:30:00-04:00",
+  // 预测截止时间。模型只能使用这个时间点之前已经可获得的信息。
+
+  "forecast_horizon": "1 trading day",
+  // 预测范围，例如预测下一个交易日涨跌。
+
+  "retrieval_time": "2025-10-28T13:35:00-04:00",
+  // 系统实际检索证据的时间，用于判断当时信息是否已经可用。
+
+  "predictor_input": {
+    // 预测 Agent 实际能看到的内容。
+
+    "question": "Will Company A's stock close higher or lower on the next trading day?",
+    // 给预测模型的问题。
+
+    "evidence": [
+      {
+        "id": "e1",
+        // 证据唯一编号。模型可以引用它，但不能只依赖编号判断时间。
+
+        "source_type": "company_filing",
+        // 来源类型，例如公司公告、新闻、财报、宏观数据。
+
+        "source_ref": "company_filing_2025_10_27",
+        // 来源链接、文件名或数据库 ID，方便复核原文。
+
+        "text": "Company A reported stable quarterly demand and maintained its production plan.",
+        // 证据正文。这里不能直接写人工 sentiment 或未来收益结果。
+
+        "published_at": "2025-10-27T08:00:00-04:00",
+        // 信息正式发布的时间。
+
+        "available_at": "2025-10-27T08:05:00-04:00",
+        // 该信息真正可以被系统检索到的时间，可能晚于发布时间。
+
+        "revision_at": null
+        // 信息修订时间。如果后来被修改，应记录修订时间；没有修订则为 null。
+      }
+    ]
+  },
+
+  "evaluator_gold": {
+    // 人工标注或评估使用的隐藏答案，不能给 predictor 看到。
+
+    "outcome_label": "DOWN",
+    // 真实结果，例如下一交易日最终是上涨还是下跌。
+
+    "outcome_time": "2025-10-29T16:00:00-04:00",
+    // 真实结果确定的时间。
+
+    "evidence_labels": [
+      {
+        "evidence_id": "e1",
+        // 对应 predictor_input 中的证据 ID。
+
+        "temporal_status": "valid",
+        // 时间状态：valid、future_unavailable、revised_after_cutoff 等。
+
+        "leakage_type": null,
+        // 泄漏类型，例如 natural_future_retrieval、revision_leakage。
+
+        "semantic_leakage": false,
+        // 虽然没有明确写涨跌，但是否已经暗示了未来结果。
+      }
+    ],
+
+    "gold_sentiment": "neutral",
+    // 人工判断证据对股价方向的倾向，仅供评估使用，不能暴露给预测模型。
+
+    "annotation_notes": "Evidence was available before cutoff and does not mention the realized return."
+    // 标注员对判断依据的解释。
+  },
+
+  "annotation": {
+    // 更细粒度的人工标注，用来评估 attribution 和 support/contradiction。
+
+    "claims": [
+      {
+        "claim_id": "c1",
+        // 预测理由中的一个具体主张。
+
+        "claim_text": "Stable demand reduces the probability of a sharp decline.",
+        // 模型或人工抽取出的主张。
+
+        "supporting_evidence_ids": ["e1"],
+        // 哪些证据支持该主张。
+
+        "contradicting_evidence_ids": []
+        // 哪些证据反驳该主张。
+      }
+    ],
+
+    "annotator_id": "annotator_01",
+    // 标注员编号，便于统计不同标注员之间的一致性。
+
+    "review_status": "double_checked"
+    // 标注状态，例如 pending、reviewed、double_checked。
+  }
+}
