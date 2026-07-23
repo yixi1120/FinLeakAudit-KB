@@ -1,0 +1,200 @@
+{
+  "_file_type": "中文标注版审查文件",
+  "_source_file": "cases_pilot_v2.json",
+  "_review_date": "2026-07-22",
+  "_overall_status": "修复后才能作为自然时间点数据使用",
+  "_note": "原始文件保持不变。标准 JSON 不支持 // 注释，因此使用结构化字段保存中文审查意见。本文件是审查标注文件，不是实验 runner 的直接输入文件。",
+  "global_review": [
+    {
+      "path": "[*].retrieval_time",
+      "severity": "P0",
+      "original_pattern": "五个案例的 retrieval_time 都比 prediction_cutoff 晚 5 分钟",
+      "problem": "系统在预测截止时间之后才检索证据，point-in-time 时间边界不一致。",
+      "suggested_change": "将 retrieval_time 改为早于或等于 prediction_cutoff；或者重新定义 prediction_cutoff 为实际检索时间，并在文档中说明。"
+    },
+    {
+      "path": "[*].real_event",
+      "severity": "P1",
+      "original_pattern": "顶层 real_event 直接包含未来事件和真实涨跌结果",
+      "problem": "这是评估阶段的信息。如果 loader 把整个 case 序列化进 prompt，会把答案泄露给预测模型。",
+      "suggested_change": "把 real_event 移入 evaluator_gold，或者在构造 prompt 时明确只允许 predictor_input 进入模型。"
+    },
+    {
+      "path": "[*].predictor_input.evidence[*].text",
+      "severity": "P0",
+      "original_pattern": "未来证据正文直接写入 +17%、-38%、+98% 等最终涨跌幅",
+      "problem": "证据在早上发布，但文本已经知道当天收盘涨跌幅，形成不可能的时间和内容组合，也让泄漏变得过于明显。",
+      "suggested_change": "预测输入中只保留财报、交易、监管或管理层事件；真实涨跌幅只放到 evaluator_gold。"
+    },
+    {
+      "path": "[*].predictor_input.evidence[*].source_ref",
+      "severity": "P0",
+      "original_pattern": "source_ref 看起来是 filing_2024-10-08_e1 一类的内部占位符",
+      "problem": "目前无法独立复核这些证据是否是真实的 point-in-time 来源。",
+      "suggested_change": "补充真实 URL 或存档 ID、原始发布时间、保存/检索方法，以及来源许可证信息。"
+    },
+    {
+      "path": "[*].predictor_input.evidence[*].source_type",
+      "severity": "P1",
+      "original_pattern": "部分分析师观点、期权信息或市场持仓文字被标为 company_filing",
+      "problem": "来源类型与正文内容不一致，会影响后续按来源统计的分析。",
+      "suggested_change": "根据真实来源重新标注为 analyst_report、market_data、news_report、industry_report、company_filing 或 regulatory_filing。"
+    },
+    {
+      "path": "[*].annotation.claims",
+      "severity": "P1",
+      "original_pattern": "所有案例的 claims 为空，review_status 为 pending",
+      "problem": "目前只能测试时间有效性，不能评估 claim-evidence attribution、支持/反驳关系和 rationale purity。",
+      "suggested_change": "完成时间标注复核后，补充 claims、supporting_evidence_ids、contradicting_evidence_ids、annotator_id 和 review_status。"
+    },
+    {
+      "path": "file_format",
+      "severity": "P1",
+      "original_pattern": "文件是 JSON 数组 cases_pilot_v2.json",
+      "problem": "当前实验 runner 读取 JSONL，并且期待 clean_evidence 和 leaked_evidence 字段，因此不能直接运行。",
+      "suggested_change": "转换为 experiments/data/cases_pilot_v2.jsonl，每行一个 case；同时写 loader adapter，把 predictor_input 映射到实验条件，并确保 gold 不进入 prompt。"
+    },
+    {
+      "path": "[*].market_metadata",
+      "severity": "P1",
+      "original_pattern": "缺少 ticker、交易所、上市地点、市场时区和价格字段",
+      "problem": "下一交易日和收盘价的含义不明确，ASML 这类跨市场股票尤其容易产生歧义。",
+      "suggested_change": "增加 ticker、exchange、market_timezone、currency、price_field 和 trading_calendar。"
+    }
+  ],
+  "case_annotations": [
+    {
+      "case_id": "case_001",
+      "status": "需要修改",
+      "annotations": [
+        {
+          "path": "predictor_input.evidence[e1].source_type",
+          "severity": "P1",
+          "original_value": "company_filing",
+          "problem": "正文描述的是分析师预测，不像公司申报文件。",
+          "suggested_change": "如果真实来源是券商或分析师材料，应改为 analyst_report。"
+        },
+        {
+          "path": "predictor_input.evidence[e4].text",
+          "severity": "P0",
+          "original_value": "...sending the stock plummeting 16% in a single session.",
+          "problem": "证据在 08:05 发布，但最终收盘结果在 16:00 才确定。",
+          "suggested_change": "删除最终涨跌句，或把发布时间放到收盘之后，并只把结果保留在 evaluator_gold。"
+        },
+        {
+          "path": "market_metadata",
+          "severity": "P1",
+          "original_value": "缺失",
+          "problem": "ASML 可能指欧洲上市股票，也可能指美国 ADR，交易日历和时区不同。",
+          "suggested_change": "明确 ticker、exchange 和 market_timezone。"
+        }
+      ]
+    },
+    {
+      "case_id": "case_002",
+      "status": "需要修改",
+      "annotations": [
+        {
+          "path": "predictor_input.evidence[e1-e3].published_at 和 available_at",
+          "severity": "P1",
+          "original_value": "-04:00",
+          "problem": "2023 年 11 月 7、9、13 日纽约已经进入冬令时，应使用 -05:00。",
+          "suggested_change": "统一使用 America/New_York 进行时区转换，不要手动填写偏移量。"
+        },
+        {
+          "path": "predictor_input.evidence[e3].source_type",
+          "severity": "P1",
+          "original_value": "company_filing",
+          "problem": "正文描述的是期权市场和空头持仓，不是公司申报文件。",
+          "suggested_change": "根据真实来源改为 market_data 或 analyst_report。"
+        },
+        {
+          "path": "predictor_input.evidence[e4].text",
+          "severity": "P0",
+          "original_value": "The stock surged 17%...",
+          "problem": "在 outcome_time 之前直接写入了最终涨跌幅。",
+          "suggested_change": "从 predictor_input 删除涨跌和逼空结果，只保留财报事件。"
+        }
+      ]
+    },
+    {
+      "case_id": "case_003",
+      "status": "需要修改",
+      "annotations": [
+        {
+          "path": "predictor_input.evidence[e4].text",
+          "severity": "P0",
+          "original_value": "...the stock crashing 38% in hours.",
+          "problem": "正文包含 08:05 时不可能已经知道的真实市场结果。",
+          "suggested_change": "保留意外亏损和削减股息的事件，把 -38% 移入 evaluator_gold。"
+        },
+        {
+          "path": "market_metadata",
+          "severity": "P1",
+          "original_value": "缺失",
+          "problem": "没有明确股票代码、交易所和收益计算口径。",
+          "suggested_change": "补充 ticker、exchange、market_timezone、currency 和 close-to-close return 定义。"
+        }
+      ]
+    },
+    {
+      "case_id": "case_004",
+      "status": "需要修改",
+      "annotations": [
+        {
+          "path": "predictor_input.evidence[e4].text",
+          "severity": "P0",
+          "original_value": "...sending the stock skyrocketing 98% in a historic rally.",
+          "problem": "未来证据在 outcome_time 之前直接透露了最终涨幅。",
+          "suggested_change": "保留授权协议这一事件，删除最终涨跌幅，并将结果只放入 evaluator_gold。"
+        },
+        {
+          "path": "evaluator_gold.gold_sentiment",
+          "severity": "P1",
+          "original_value": "neutral",
+          "problem": "所有案例都写 neutral，不能表达每条证据实际的方向性信息。",
+          "suggested_change": "删除该字段，或在 evaluator_gold 中按证据分别标注 sentiment、support 和 contradiction。"
+        }
+      ]
+    },
+    {
+      "case_id": "case_005",
+      "status": "需要修改",
+      "annotations": [
+        {
+          "path": "predictor_input.evidence[e1-e4].published_at 和 available_at",
+          "severity": "P1",
+          "original_value": "-04:00",
+          "problem": "2024 年 1 月和 2 月纽约处于冬令时，应使用 -05:00。",
+          "suggested_change": "统一使用 America/New_York 进行时间标准化。"
+        },
+        {
+          "path": "predictor_input.evidence[e4].text",
+          "severity": "P0",
+          "original_value": "...triggering a sharp 17% surge in the stock price.",
+          "problem": "在 16:00 的真实结果确定之前写入了最终涨幅。",
+          "suggested_change": "从 predictor_input 删除最终涨幅，只把结果保留在 evaluator_gold。"
+        }
+      ]
+    }
+  ],
+  "minimal_correction_examples": {
+    "retrieval_time": {
+      "prediction_cutoff": "2024-10-15T13:30:00-04:00",
+      "retrieval_time": "2024-10-15T13:25:00-04:00"
+    },
+    "future_evidence_text": "The company reported a major earnings miss and cut its revenue guidance.",
+    "evaluator_gold_return": {
+      "realized_return": -0.16,
+      "return_window": "2024-10-16T09:30:00-04:00/2024-10-16T16:00:00-04:00"
+    },
+    "required_market_metadata": {
+      "ticker": "ASML",
+      "exchange": "需要核实",
+      "market_timezone": "需要核实",
+      "currency": "需要核实",
+      "price_field": "close_to_close_return",
+      "trading_calendar": "需要核实"
+    }
+  }
+}
