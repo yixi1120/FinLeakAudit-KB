@@ -4,6 +4,31 @@
 
 ---
 
+## 2026-07-26 — 新增 7 个 SEC 时间戳可核验案例
+
+- 从 12 个带精确 SEC 接收时间的盘后事件候选中选出 NVDA、NFLX、CRM、DELL、ADBE、FDX、NKE。
+- 每个案例使用上一季度 SEC Exhibit 99.1 构造 3 条真实来源 clean evidence，并使用当前季度 Exhibit 99.1 构造 1 条未来证据。
+- 统一采用事件日 16:00 ET 作为 prediction cutoff、SEC `acceptanceDateTime` 作为 evidence availability、下一交易日 16:00 ET 作为 outcome。
+- 保存 cutoff/outcome 两端价格并复算收益，标签分布为 3 UP、4 DOWN。
+- 新增 `数据线/cases_pilot_v4_new7_verified.jsonl` 和 mixed 10-case candidate。
+- 记录页：`wiki/experiments/cases_pilot_v4_construction_2026_07_26.md`
+- 限制：新增案例仍是人工选择证据的 controlled context，不能表述为自然检索数据。
+- 工程修复：predictor 不再看到 `time`、人工 `sentiment` 或 `available_at`；
+  auditor 改用带时区的绝对时间，并保留旧 synthetic 数据的相对时间兼容路径。
+- 新增回归测试覆盖 audited 输入、绝对时间边界和 predictor 信息隔离。
+
+## 2026-07-26 — v4 三模型 mixed 10-case 实验完成
+
+- DeepSeek、Zhipu、本地 Qwen2.5-14B 均完成 10 个案例的
+  Clean/Leaky/Audited + leave-one-out ablation，共 210 次模型调用，0 errors。
+- 30 个 model-case 中，28 次显式引用未来证据，12 次发生方向改变。
+- 12 个翻转均在删除 auditor 识别的未来证据后恢复到 Clean 方向；该条件率的
+  Wilson 95% CI 为 [75.7%, 100%]，不得对外简写为“100% 有效”。
+- 描述性 Clean/Leaky/Audited accuracy 为 8/30、18/30、8/30；Leaky 的虚高
+  来自 cutoff 后信息，不代表模型预测能力提高。
+- 记录页：`wiki/experiments/three_model_v4_results_2026_07_26.md`
+- 本地 Qwen 服务在实验后已关闭。
+
 ## 2026-07-07 — Experiment A 三模型 Pilot 跑通
 
 - 工程线新增 `experiments/` 最小可跑 pipeline：

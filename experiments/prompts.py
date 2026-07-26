@@ -45,13 +45,7 @@ Confidence calibration:
 
 
 def format_evidence(evidence: list[dict]) -> str:
-    lines = []
-    for ev in evidence:
-        sentiment = ev.get("sentiment", "unknown")
-        lines.append(
-            f'- {ev["id"]} | time={ev["time"]} | sentiment={sentiment} | {ev["text"]}'
-        )
-    return "\n".join(lines)
+    return "\n".join(f'- {ev["id"]} | {ev["text"]}' for ev in evidence)
 
 
 def build_prediction_prompt(case: dict, evidence: list[dict]) -> str:

@@ -2,25 +2,57 @@
 
 from __future__ import annotations
 
+from datetime import datetime
 import re
 from typing import Iterable
 
 
-def temporal_availability_check(evidence_list: Iterable[dict]) -> list[dict]:
-    """Mark evidence with a T+ offset as future leakage."""
+def parse_timestamp(value: object) -> datetime | None:
+    """Parse an aware ISO-8601 timestamp, returning None for invalid values."""
+    if not isinstance(value, str) or not value.strip():
+        return None
+    try:
+        parsed = datetime.fromisoformat(value.strip().replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    return parsed if parsed.tzinfo is not None else None
+
+
+def temporal_availability_check(
+    evidence_list: Iterable[dict],
+    prediction_cutoff: object = None,
+) -> list[dict]:
+    """Classify evidence using absolute availability, with a legacy fallback."""
+    cutoff = parse_timestamp(prediction_cutoff)
     results = []
     for ev in evidence_list:
         time_str = str(ev.get("time", ""))
-        status = "future_leakage" if re.match(r"^T\+\d+", time_str) else "valid"
-        severity = "high" if time_str in {"T+1", "T+2"} else "medium"
-        if status == "valid":
-            severity = "none"
+        available_at = ev.get("available_at")
+        available = parse_timestamp(available_at)
+
+        if available_at:
+            if cutoff is None or available is None:
+                status = "unknown"
+                severity = "unknown"
+                basis = "invalid_or_missing_absolute_timestamp"
+            else:
+                status = "future_leakage" if available > cutoff else "valid"
+                severity = "high" if status == "future_leakage" else "none"
+                basis = "absolute_timestamp"
+        else:
+            status = "future_leakage" if re.match(r"^T\+\d+", time_str) else "valid"
+            severity = "high" if status == "future_leakage" else "none"
+            basis = "relative_time_fallback"
+
         results.append(
             {
                 "evidence_id": ev["id"],
                 "time": time_str,
+                "available_at": available_at,
+                "prediction_cutoff": prediction_cutoff,
                 "temporal_status": status,
                 "severity": severity,
+                "availability_basis": basis,
             }
         )
     return results
@@ -56,9 +88,13 @@ def detect_rationale_leakage(rationale: list[dict], temporal_results: list[dict]
 
 
 def audit_prediction(case: dict, prediction_output: dict) -> dict:
-    """Audit a leaky prediction and return clean evidence for revision."""
+    """Audit a leaky prediction and return evidence allowed after removal."""
     all_evidence = case.get("clean_evidence", []) + case.get("leaked_evidence", [])
-    temporal_results = temporal_availability_check(all_evidence)
+    prediction_cutoff = case.get("prediction_cutoff") or case.get("prediction_date")
+    temporal_results = temporal_availability_check(
+        all_evidence,
+        prediction_cutoff=prediction_cutoff,
+    )
     leakage_report = detect_rationale_leakage(
         prediction_output.get("rationale") or [],
         temporal_results,
@@ -76,4 +112,3 @@ def audit_prediction(case: dict, prediction_output: dict) -> dict:
         "removed_evidence_ids": sorted(removed_ids),
         "valid_evidence": valid_evidence,
     }
-

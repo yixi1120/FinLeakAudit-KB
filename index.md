@@ -1,6 +1,6 @@
 # FinLeakAudit Knowledge Base — 全局索引
 
-> 最后更新：2026-05-17
+> 最后更新：2026-07-26
 > 维护方式：每次新增/修改 wiki 页面后更新本索引
 
 ---
@@ -74,6 +74,14 @@
 - [[collision_matrix]]
 - [[contribution_matrix]]
 - [[baseline_matrix]]
+
+---
+
+## 实验索引 (wiki/experiments/)
+
+- [[smoke_pilot_results_2026_07_24]] — 3-case verified smoke pilot
+- [[cases_pilot_v4_construction_2026_07_26]] — 新增 7 个 SEC 时间戳案例与 mixed 10-case candidate
+- [[three_model_v4_results_2026_07_26]] — v4 mixed 10-case 三模型结果与分层指标
 
 ---
 

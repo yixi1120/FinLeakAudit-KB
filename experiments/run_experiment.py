@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Optional
 
 from config import DEFAULT_CASES_PATH, MODELS, RESULTS_DIR, ModelConfig
-from finleakaudit import audit_prediction
+from finleakaudit import audit_prediction, temporal_availability_check
 from prompts import SYSTEM_PROMPT, build_prediction_prompt
 
 
@@ -136,8 +136,13 @@ def insert_leaked_evidence(clean_evidence: list[dict], leaked_evidence: list[dic
     return result
 
 
-def is_future_evidence(evidence: dict) -> bool:
-    return bool(re.match(r"^T\+\d+", str(evidence.get("time", ""))))
+def is_future_evidence(evidence: dict, case: dict) -> bool:
+    prediction_cutoff = case.get("prediction_cutoff") or case.get("prediction_date")
+    result = temporal_availability_check(
+        [evidence],
+        prediction_cutoff=prediction_cutoff,
+    )[0]
+    return result["temporal_status"] == "future_leakage"
 
 
 def run_evidence_ablation(
@@ -160,7 +165,7 @@ def run_evidence_ablation(
                 "evidence_id": removed["id"],
                 "time": removed.get("time"),
                 "sentiment": removed.get("sentiment"),
-                "is_future_leakage": is_future_evidence(removed),
+                "is_future_leakage": is_future_evidence(removed, case),
                 "full_prediction": full_prediction["prediction"],
                 "full_confidence": full_prediction["confidence"],
                 "removed_prediction": prediction["prediction"],
@@ -223,9 +228,18 @@ def run_case(
 
     result = {
         "case_id": case["case_id"],
+        "schema_version": case.get("schema_version"),
         "case_type": case.get("case_type"),
+        "dataset_tier": case.get("dataset_tier"),
         "label": case.get("label"),
+        "outcome_label": case.get("outcome_label") or case.get("label"),
+        "prediction_date": case.get("prediction_date"),
+        "outcome_time": case.get("outcome_time"),
+        "cutoff_price": case.get("cutoff_price"),
+        "outcome_price": case.get("outcome_price"),
+        "outcome_return": case.get("outcome_return"),
         "model": model_config.name,
+        "model_id": model_config.model,
         "seed": seed,
         "clean": clean,
         "leaky": leaky,
