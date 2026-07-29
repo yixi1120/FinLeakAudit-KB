@@ -4,6 +4,19 @@
 
 ---
 
+## 2026-07-29 — 自然数据与语义归因任务启动
+
+- 冻结数据线 v1 协议：先收集带真实时间的候选语料，再由固定检索器生成
+  top-k，禁止人工挑选最终泄漏证据。
+- 从 v4 三模型结果生成 79 条随机化 claim-evidence 盲标样本和独立
+  coordinator key；模型、case、自动引用标签和 outcome 不对标注者可见。
+- 新增离线 lexical attribution baseline。它比较 claim 与 cutoff 后证据的
+  重合，同时扣除 cutoff 前证据可解释的最大重合；人工 gold labels 冻结前不报告
+  precision、recall 或 F1。
+- 将旧 `experiments/analysis/case_studies.md` 标为 legacy illustrative
+  draft。旧稿中关于 cosine threshold 和 LLM judge 的表述不是已实现实验，不得
+  作为项目结果引用。
+
 ## 2026-07-26 — 新增 7 个 SEC 时间戳可核验案例
 
 - 从 12 个带精确 SEC 接收时间的盘后事件候选中选出 NVDA、NFLX、CRM、DELL、ADBE、FDX、NKE。

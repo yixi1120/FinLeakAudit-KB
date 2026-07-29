@@ -124,6 +124,7 @@ and [30-row case table](wiki/experiments/three_model_v4_case_results_2026_07_26.
 | Leave-one-out marginal sensitivity | Implemented |
 | Three-model runner, retries, resume, and non-overwriting names | Implemented |
 | Logic, metric, and v4 data validation tests | Implemented |
+| Lexical claim-evidence attribution proxy | Implemented, awaiting human labels |
 | Citation-free semantic attribution | Planned |
 | Market-open and trading-calendar alignment | Planned |
 | Original/revision/vendor timestamp handling | Planned |

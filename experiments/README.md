@@ -130,6 +130,22 @@ files:
 python3 experiments/analyze_baselines.py
 ```
 
+Prepare the blinded claim-evidence annotation batch and coordinator key:
+
+```bash
+python3 experiments/prepare_semantic_annotations.py
+```
+
+Run the provisional lexical attribution baseline without model calls:
+
+```bash
+python3 experiments/lexical_attribution_baseline.py
+```
+
+The lexical baseline does not establish semantic dependence. Precision,
+recall, and F1 are computed only after two independent annotators complete and
+adjudicate the semantic labels.
+
 ## Run Offline Logic Tests
 
 The regression tests do not start a model server or call an API:

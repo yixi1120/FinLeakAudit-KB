@@ -83,6 +83,8 @@
 - [[cases_pilot_v4_construction_2026_07_26]] — 新增 7 个 SEC 时间戳案例与 mixed 10-case candidate
 - [[three_model_v4_results_2026_07_26]] — v4 mixed 10-case 三模型结果与分层指标
 - [[baseline_comparison_v4_2026_07_26]] — No Audit、时间过滤、引用审计与删除未来证据对照
+- [[semantic_attribution_annotation_protocol_v1]] — 79 个 claim-evidence pair 的双人盲标协议
+- [[natural_point_in_time_data_protocol_v1]] — 自然检索候选语料与时间台账收集规范
 
 ---
 

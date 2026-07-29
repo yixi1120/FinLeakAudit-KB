@@ -79,7 +79,9 @@ FinLeakAudit 的 premise，但不证明其能提高预测准确率，也不能�
 - `case_014` NKE：三个模型均被未来证据带到 `DOWN`，删除后恢复各自的
   Clean 方向。
 - `case_005`：Zhipu 和 Qwen 没有显式引用未来 evidence ID，citation-only
-  auditor 因而没有删除该证据，暴露出 semantic attribution 的缺口。
+  auditor 因而没有删除该证据，暴露出 attribution coverage 的缺口。仅凭未引用
+  和证据仍被保留，不能断定模型在语义上依赖了该未来证据；该问题必须通过独立
+  claim-evidence 标注验证。
 
 ## 如何解释
 

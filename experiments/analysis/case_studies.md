@@ -1,3 +1,21 @@
+---
+title: Legacy illustrative case-study draft
+status: legacy-illustrative-do-not-cite
+---
+
+# Research Integrity Notice
+
+This document predates the verified v4 experiment and contains illustrative
+case narratives, model outputs, and proposed semantic-detector behavior. The
+statements below about cosine-similarity thresholds, an LLM judge, and semantic
+leakage detection were not produced by an implemented, versioned experiment in
+this repository. They must not be cited as empirical FinLeakAudit results.
+
+Use `wiki/experiments/three_model_v4_results_2026_07_26.md` for verified
+three-model results. The v4 semantic-attribution study starts from independent
+claim-evidence annotation and treats a missing evidence ID as an attribution
+gap to investigate, not proof of semantic dependence.
+
 ## Case 1: Biotech Licensing Rescue (case_004)
 
 **Category.** Earnings surprise — positive reversal driven by a previously

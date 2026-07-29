@@ -1,0 +1,2 @@
+event_id,document_id,company,ticker,prediction_cutoff,retrieval_query,title,source_url,canonical_url,source_type,original_published_at,available_at,revised_at,vendor_indexed_at,timestamp_timezone_basis,timestamp_source_url,retrieved_at,archive_path,content_sha256,license_or_use_note,source_verification_status,verified_by,verification_note
+natural_001,natural_001_doc_001,,,,,,,,,,,,,,,,,,,pending,,

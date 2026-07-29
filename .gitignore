@@ -29,6 +29,10 @@ tmp/
 experiments/results/*.jsonl
 experiments/results/*.csv
 
+# Keep blind annotation materials separate until adjudication.
+experiments/analysis/semantic_annotation_key_*.csv
+experiments/analysis/semantic_annotations_annotator_*.csv
+
 # Secrets
 .env
 *.key
