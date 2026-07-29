@@ -1,0 +1,2 @@
+# The experiment runner, analysis scripts, and tests use Python's standard library.
+# Local Qwen inference requires a separate llama.cpp installation.

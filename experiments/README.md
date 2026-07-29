@@ -5,7 +5,13 @@ This folder contains the minimal runnable engineering pipeline for the leakage i
 ## Start Local Qwen
 
 ```bash
-/Users/luziyang/qwen-local/start-qwen-server.sh
+llama-server \
+  -m /path/to/qwen2.5-14b-instruct-q4_k_m-00001-of-00003.gguf \
+  --alias qwen2.5-14b-instruct-q4_k_m \
+  --host 127.0.0.1 \
+  --port 8080 \
+  -c 8192 \
+  -ngl 99
 ```
 
 The local OpenAI-compatible endpoint is:
@@ -117,6 +123,13 @@ Outputs:
 - `experiments/results/qwen_cases_pilot_results.jsonl`
 - `experiments/results/qwen_cases_pilot_summary.csv`
 
+Build the v4 policy-baseline comparison from the completed three-model result
+files:
+
+```bash
+python3 experiments/analyze_baselines.py
+```
+
 ## Run Offline Logic Tests
 
 The regression tests do not start a model server or call an API:
@@ -124,3 +137,5 @@ The regression tests do not start a model server or call an API:
 ```bash
 python3 -m unittest discover -s tests -p 'test_*.py'
 ```
+
+The offline tests do not require API keys and do not start Qwen.

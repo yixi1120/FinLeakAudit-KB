@@ -1,0 +1,49 @@
+scope,model,dataset_tier,baseline,n_model_cases,correct_predictions,accuracy,changes_vs_no_audit,change_rate_vs_no_audit,clean_direction_agreements,clean_direction_agreement_rate,future_evidence_items,retained_future_items,future_retained_rate,note
+all,all,all,no_audit,30,18,0.6,0,0.0,18,0.6,30,30,1.0,Use the prediction made with all retrieved evidence.
+all,all,all,timestamp_only,30,8,0.26666666666666666,12,0.4,30,1.0,30,0,0.0,Remove every item available after cutoff before prediction.
+all,all,all,citation_only,30,8,0.26666666666666666,12,0.4,30,1.0,30,2,0.06666666666666667,Remove future items explicitly cited in the rationale.
+all,all,all,delete_all_future,30,8,0.26666666666666666,12,0.4,30,1.0,30,0,0.0,Oracle deletion; identical to timestamp_only in this controlled dataset.
+model,deepseek,all,no_audit,10,7,0.7,0,0.0,5,0.5,10,10,1.0,Use the prediction made with all retrieved evidence.
+model,deepseek,all,timestamp_only,10,3,0.3,5,0.5,10,1.0,10,0,0.0,Remove every item available after cutoff before prediction.
+model,deepseek,all,citation_only,10,3,0.3,5,0.5,10,1.0,10,0,0.0,Remove future items explicitly cited in the rationale.
+model,deepseek,all,delete_all_future,10,3,0.3,5,0.5,10,1.0,10,0,0.0,Oracle deletion; identical to timestamp_only in this controlled dataset.
+model,qwen,all,no_audit,10,5,0.5,0,0.0,6,0.6,10,10,1.0,Use the prediction made with all retrieved evidence.
+model,qwen,all,timestamp_only,10,2,0.2,4,0.4,10,1.0,10,0,0.0,Remove every item available after cutoff before prediction.
+model,qwen,all,citation_only,10,2,0.2,4,0.4,10,1.0,10,1,0.1,Remove future items explicitly cited in the rationale.
+model,qwen,all,delete_all_future,10,2,0.2,4,0.4,10,1.0,10,0,0.0,Oracle deletion; identical to timestamp_only in this controlled dataset.
+model,zhipu,all,no_audit,10,6,0.6,0,0.0,7,0.7,10,10,1.0,Use the prediction made with all retrieved evidence.
+model,zhipu,all,timestamp_only,10,3,0.3,3,0.3,10,1.0,10,0,0.0,Remove every item available after cutoff before prediction.
+model,zhipu,all,citation_only,10,3,0.3,3,0.3,10,1.0,10,1,0.1,Remove future items explicitly cited in the rationale.
+model,zhipu,all,delete_all_future,10,3,0.3,3,0.3,10,1.0,10,0,0.0,Oracle deletion; identical to timestamp_only in this controlled dataset.
+dataset_tier,all,controlled_hard_real_source_context,no_audit,21,14,0.6666666666666666,0,0.0,13,0.6190476190476191,21,21,1.0,Use the prediction made with all retrieved evidence.
+dataset_tier,all,controlled_hard_real_source_context,timestamp_only,21,8,0.38095238095238093,8,0.38095238095238093,21,1.0,21,0,0.0,Remove every item available after cutoff before prediction.
+dataset_tier,all,controlled_hard_real_source_context,citation_only,21,8,0.38095238095238093,8,0.38095238095238093,21,1.0,21,0,0.0,Remove future items explicitly cited in the rationale.
+dataset_tier,all,controlled_hard_real_source_context,delete_all_future,21,8,0.38095238095238093,8,0.38095238095238093,21,1.0,21,0,0.0,Oracle deletion; identical to timestamp_only in this controlled dataset.
+dataset_tier,all,controlled_hard_semi_real,no_audit,9,4,0.4444444444444444,0,0.0,5,0.5555555555555556,9,9,1.0,Use the prediction made with all retrieved evidence.
+dataset_tier,all,controlled_hard_semi_real,timestamp_only,9,0,0.0,4,0.4444444444444444,9,1.0,9,0,0.0,Remove every item available after cutoff before prediction.
+dataset_tier,all,controlled_hard_semi_real,citation_only,9,0,0.0,4,0.4444444444444444,9,1.0,9,2,0.2222222222222222,Remove future items explicitly cited in the rationale.
+dataset_tier,all,controlled_hard_semi_real,delete_all_future,9,0,0.0,4,0.4444444444444444,9,1.0,9,0,0.0,Oracle deletion; identical to timestamp_only in this controlled dataset.
+model_dataset_tier,deepseek,controlled_hard_real_source_context,no_audit,7,5,0.7142857142857143,0,0.0,4,0.5714285714285714,7,7,1.0,Use the prediction made with all retrieved evidence.
+model_dataset_tier,deepseek,controlled_hard_real_source_context,timestamp_only,7,3,0.42857142857142855,3,0.42857142857142855,7,1.0,7,0,0.0,Remove every item available after cutoff before prediction.
+model_dataset_tier,deepseek,controlled_hard_real_source_context,citation_only,7,3,0.42857142857142855,3,0.42857142857142855,7,1.0,7,0,0.0,Remove future items explicitly cited in the rationale.
+model_dataset_tier,deepseek,controlled_hard_real_source_context,delete_all_future,7,3,0.42857142857142855,3,0.42857142857142855,7,1.0,7,0,0.0,Oracle deletion; identical to timestamp_only in this controlled dataset.
+model_dataset_tier,deepseek,controlled_hard_semi_real,no_audit,3,2,0.6666666666666666,0,0.0,1,0.3333333333333333,3,3,1.0,Use the prediction made with all retrieved evidence.
+model_dataset_tier,deepseek,controlled_hard_semi_real,timestamp_only,3,0,0.0,2,0.6666666666666666,3,1.0,3,0,0.0,Remove every item available after cutoff before prediction.
+model_dataset_tier,deepseek,controlled_hard_semi_real,citation_only,3,0,0.0,2,0.6666666666666666,3,1.0,3,0,0.0,Remove future items explicitly cited in the rationale.
+model_dataset_tier,deepseek,controlled_hard_semi_real,delete_all_future,3,0,0.0,2,0.6666666666666666,3,1.0,3,0,0.0,Oracle deletion; identical to timestamp_only in this controlled dataset.
+model_dataset_tier,qwen,controlled_hard_real_source_context,no_audit,7,5,0.7142857142857143,0,0.0,3,0.42857142857142855,7,7,1.0,Use the prediction made with all retrieved evidence.
+model_dataset_tier,qwen,controlled_hard_real_source_context,timestamp_only,7,2,0.2857142857142857,4,0.5714285714285714,7,1.0,7,0,0.0,Remove every item available after cutoff before prediction.
+model_dataset_tier,qwen,controlled_hard_real_source_context,citation_only,7,2,0.2857142857142857,4,0.5714285714285714,7,1.0,7,0,0.0,Remove future items explicitly cited in the rationale.
+model_dataset_tier,qwen,controlled_hard_real_source_context,delete_all_future,7,2,0.2857142857142857,4,0.5714285714285714,7,1.0,7,0,0.0,Oracle deletion; identical to timestamp_only in this controlled dataset.
+model_dataset_tier,qwen,controlled_hard_semi_real,no_audit,3,0,0.0,0,0.0,3,1.0,3,3,1.0,Use the prediction made with all retrieved evidence.
+model_dataset_tier,qwen,controlled_hard_semi_real,timestamp_only,3,0,0.0,0,0.0,3,1.0,3,0,0.0,Remove every item available after cutoff before prediction.
+model_dataset_tier,qwen,controlled_hard_semi_real,citation_only,3,0,0.0,0,0.0,3,1.0,3,1,0.3333333333333333,Remove future items explicitly cited in the rationale.
+model_dataset_tier,qwen,controlled_hard_semi_real,delete_all_future,3,0,0.0,0,0.0,3,1.0,3,0,0.0,Oracle deletion; identical to timestamp_only in this controlled dataset.
+model_dataset_tier,zhipu,controlled_hard_real_source_context,no_audit,7,4,0.5714285714285714,0,0.0,6,0.8571428571428571,7,7,1.0,Use the prediction made with all retrieved evidence.
+model_dataset_tier,zhipu,controlled_hard_real_source_context,timestamp_only,7,3,0.42857142857142855,1,0.14285714285714285,7,1.0,7,0,0.0,Remove every item available after cutoff before prediction.
+model_dataset_tier,zhipu,controlled_hard_real_source_context,citation_only,7,3,0.42857142857142855,1,0.14285714285714285,7,1.0,7,0,0.0,Remove future items explicitly cited in the rationale.
+model_dataset_tier,zhipu,controlled_hard_real_source_context,delete_all_future,7,3,0.42857142857142855,1,0.14285714285714285,7,1.0,7,0,0.0,Oracle deletion; identical to timestamp_only in this controlled dataset.
+model_dataset_tier,zhipu,controlled_hard_semi_real,no_audit,3,2,0.6666666666666666,0,0.0,1,0.3333333333333333,3,3,1.0,Use the prediction made with all retrieved evidence.
+model_dataset_tier,zhipu,controlled_hard_semi_real,timestamp_only,3,0,0.0,2,0.6666666666666666,3,1.0,3,0,0.0,Remove every item available after cutoff before prediction.
+model_dataset_tier,zhipu,controlled_hard_semi_real,citation_only,3,0,0.0,2,0.6666666666666666,3,1.0,3,1,0.3333333333333333,Remove future items explicitly cited in the rationale.
+model_dataset_tier,zhipu,controlled_hard_semi_real,delete_all_future,3,0,0.0,2,0.6666666666666666,3,1.0,3,0,0.0,Oracle deletion; identical to timestamp_only in this controlled dataset.

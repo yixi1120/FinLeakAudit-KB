@@ -29,6 +29,18 @@
 - 记录页：`wiki/experiments/three_model_v4_results_2026_07_26.md`
 - 本地 Qwen 服务在实验后已关闭。
 
+## 2026-07-26 — Baseline 对照与 RA 对外材料
+
+- 新增离线 baseline 汇总器，复用三模型结果比较 No Audit、
+  Timestamp-only、Citation-only 和 Delete-All-Future，不增加模型调用。
+- 总体结果：No Audit accuracy 18/30；其余三项均为 8/30。
+  Citation-only 保留 2/30 条未显式引用的未来证据，当前结果尚不能证明其
+  优于 timestamp filtering。
+- 新增 48 行 baseline 分层表和 30 行逐案例公开结果表。
+- 根 README 从内部 Wiki 说明改为 RA-facing 研究项目首页。
+- 新增 `wiki/writing/ra_application_project_brief_2026_07_26.md`，提供克制的
+  CV、邮件和面试表述。
+
 ## 2026-07-07 — Experiment A 三模型 Pilot 跑通
 
 - 工程线新增 `experiments/` 最小可跑 pipeline：

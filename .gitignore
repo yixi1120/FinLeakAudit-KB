@@ -15,6 +15,9 @@ venv/
 .vscode/
 .idea/
 
+# Local review and rendered artifacts
+tmp/
+
 # Model files (large)
 *.gguf
 *.bin

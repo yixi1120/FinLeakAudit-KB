@@ -152,3 +152,12 @@ python3 experiments/analyze.py \
    固定模型版本。
 7. 下一轮应加入 timestamp-only、citation-only、delete-all-future 和
    semantic attribution baselines，并扩展 natural point-in-time cases。
+
+## Baseline follow-up
+
+The implemented policy comparison is reported in
+[[baseline_comparison_v4_2026_07_26]]. In this controlled dataset,
+timestamp-only filtering and citation-only revision have the same directional
+accuracy, while citation-only revision retains 2/30 future items. This result
+motivates semantic attribution but does not yet establish an advantage for the
+full planned method.
