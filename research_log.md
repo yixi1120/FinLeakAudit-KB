@@ -4,6 +4,17 @@
 
 ---
 
+## 2026-08-08 — 标注线与自然数据线交付复核
+
+- 复核标注线提交 `be16042`：79 条 Annotator A 样本结构完整，可保留为单人原始标注；
+  正式 gold labels 前仍需保护 B 的独立盲标、缩短 41 条 `yes` 的 matched span、记录
+  annotation provenance，并完成 agreement、Cohen's kappa 和分歧裁决。
+- 复核数据线提交 `506ffe3`：CrowdStrike `natural_001` 的 18 篇候选文档、JSON、CSV、
+  archive path 和 SHA-256 一致；正式实验前仍需处理当前网页与历史版本混用、状态页版本
+  拆分、三处已确认的时间/URL 元数据、候选语料收集记录和第二人核验。
+- 两项交付均定位为可保留的内部初稿，暂不作为论文金标或自然检索正式结果。
+- 详细说明：`wiki/experiments/team_submission_review_2026_08_08.md`
+
 ## 2026-07-29 — 自然数据与语义归因任务启动
 
 - 冻结数据线 v1 协议：先收集带真实时间的候选语料，再由固定检索器生成
