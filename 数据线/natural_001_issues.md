@@ -1,6 +1,9 @@
 # natural_001 issues and exceptions
 
-- `natural_001_doc_016`, `018`, `019`, `020`, and `021` expose date-only first-publication information. Exact `original_published_at` and `available_at` remain `null`; no time is inferred.
+- `natural_001_doc_016`, `018`, `019`, and `020` expose date-only first-publication information. Exact `original_published_at` and `available_at` remain `null`; no time is inferred. `natural_001_doc_021` is not included in this exception: its source HTML gives `datePublished = 2024-07-24T11:11Z`.
 - `natural_001_doc_018` visibly says it was updated on 2024-07-25 at 19:00 UTC, while the downloaded HTML exposes later `dateModified` metadata of 2024-09-21T19:33:00Z. `revised_at` records the later metadata; the discrepancy requires second-verifier review.
+- The full-page HTML for documents `015`, `016`, `018`, `019`, `020`, and `021` was downloaded in 2026 and is retained only as an immutable source snapshot. Retrieval uses the body-only extracts listed in `natural_001_extraction_ledger_v1.csv`; no historical archive capture was verified in this pass, so these extracts must not support an as-of-time content claim without a historical-capture verification.
+- The first TechTarget body extract, `raw/natural_001/extracted/natural_001_doc_021_body.txt`, is append-only raw material but is superseded and excluded from retrieval because it included a related-content module and a later update paragraph. The v2 extract is the referenced retrieval text; both versions are recorded in the extraction ledger.
+- `natural_001_doc_012` is no longer a final aggregate Google incident page for retrieval. `natural_001_extraction_ledger_v1.csv` records 13 separately hashed status-update units; the earliest is `2024-07-18T23:48:00-07:00` (PDT). The manifest points only to that earliest update.
 - All `vendor_indexed_at` values are `null` because no third-party vendor copy was used.
-- Engineering must use each `archive_path` raw snapshot as retrieval text. `text` is only a source-grounded audit excerpt and must not become a replacement retrieval corpus.
+- Engineering must use the extraction ledger's `extracted_text_archive_path` for web retrieval. The original full-page snapshots must not be used as retrieval text.
