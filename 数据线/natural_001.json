@@ -424,12 +424,12 @@
   "outcome_source": null,
   "evaluator_only_note": "outcome_time is the next-trading-day closing observation time implied by forecast_horizon, not the event-publication time. It must not be surfaced to retrieval or prediction components. Outcome label and price source are intentionally not collected in this candidate-corpus pass.",
   "open_issues": [
-    "Documents 016, 018, 019, 020 and 021 show date-only first-publication information on their primary pages; exact original_published_at and available_at remain null rather than inferred.",
+    "Documents 016, 018, 019 and 020 show date-only first-publication information on their primary pages; exact original_published_at and available_at remain null rather than inferred. Document 021 has source HTML datePublished = 2024-07-24T11:11Z.",
     "Document 018 has a visible July 25 2024 update and later HTML dateModified metadata of 2024-09-21T19:33:00Z; the latter is stored in revised_at and the discrepancy requires second-verifier review.",
     "All documents have vendor_indexed_at null because no third-party vendor copy was used.",
     "Engineering must index archive_path raw snapshots as retrieval text. The JSON text field is an audit excerpt only and must not replace raw source text in the natural retrieval corpus.",
     "SEC filings have original_published_at null because their EDGAR acceptance times prove public availability but do not prove a separate issuer original-release time.",
-    "Web retrieval text is body-only and recorded in natural_001_extraction_ledger_v1.csv. No historical archive snapshot was verified in this pass for documents 015, 016, 018, 019, 020, or 021; their 2026-page body extracts must not support an as-of-time content claim without a later historical-capture verification.",
+    "The historical-capture ledger records 2024 Wayback captures for documents 015, 016, 018, 019 and 020, but capture timestamps do not prove first publication/availability and do not activate the existing blocked units. No 2024 HTTP-200 Wayback capture was found for document 021. The 2026 body extracts remain ineligible for as-of-time claims.",
     "Google document 012 is represented by 13 separately timestamped status-update extraction units. The primary manifest points only to the earliest update (2024-07-18 23:48 PDT), never to the final aggregate status page."
   ],
   "retrieval_units_manifest": "数据线/natural_001_retrieval_units_v1.csv",
