@@ -7,5 +7,6 @@
 - `natural_001_doc_012` is no longer a final aggregate Google incident page for retrieval. `natural_001_extraction_ledger_v1.csv` records 13 separately hashed status-update units; the earliest is `2024-07-18T23:48:00-07:00` (PDT). The manifest points only to that earliest update.
 - Engineering must use `natural_001_retrieval_units_v1.csv` as the authoritative retrieval-unit list. It contains 30 units: 24 `active` units that may be indexed, and 6 `blocked_historical_snapshot_required` body extracts that must remain out of the corpus until a historical snapshot is verified. It excludes all full-page 2026 web snapshots and the superseded TechTarget v1 extract.
 - The complete, acceptance-testable backlog is in `natural_001_follow_up_register_v1.csv`. It covers historical captures, exact availability evidence, Google update proof, version splitting, loader enforcement, and source-to-unit grain documentation.
+- The collection/search/verification handoff, including the explicit absence of retained SERPs, rankings, screenshots, browser history, and Agent-conversation export, is in `natural_001_handoff_v1.md`.
 - All `vendor_indexed_at` values are `null` because no third-party vendor copy was used.
 - Engineering must use the extraction ledger's `extracted_text_archive_path` for web retrieval. The original full-page snapshots must not be used as retrieval text.
