@@ -1,2 +1,4 @@
-# The experiment runner, analysis scripts, and tests use Python's standard library.
+# The experiment runner, analysis scripts, and tests otherwise use Python's standard library.
 # Local Qwen inference requires a separate llama.cpp installation.
+PyMuPDF>=1.24,<2
+lxml>=5,<7

@@ -97,6 +97,16 @@ Claim：
 5. 只对分歧样本进行 adjudication，并保留两份原始标注。
 6. 人工标签冻结后，才运行 lexical/embedding/LLM-judge baselines。
 
+两份标注冻结后，由协调者运行：
+
+```bash
+python3 experiments/analyze_semantic_annotations.py
+```
+
+该命令会先验证样本对齐、标签枚举、置信度和 claim span，再生成一致性摘要、分歧表
+和待人工填写的 adjudication 模板。第二位标注必须由另一位真人独立完成，不能由
+脚本、LLM 或第一位标注者的答案代填。
+
 # 验收规则
 
 - 79 行全部填写；
@@ -112,3 +122,8 @@ Claim：
 - `semantic_annotations_annotator_b_v1.csv`
 - `semantic_annotation_disagreements_v1.csv`
 - `semantic_annotation_adjudicated_v1.csv`
+- `semantic_annotation_provenance_v1.md`
+
+在第二位真人完成标注前，最后三份 CSV 不应被描述为已经完成；工具首先输出
+`semantic_annotation_adjudication_template_v1.csv`，人工裁决并冻结后再形成
+`semantic_annotation_adjudicated_v1.csv`。

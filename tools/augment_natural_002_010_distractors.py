@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 """Append SEC form-type-diverse candidate sources without changing raw files."""
-import csv, hashlib, json, time, urllib.request
+import csv, hashlib, json, os, time, urllib.request
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
-ROOT=Path(__file__).resolve().parents[1]; DATA=ROOT/'数据线'; UA='FinLeakAudit-KB research contact@example.com'
+ROOT=Path(__file__).resolve().parents[1]; DATA=ROOT/'数据线'
+def sec_user_agent():
+ value=os.environ.get('FINLEAKAUDIT_SEC_USER_AGENT','').strip()
+ if not value:raise RuntimeError('Set FINLEAKAUDIT_SEC_USER_AGENT to a project name and real contact email')
+ return value
 def get(url):
- with urllib.request.urlopen(urllib.request.Request(url,headers={'User-Agent':UA}),timeout=90) as r:return r.read()
+ with urllib.request.urlopen(urllib.request.Request(url,headers={'User-Agent':sec_user_agent()}),timeout=90) as r:return r.read()
 def iso(v):return v.replace('.000Z','+00:00').replace('Z','+00:00')
 def main():
  ledger=DATA/'natural_point_in_time_source_ledger_v1.csv'; ledger_rows=list(csv.DictReader(ledger.open())); fields=list(ledger_rows[0])

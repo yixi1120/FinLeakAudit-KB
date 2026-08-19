@@ -18,7 +18,7 @@ from lxml import html
 ROOT = Path.cwd()
 RAW = ROOT / "raw" / "natural_001"
 EXTRACTED = RAW / "extracted"
-OUT = ROOT / "stage2_delivery" / "数据线"
+OUT = ROOT / "数据线"
 MANIFEST = OUT / "natural_001.json"
 SOURCE_LEDGER = OUT / "natural_point_in_time_source_ledger_v1.csv"
 EXTRACTION_LEDGER = OUT / "natural_001_extraction_ledger_v1.csv"
@@ -282,11 +282,18 @@ def main():
     with SOURCE_LEDGER.open(newline="", encoding="utf-8-sig") as f:
         reader = csv.DictReader(f)
         fieldnames = reader.fieldnames
+        other_event_rows = [row for row in reader if row["event_id"] != "natural_001"]
     with SOURCE_LEDGER.open("w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer = csv.DictWriter(f, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
+        writer.writerows(other_event_rows)
         for doc in manifest["documents"]:
-            writer.writerow({key: manifest.get(key) if key in manifest else doc.get(key) for key in fieldnames})
+            writer.writerow(
+                {
+                    key: manifest.get(key) if key in manifest else doc.get(key)
+                    for key in fieldnames
+                }
+            )
 
     extraction_fields = [
         "extraction_id", "parent_document_id", "unit_type", "content_available_at", "content_revised_at",
@@ -321,7 +328,12 @@ def main():
                     "retrieval_unit_id": extract["extraction_id"],
                     "parent_document_id": doc["document_id"],
                     "unit_type": extract["unit_type"],
-                    "title": doc["title"],
+                    "title": (
+                        f"{doc['title'].removesuffix(' (first status update)')} "
+                        f"(status update {extract['extraction_id'][-2:]}/13)"
+                        if extract["unit_type"] == "status_update"
+                        else doc["title"]
+                    ),
                     "source_type": doc["source_type"],
                     "available_at": extract["content_available_at"],
                     "revised_at": extract["content_revised_at"],

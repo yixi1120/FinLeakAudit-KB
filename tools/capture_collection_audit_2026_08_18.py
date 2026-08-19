@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
 """Append raw SEC API inputs and an honest collection-audit manifest."""
-import hashlib, json, urllib.request
+import hashlib, json, os, urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
 AUDIT=ROOT/'raw/collection_audit/2026-08-18'
-UA='FinLeakAudit-KB research contact@example.com'
 CIKS=['0001045810','0000320187','0000829224','0000050863','0000034088','0000927628','0000789019','0000731766','0001158463']
+def sec_user_agent():
+ value=os.environ.get('FINLEAKAUDIT_SEC_USER_AGENT','').strip()
+ if not value:raise RuntimeError('Set FINLEAKAUDIT_SEC_USER_AGENT to a project name and real contact email')
+ return value
 def add(path,b):
  path.parent.mkdir(parents=True,exist_ok=True)
  if path.exists() and path.read_bytes()!=b: raise RuntimeError(f'immutable raw collision: {path}')
@@ -17,7 +20,7 @@ def main():
  rows=[]
  for cik in CIKS:
   url=f'https://data.sec.gov/submissions/CIK{cik}.json'
-  req=urllib.request.Request(url,headers={'User-Agent':UA})
+  req=urllib.request.Request(url,headers={'User-Agent':sec_user_agent()})
   with urllib.request.urlopen(req,timeout=60) as r: b=r.read()
   rel=f'raw/collection_audit/2026-08-18/sec_submissions/CIK{cik}.json'
   rows.append({'url':url,'archive_path':rel,'sha256':add(ROOT/rel,b)})

@@ -3,7 +3,7 @@
   "event_id": "natural_001",
   "company": "CrowdStrike Holdings, Inc.",
   "ticker": "CRWD",
-  "exchange": "Nasdaq",
+  "exchange": "NASDAQ",
   "market_timezone": "America/New_York",
   "trading_calendar": "XNAS",
   "prediction_cutoff": "2024-07-18T16:00:00-04:00",
@@ -420,9 +420,9 @@
     }
   ],
   "outcome_time": "2024-07-19T16:00:00-04:00",
-  "outcome_label": null,
-  "outcome_source": null,
-  "evaluator_only_note": "outcome_time is the next-trading-day closing observation time implied by forecast_horizon, not the event-publication time. It must not be surfaced to retrieval or prediction components. Outcome label and price source are intentionally not collected in this candidate-corpus pass.",
+  "outcome_label": "DOWN",
+  "outcome_source": "https://query1.finance.yahoo.com/v8/finance/chart/CRWD?period1=1721174400&period2=1721520000&interval=1d&events=history",
+  "evaluator_only_note": "Outcome and price fields are evaluator-only and must never be passed to retrieval, predictor, auditor, or annotation components. Price values use two public price providers agree on direction, but their displayed values are not treated as identical or as licensed benchmark data.",
   "open_issues": [
     "Documents 016, 018, 019 and 020 show date-only first-publication information on their primary pages; exact original_published_at and available_at remain null rather than inferred. Document 021 has source HTML datePublished = 2024-07-24T11:11Z.",
     "Document 018 has a visible July 25 2024 update and later HTML dateModified metadata of 2024-09-21T19:33:00Z; the latter is stored in revised_at and the discrepancy requires second-verifier review.",
@@ -435,5 +435,29 @@
   "retrieval_units_manifest": "数据线/natural_001_retrieval_units_v1.csv",
   "retrieval_unit_count": 30,
   "follow_up_register": "数据线/natural_001_follow_up_register_v1.csv",
-  "handoff_record": "数据线/natural_001_handoff_v1.md"
+  "handoff_record": "数据线/natural_001_handoff_v1.md",
+  "event_available_at": "2024-07-19T06:48:00+00:00",
+  "event_source": "https://status.cloud.google.com/incidents/DK3LfKowzJPpZq4Q9YqP",
+  "event_availability_basis": "First timestamped Google Cloud status update retained as a retrieval unit.",
+  "cutoff_price": 85.76249694824219,
+  "outcome_price": 76.23999786376953,
+  "outcome_return": -0.11103337,
+  "price_field": "Yahoo Finance chart API unadjusted close field as returned on 2026-08-19",
+  "return_definition": "outcome_close / cutoff_close - 1",
+  "label_rule": "UP if outcome_return > 0; DOWN if outcome_return < 0; NEUTRAL only if exactly 0",
+  "outcome_verification_status": "two_public_providers_direction_consistent_values_not_identical",
+  "timeline_validation": "valid_cutoff_event_outcome_order",
+  "timeline_validation_note": "cutoff=2024-07-18T16:00:00-04:00; event_available=2024-07-19T06:48:00+00:00; outcome=2024-07-19T16:00:00-04:00",
+  "event_parent_document_id": "natural_001_doc_012",
+  "secondary_price_verification": {
+    "provider": "StatMuse Money",
+    "cutoff_close": 85.76,
+    "outcome_close": 76.24,
+    "outcome_return": -0.11100746,
+    "outcome_label": "DOWN",
+    "direction_match": true,
+    "cutoff_source_url": "https://www.statmuse.com/money/ask/CRWD-stock-price-on-july-18-2024",
+    "outcome_source_url": "https://www.statmuse.com/money/ask/CRWD-stock-price-on-july-19-2024",
+    "retrieved_at": "2026-08-19"
+  }
 }

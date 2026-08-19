@@ -413,13 +413,37 @@
       "verification_note": "Added as query_adjacent_distractor; SEC submissions metadata and primary document were retrieved directly. This candidate role is a collection-coverage label, not a relevance score or a top-k decision. original_published_at is null because SEC acceptance proves public availability, not a separate issuer-release time."
     }
   ],
-  "outcome_time": null,
-  "outcome_label": null,
-  "outcome_source": null,
-  "evaluator_only_note": "Outcome fields are intentionally null and must not be shown to retrieval or prediction components.",
+  "outcome_time": "2023-10-13T16:00:00-04:00",
+  "outcome_label": "DOWN",
+  "outcome_source": "https://query1.finance.yahoo.com/v8/finance/chart/MSFT?period1=1696982400&period2=1697328000&interval=1d&events=history",
+  "evaluator_only_note": "Outcome and price fields are evaluator-only and must never be passed to retrieval, predictor, auditor, or annotation components. Price values use two public price providers agree on direction, but their displayed values are not treated as identical or as licensed benchmark data.",
   "open_issues": [
     "All candidates in this event are SEC primary-source snapshots. Candidate-source diversity should be expanded with historically captured news, issuer releases, and regulator documents in a later collection pass; none will be fabricated from current webpages.",
     "vendor_indexed_at is null for every document because no third-party vendor index was used.",
     "original_published_at is null for every SEC filing because SEC acceptance establishes public availability but not a separate issuer original-release time."
-  ]
+  ],
+  "event_available_at": "2023-10-13T12:37:32+00:00",
+  "event_source": "https://www.sec.gov/Archives/edgar/data/789019/000119312523255762/d537928d8k.htm",
+  "event_availability_basis": "SEC EDGAR acceptance timestamp for the acquisition-closing 8-K.",
+  "cutoff_price": 331.1600036621094,
+  "outcome_price": 327.7300109863281,
+  "outcome_return": -0.01035751,
+  "price_field": "Yahoo Finance chart API unadjusted close field as returned on 2026-08-19",
+  "return_definition": "outcome_close / cutoff_close - 1",
+  "label_rule": "UP if outcome_return > 0; DOWN if outcome_return < 0; NEUTRAL only if exactly 0",
+  "outcome_verification_status": "two_public_providers_direction_consistent_values_not_identical",
+  "timeline_validation": "valid_cutoff_event_outcome_order",
+  "timeline_validation_note": "cutoff=2023-10-12T16:00:00-04:00; event_available=2023-10-13T12:37:32+00:00; outcome=2023-10-13T16:00:00-04:00",
+  "event_parent_document_id": "natural_008_doc_005",
+  "secondary_price_verification": {
+    "provider": "StatMuse Money",
+    "cutoff_close": 324.19,
+    "outcome_close": 320.83,
+    "outcome_return": -0.01036429,
+    "outcome_label": "DOWN",
+    "direction_match": true,
+    "cutoff_source_url": "https://www.statmuse.com/money/ask/MSFT-stock-price-on-october-12-2023",
+    "outcome_source_url": "https://www.statmuse.com/money/ask/MSFT-stock-price-on-october-13-2023",
+    "retrieved_at": "2026-08-19"
+  }
 }

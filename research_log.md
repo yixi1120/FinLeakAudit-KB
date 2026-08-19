@@ -4,6 +4,26 @@
 
 ---
 
+## 2026-08-19 — 两条线技术收口与自然语料离线检索
+
+- 合并 `main` 的语义标注提交与 `develop` 的 10 事件自然候选语料，保留两条线原始
+  Git 历史。
+- 修正 4 条 Annotator A claim span；新增 A/B 完整性校验、三分类 agreement、
+  Cohen's kappa、`yes` vs `other` agreement、分歧导出和 provenance 模板。第二位
+  真人标注与人工裁决仍待完成，未用模型代填。
+- 修正 NVIDIA、NIKE、Intel、JetBlue 的 cutoff/horizon，以及 NIKE、Capital One
+  的交易所/日历；为 10 个事件补齐 evaluator-only outcome，并使用 Yahoo Finance
+  chart API 与 StatMuse Money 交叉核验方向，10/10 一致（显示价格并不完全相同）。
+- 新增 9 份 SEC Exhibit/DOJ 判决原文；`raw/` 旧文件未改动。自然语料当前包含
+  195 个 active retrieval units，validator 报告 0 errors。
+- 新增 HTML/XML/PDF 正文抽取、稳定分块、时间过滤、parent-source cap 和确定性
+  lexical top-k；10/10 事件的关键事件来源组均自然进入 outcome-bounded top-8。
+- 新增 139 行独立二次来源核验批次，覆盖全部 post-cutoff、全部 unresolved-time
+  文档和每事件至少 20% 的 pre-cutoff 文档。该文档级人工核验仍待另一位真人完成；
+  投稿前仍建议换用或补充许可清晰、版本固定的市场数据源。
+- 离线回归测试增至 31 个，全部通过；本次没有调用任何预测模型。
+- 详细交接：`wiki/experiments/team_completion_handoff_2026_08_19.md`。
+
 ## 2026-08-08 — 标注线与自然数据线交付复核
 
 - 复核标注线提交 `be16042`：79 条 Annotator A 样本结构完整，可保留为单人原始标注；

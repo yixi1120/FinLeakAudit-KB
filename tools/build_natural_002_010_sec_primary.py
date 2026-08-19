@@ -10,6 +10,7 @@ from __future__ import annotations
 import csv
 import hashlib
 import json
+import os
 import time
 import urllib.request
 from datetime import datetime, timezone
@@ -18,38 +19,56 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "数据线"
 RAW = ROOT / "raw"
-UA = "FinLeakAudit-KB research contact@example.com"
+from natural_event_registry import EVENT_SPECS
 
 EVENTS = [
     # event_id, company, ticker, CIK, cutoff, category, query
-    ("natural_002", "NVIDIA Corporation", "NVDA", "0001045810", "2024-05-21T16:00:00-04:00", "earnings_guidance", "NVIDIA NVDA data center revenue AI demand business outlook"),
-    ("natural_003", "NIKE, Inc.", "NKE", "0000320187", "2024-06-26T16:00:00-04:00", "earnings_guidance", "Nike NKE fiscal 2024 earnings revenue guidance consumer demand outlook"),
+    ("natural_002", "NVIDIA Corporation", "NVDA", "0001045810", "2024-05-22T16:00:00-04:00", "earnings_guidance", "NVIDIA NVDA data center revenue AI demand business outlook"),
+    ("natural_003", "NIKE, Inc.", "NKE", "0000320187", "2024-06-27T16:00:00-04:00", "earnings_guidance", "Nike NKE fiscal 2024 earnings revenue guidance consumer demand outlook"),
     ("natural_004", "Starbucks Corporation", "SBUX", "0000829224", "2024-08-12T16:00:00-04:00", "management", "Starbucks SBUX leadership strategy store operations business outlook"),
-    ("natural_005", "Intel Corporation", "INTC", "0000050863", "2024-12-01T16:00:00-05:00", "management", "Intel INTC leadership strategy foundry business outlook"),
+    ("natural_005", "Intel Corporation", "INTC", "0000050863", "2024-11-29T16:00:00-05:00", "management", "Intel INTC leadership strategy foundry business outlook"),
     ("natural_006", "Exxon Mobil Corporation", "XOM", "0000034088", "2024-05-02T16:00:00-04:00", "management_financing_ma", "Exxon Mobil XOM Pioneer acquisition integration Permian business outlook"),
-    ("natural_007", "Capital One Financial Corporation", "COF", "0000927628", "2024-02-16T16:00:00-05:00", "management_financing_ma", "Capital One COF Discover acquisition consumer banking business outlook"),
+    ("natural_007", "Capital One Financial Corporation", "COF", "0000927628", "2024-02-16T16:00:00-05:00", "management_financing_ma", "Capital One COF consumer banking credit cards business outlook"),
     ("natural_008", "Microsoft Corporation", "MSFT", "0000789019", "2023-10-12T16:00:00-04:00", "management_financing_ma", "Microsoft MSFT Activision Blizzard acquisition gaming business outlook"),
-    ("natural_009", "UnitedHealth Group Incorporated", "UNH", "0000731766", "2024-02-20T16:00:00-05:00", "product_cybersecurity_incident", "UnitedHealth UNH Change Healthcare cybersecurity disruption business outlook"),
-    ("natural_010", "JetBlue Airways Corporation", "JBLU", "0001158463", "2024-01-16T16:00:00-05:00", "regulatory_litigation", "JetBlue JBLU Spirit merger antitrust litigation airline business outlook"),
+    ("natural_009", "UnitedHealth Group Incorporated", "UNH", "0000731766", "2024-02-20T16:00:00-05:00", "product_cybersecurity_incident", "UnitedHealth UNH Optum health services business outlook"),
+    ("natural_010", "JetBlue Airways Corporation", "JBLU", "0001158463", "2024-01-12T16:00:00-05:00", "regulatory_litigation", "JetBlue JBLU Spirit merger antitrust litigation airline business outlook"),
 ]
 
 PRIORITY = {"8-K": 0, "10-Q": 1, "10-K": 2, "DEF 14A": 3, "DEFA14A": 4, "425": 5, "ARS": 6, "4": 20, "144": 21}
 
 
 def get_json(url: str) -> dict:
-    req = urllib.request.Request(url, headers={"User-Agent": UA})
+    req = urllib.request.Request(url, headers={"User-Agent": sec_user_agent()})
     with urllib.request.urlopen(req, timeout=60) as f:
         return json.load(f)
 
 
 def get_bytes(url: str) -> bytes:
-    req = urllib.request.Request(url, headers={"User-Agent": UA})
+    req = urllib.request.Request(url, headers={"User-Agent": sec_user_agent()})
     with urllib.request.urlopen(req, timeout=90) as f:
         return f.read()
 
 
 def iso_utc(value: str) -> str:
     return value.replace(".000Z", "+00:00").replace("Z", "+00:00")
+
+
+def sec_user_agent() -> str:
+    value = os.environ.get("FINLEAKAUDIT_SEC_USER_AGENT", "").strip()
+    if not value:
+        raise RuntimeError(
+            "Set FINLEAKAUDIT_SEC_USER_AGENT to a project name and real contact "
+            "email before downloading from SEC EDGAR."
+        )
+    return value
+
+
+def write_raw_once(path: Path, payload: bytes) -> None:
+    if path.exists():
+        if path.read_bytes() != payload:
+            raise RuntimeError(f"Immutable raw collision: {path}")
+        return
+    path.write_bytes(payload)
 
 
 def choose_rows(recent: dict, cutoff: datetime) -> list[int]:
@@ -105,7 +124,7 @@ def main() -> None:
             payload = get_bytes(source_url)
             ext = Path(primary).suffix or ".html"
             archive_rel = f"raw/{event_id}/{event_id}_doc_{seq:03d}{ext}"
-            (ROOT / archive_rel).write_bytes(payload)
+            write_raw_once(ROOT / archive_rel, payload)
             digest = hashlib.sha256(payload).hexdigest()
             retrieved_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
             accepted = iso_utc(recent["acceptanceDateTime"][i])
@@ -149,32 +168,53 @@ def main() -> None:
             time.sleep(0.12)
         manifest = {
             "schema_version": "finleakaudit_natural_candidate_v1", "event_id": event_id,
-            "event_category": category, "company": company, "ticker": ticker, "exchange": "NASDAQ" if ticker not in {"XOM", "UNH"} else "NYSE",
-            "market_timezone": "America/New_York", "trading_calendar": "XNYS" if ticker in {"XOM", "UNH"} else "XNAS",
-            "prediction_cutoff": cutoff_s, "forecast_horizon": "next trading day close", "retrieval_query": query,
+            "event_category": category, "company": company, "ticker": ticker,
+            "exchange": EVENT_SPECS[event_id]["exchange"],
+            "market_timezone": "America/New_York",
+            "trading_calendar": EVENT_SPECS[event_id]["trading_calendar"],
+            "prediction_cutoff": cutoff_s,
+            "forecast_horizon": EVENT_SPECS[event_id]["forecast_horizon"],
+            "retrieval_query": query,
             "query_origin": "Event/query register frozen on 2026-08-18 before SEC candidate enumeration; wording uses only company/product/business concepts that were public before the stated cutoff.",
             "retrieval_corpus_id": "natural_point_in_time_candidate_v1", "retrieval_run_id": None,
             "retrieval_method": "assigned_by_engineering_line", "top_k": None, "documents": docs,
-            "outcome_time": None, "outcome_label": None, "outcome_source": None,
-            "evaluator_only_note": "Outcome fields are intentionally null and must not be shown to retrieval or prediction components.",
+            "outcome_time": EVENT_SPECS[event_id]["outcome_time"],
+            "outcome_label": EVENT_SPECS[event_id]["outcome_label"],
+            "outcome_source": EVENT_SPECS[event_id]["outcome_source"],
+            "evaluator_only_note": "Outcome fields are populated for evaluation only and must not be shown to retrieval or prediction components.",
             "open_issues": [
                 "All candidates in this event are SEC primary-source snapshots. Candidate-source diversity should be expanded with historically captured news, issuer releases, and regulator documents in a later collection pass; none will be fabricated from current webpages.",
                 "vendor_indexed_at is null for every document because no third-party vendor index was used.",
                 "original_published_at is null for every SEC filing because SEC acceptance establishes public availability but not a separate issuer original-release time."
             ]
         }
-        (OUT / f"{event_id}.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
-        with (OUT / f"{event_id}_retrieval_units_v1.csv").open("w", newline="") as f:
+        (OUT / f"{event_id}.json").write_text(
+            json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        with (OUT / f"{event_id}_retrieval_units_v1.csv").open(
+            "w", encoding="utf-8", newline=""
+        ) as f:
             w = csv.DictWriter(f, fieldnames=list(unit_rows[0])); w.writeheader(); w.writerows(unit_rows)
         (OUT / f"{event_id}_issues.md").write_text(
             f"# {event_id} issues\n\n- All {len(docs)} current candidate sources are SEC primary-source snapshots; historically captured non-SEC sources remain a follow-up, not a substitution with a current webpage.\n- `vendor_indexed_at` and `original_published_at` are null for the documented reasons in the manifest.\n"
+            , encoding="utf-8"
         )
     # Preserve prior ledger rows and append only new event rows.
     ledger = OUT / "natural_point_in_time_source_ledger_v1.csv"
-    existing = list(csv.DictReader(ledger.open(newline=""))) if ledger.exists() else []
+    existing = (
+        list(csv.DictReader(ledger.open(encoding="utf-8", newline="")))
+        if ledger.exists()
+        else []
+    )
     fields = list(existing[0]) if existing else list(all_ledger_rows[0])
-    with ledger.open("w", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=fields, extrasaction="ignore"); w.writeheader(); w.writerows(existing); w.writerows(all_ledger_rows)
+    by_key = {(row["event_id"], row["document_id"]): row for row in existing}
+    for row in all_ledger_rows:
+        by_key[(row["event_id"], row["document_id"])] = row
+    with ledger.open("w", encoding="utf-8", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=fields, extrasaction="ignore")
+        w.writeheader()
+        w.writerows(by_key[key] for key in sorted(by_key))
 
 
 if __name__ == "__main__":

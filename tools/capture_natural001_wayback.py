@@ -6,7 +6,7 @@ by that time; it is deliberately *not* substituted for first-publication time.
 The existing blocked retrieval units therefore remain blocked pending a
 document-specific earliest-availability verifier.
 """
-import csv, gzip, hashlib, io, json, re, sys, urllib.parse, urllib.request
+import csv, gzip, hashlib, io, json, os, re, sys, urllib.parse, urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 from lxml import html
@@ -14,7 +14,7 @@ from lxml import html
 ROOT=Path(__file__).resolve().parents[1]
 RAW=ROOT/'raw/natural_001/historical'
 OUT=ROOT/'数据线/natural_001_historical_capture_ledger_v1.csv'
-UA='FinLeakAudit-KB research contact@example.com'
+UA=os.environ.get('FINLEAKAUDIT_HTTP_USER_AGENT','FinLeakAudit-KB/1.0 (+https://github.com/yixi1120/FinLeakAudit-KB)')
 SPECS={
  'natural_001_doc_015':('https://techcrunch.com/2024/07/19/what-we-know-about-crowdstrikes-update-fail-thats-causing-global-outages-and-travel-chaos/','//*[contains(concat(" ", normalize-space(@class), " "), " wp-block-post-content ")]'),
  'natural_001_doc_016':('https://www.crowdstrike.com/en-us/blog/to-our-customers-and-partners/','//*[contains(concat(" ", normalize-space(@class), " "), " text--blog-content ")]'),

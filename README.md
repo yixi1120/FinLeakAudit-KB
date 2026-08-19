@@ -124,22 +124,35 @@ and [30-row case table](wiki/experiments/three_model_v4_case_results_2026_07_26.
 | Leave-one-out marginal sensitivity | Implemented |
 | Three-model runner, retries, resume, and non-overwriting names | Implemented |
 | Logic, metric, and v4 data validation tests | Implemented |
-| Lexical claim-evidence attribution proxy | Implemented, awaiting human labels |
+| Lexical claim-evidence attribution proxy | Implemented; Annotator B and adjudication pending |
 | Citation-free semantic attribution | Planned |
 | Market-open and trading-calendar alignment | Planned |
 | Original/revision/vendor timestamp handling | Planned |
 | Support/contradiction operator evaluation | Planned |
-| Natural point-in-time retrieval cases | Planned |
+| Natural point-in-time candidate corpus and offline lexical retrieval | Implemented; model experiment pending |
 
 ## Quick Start
 
-The runner and tests use the Python standard library.
+Install the two document-extraction dependencies, then run the offline tests:
 
 ```bash
 git clone git@github.com:yixi1120/FinLeakAudit-KB.git
 cd FinLeakAudit-KB
+python3 -m pip install -r requirements.txt
 python3 -m unittest discover -s tests -v
 ```
+
+Validate and smoke-test the 10-event natural candidate corpus without model
+calls:
+
+```bash
+python3 tools/validate_natural_retrieval_corpus.py
+python3 tools/smoke_natural_retrieval.py
+```
+
+The smoke test uses deterministic visible-text extraction, lexical ranking,
+and parent-source caps. It is an engineering retrieval check, not a natural
+leakage result or a production-search benchmark.
 
 For cloud models, export keys in the shell. Do not commit them:
 
@@ -228,10 +241,16 @@ Start with:
 4. Citation-only attribution misses semantic use without an explicit evidence
    ID.
 5. The three semi-real cases contain synthetic Clean evidence.
-6. Price directions were recomputed, but a second licensed market-data source
-   is still needed for a paper-grade dataset.
+6. Yahoo Finance and StatMuse agree on all 10 recorded outcome directions, but
+   their displayed prices are not identical; a fixed, licensed market-data
+   source is still needed for a paper-grade dataset.
 7. The results do not establish how often leakage occurs in deployed financial
    RAG systems.
+8. The 10-event natural corpus is a direct primary-source candidate feed, not a
+   preserved web-search SERP or production RAG trace. Its offline top-k has not
+   yet been run through the three forecasting models.
+9. Natural-source metadata is engineering-validated, but the independent
+   second-verifier batch and Annotator B semantic labels remain incomplete.
 
 ## Claim Boundary
 
