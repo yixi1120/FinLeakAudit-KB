@@ -1,0 +1,25 @@
+CrowdStrike on Wednesday said a bug in the cybersecurity vendor's content validation system was to blame for a defective channel file update that led to last Friday's global outage.
+
+Last Friday, CrowdStrike published a faulty channel file update for its Falcon platform, causing millions of Windows devices to crash and enter reboot loops. Although Microsoft said that only about 8.5 million Windows devices -- under 1% of the total -- were affected, the errant update caused major service disruptions at organizations such as hospitals , airlines and more.
+
+On Wednesday, CrowdStrike published an update to its official remediation and guidance hub with an explanation for why and how the vendor launched its problematic Falcon update. Described as a "preliminary Post Incident Review (PIR)," these initial findings will precede a forthcoming "Root Cause Analysis," presumably with the vendor's ultimate findings.
+
+The update itself, CrowdStrike said, was a content configuration update for its Windows sensor to gain threat intelligence telemetry. Though such updates are a regular part of Falcon's processes, this specific update resulted in Windows system crashes for CrowdStrike customers. The update was published on Friday, July 19, 2024, at 04:09 UTC, and the defect was reverted at 5:27 UTC.
+
+The PIR explained that CrowdStrike delivers its security content configuration updates to sensors in two ways: Sensor Content and Rapid Response Content. Sensor Content is fully tested and "includes on-sensor AI and machine learning models, and comprises code written expressly to deliver longer-term, reusable capabilities for CrowdStrike's threat detection engineers." Rapid Response Content, by comparison, is used for "a variety of behavioral pattern-matching operations" and "provides visibility and detections on the sensor without requiring sensor code changes."
+
+According to the PIR, Sensor Content undergoes automated unit testing, integration testing, performance testing and stress testing before it's released in a staged rollout, which begins with "dogfooding internally" on CrowdStrike's test systems. However, CrowdStrike said Rapid Response Content updates, which are delivered as "template instances," are configured through the Falcon platform's Content Configuration System, which performs checks on the updates prior to release through a Content Validator.
+
+As CrowdStrike explained, the outage was caused by a Rapid Response Content update or inter-process communication (IPC) template with an "undetected error" that the automated Content Validator missed. While CrowdStrike applies stress testing to Rapid Response Content, the updates apparently do not undergo the same kind of pre-release testing as Sensor Content.
+
+"On July 19, 2024, two additional IPC Template Instances were deployed. Due to a bug in the Content Validator, one of the two Template Instances passed validation despite containing problematic content data," CrowdStrike said. "Based on the testing performed before the initial deployment of the Template Type (on March 05, 2024), trust in the checks performed in the Content Validator, and previous successful IPC Template Instance deployments, these instances were deployed into production."
+
+CrowdStrike's report did not specify what kind of bug was discovered in the Content Validator. It's also unclear if the bug has been mitigated. TechTarget Editorial reached out to CrowdStrike for additional comment, but the vendor did not respond at press time.
+
+The PIR said the undetected error in Channel File 291 led to an out-of-bounds memory read, triggering blue screen of death errors on Windows systems with Falcon sensors.
+
+To prevent this from happening in the future, CrowdStrike said it would implement new testing and deployment practices for Rapid Response Content sensor updates. At the testing end, the vendor will use additional testing processes , such as local developer testing as well as content update and rollback testing; implement additional validation checks; and enhance existing error handling.
+
+On the deployment end, the vendor intends to implement staggered deployment "in which updates are gradually deployed to larger portions of the sensor base, starting with a canary deployment", improve monitoring for sensor and system performance, provide customers with greater control over how updates are delivered, and provide update details via release notes customers can subscribe to.
+
+Recovery from Friday's defective update has proven complicated as each affected device requires manual remediation. But Microsoft has published recovery tools , and both it and CrowdStrike have published guidance and workarounds. CrowdStrike said this week that a "significant number" of devices have been restored , though the recovery process remains ongoing.
