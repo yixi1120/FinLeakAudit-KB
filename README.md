@@ -113,6 +113,30 @@ See the [baseline report](wiki/experiments/baseline_comparison_v4_2026_07_26.md)
 [policy summary](wiki/experiments/three_model_v4_baseline_summary_2026_07_26.csv),
 and [30-row case table](wiki/experiments/three_model_v4_case_results_2026_07_26.csv).
 
+## Natural Point-in-Time Replay Pilot
+
+A separate five-event pilot uses frozen queries and directly archived primary-source
+documents rather than hand-written evidence. DeepSeek and Zhipu were each run under
+three conditions: cutoff-safe Clean retrieval, outcome-bounded Unfiltered retrieval,
+and timestamp-audited revision.
+
+| Model | Future cited | Clean-to-Unfiltered change | Recovery on changed runs | Clean / Unfiltered / Audited accuracy |
+|---|---:|---:|---:|---:|
+| DeepSeek | 5/5 | 3/5 | 3/3 | 1/5 / 4/5 / 1/5 |
+| Zhipu | 4/5 | 1/5 | 1/1 | 3/5 / 4/5 / 3/5 |
+
+Across 10 model-event runs and 30 prediction calls, cutoff-postdating evidence
+was explicitly cited in 9/10 runs and changed direction in 4/10. Removing all
+post-cutoff chunks from the actual Unfiltered top-k restored the corresponding
+Clean direction in all four changed runs. Aggregate outcome accuracy was 4/10
+Clean, 8/10 Unfiltered, and 4/10 Audited; the temporary increase is hindsight
+inflation in this replay, not valid forecasting performance.
+
+This is an outcome-bounded stress test over a constructed candidate feed, not a
+preserved production retrieval trace and not an estimate of real-world leakage
+prevalence. See the
+[five-event replay report](wiki/experiments/natural_pit_5event_results_2026_08_19.md).
+
 ## Implemented vs Planned
 
 | Component | Status |
@@ -129,7 +153,8 @@ and [30-row case table](wiki/experiments/three_model_v4_case_results_2026_07_26.
 | Market-open and trading-calendar alignment | Planned |
 | Original/revision/vendor timestamp handling | Planned |
 | Support/contradiction operator evaluation | Planned |
-| Natural point-in-time candidate corpus and offline lexical retrieval | Implemented; model experiment pending |
+| Natural point-in-time candidate corpus and offline lexical retrieval | Implemented |
+| Natural replay model experiment | Five-event DeepSeek/Zhipu pilot implemented; Qwen and full 10-event run pending |
 
 ## Quick Start
 
@@ -153,6 +178,14 @@ python3 tools/smoke_natural_retrieval.py
 The smoke test uses deterministic visible-text extraction, lexical ranking,
 and parent-source caps. It is an engineering retrieval check, not a natural
 leakage result or a production-search benchmark.
+
+Run the five-event natural replay after exporting a cloud-model key:
+
+```bash
+python3 experiments/run_natural_experiment.py \
+  --model deepseek --minimal --run-name natural_pit_5event_v1
+python3 experiments/analyze_natural_experiment.py
+```
 
 For cloud models, export keys in the shell. Do not commit them:
 

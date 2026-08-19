@@ -24,6 +24,23 @@
 - 离线回归测试增至 31 个，全部通过；本次没有调用任何预测模型。
 - 详细交接：`wiki/experiments/team_completion_handoff_2026_08_19.md`。
 
+## 2026-08-19 — Natural point-in-time replay 最小实验
+
+- 新增 Natural 专用 runner，将 cutoff-safe Clean、outcome-bounded Unfiltered 和
+  timestamp-audited revision 三种条件接入现有 DeepSeek/智谱调用层。
+- Audited 严格从实际 Unfiltered top-k 删除 cutoff 后 chunks，不使用 Clean 输入替换；
+  predictor prompt 不展示证据时间、URL、availability 标签或 outcome。
+- 冻结 5 个异质事件，完成 DeepSeek 与智谱各 5 个事件、共 30 次预测调用，0 errors；
+  本轮未启动本地 Qwen。
+- 10 个 model-event 中，未来证据进入 Unfiltered top-k 10/10，被显式引用 9/10，
+  预测方向改变 4/10；四个改变均在时间过滤后恢复到各自 Clean 方向。
+- Clean/Unfiltered/Audited 准确率分别为 4/10、8/10、4/10。Unfiltered 的暂时提升
+  解释为 outcome-bounded replay 中的 hindsight inflation，不解释为预测能力提升。
+- 新增结果分析器、citation ID 有效性检查、模型/事件明细表、聚合表和 CrowdStrike
+  case study；离线测试增至 38 个。另记录到 2/30 个预测输出共形成 5 个不可解析
+  引用：一处使用了不存在的 chunk 后缀，一处把 chunk ID 缩写成 document ID。
+- 结果页：`wiki/experiments/natural_pit_5event_results_2026_08_19.md`。
+
 ## 2026-08-08 — 标注线与自然数据线交付复核
 
 - 复核标注线提交 `be16042`：79 条 Annotator A 样本结构完整，可保留为单人原始标注；
