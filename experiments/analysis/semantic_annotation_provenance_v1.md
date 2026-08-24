@@ -51,12 +51,21 @@ Current generated artifacts:
 - `semantic_annotation_agreement_v1.json`: 79 aligned pairs;
 - `semantic_annotation_disagreements_v1.csv`: 13 rows with at least one label
   disagreement;
-- `semantic_annotation_adjudication_template_v1.csv`: blank adjudication fields
-  awaiting a third human reviewer.
+- `semantic_annotation_adjudication_template_v1.csv`: 13 human-confirmed
+  adjudication decisions by Lu Ziyang on 2026-08-25, SHA-256
+  `81e9f5647d3113f96041bea54750bcc158c4e3e111ea97ae43cfc25f7d488080`;
+- `semantic_annotation_adjudicated_v1.csv`: 79 consolidated labels generated
+  after adjudication, SHA-256
+  `1a98b66fa9c0760ce27e4dc85a8599d999a76d37c8fef9f70136e19baac41341`.
+
+The consolidated file is technically frozen, but it must not be described as
+publication-ready gold labels until the remaining annotator independence
+attestations above are completed.
 
 ## Sign-off
 
-- Coordinator: pending
-- Second annotator: pending
-- Adjudicator: pending
-- Gold-label freeze date: pending
+- Coordinator: Lu Ziyang (recorded 2026-08-25)
+- Second annotator: Chen Junwei (independence attestation pending)
+- Adjudicator: Lu Ziyang (13 decisions confirmed 2026-08-25)
+- Gold-label freeze date: provisional 2026-08-25; final sign-off pending
+  annotator attestations

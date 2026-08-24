@@ -19,6 +19,9 @@ DEFAULT_DISAGREEMENTS = (
 DEFAULT_ADJUDICATION = (
     ROOT / "experiments" / "analysis" / "semantic_annotation_adjudication_template_v1.csv"
 )
+DEFAULT_ADJUDICATED = (
+    ROOT / "experiments" / "analysis" / "semantic_annotation_adjudicated_v1.csv"
+)
 
 LABEL_FIELDS = {
     "label_semantic_dependency": {"yes", "no", "uncertain"},
@@ -32,6 +35,12 @@ ANNOTATION_FIELDS = [
     "confidence_1_to_5",
     "annotator_id",
     "notes",
+]
+ADJUDICATION_FIELDS = [
+    *(f"adjudicated_{field}" for field in LABEL_FIELDS),
+    "adjudicated_matched_claim_span",
+    "adjudicator_id",
+    "adjudication_notes",
 ]
 PAIR_FIELDS = [
     "forecast_prediction",
@@ -189,6 +198,102 @@ def build_disagreements(
     return rows
 
 
+def preserve_existing_adjudications(
+    generated: list[dict[str, str]], existing: list[dict[str, str]]
+) -> list[dict[str, str]]:
+    if not existing:
+        return [dict(row) for row in generated]
+    preserved = [dict(row) for row in generated]
+    by_id = {row["sample_id"]: row for row in existing}
+    if set(by_id) != {row["sample_id"] for row in preserved}:
+        raise ValueError(
+            "Existing adjudication sample IDs differ from current disagreements"
+        )
+    for row in preserved:
+        old = by_id[row["sample_id"]]
+        for field, value in row.items():
+            if field not in ADJUDICATION_FIELDS and old.get(field) != value:
+                raise ValueError(
+                    f"{row['sample_id']}: existing adjudication source differs in {field}"
+                )
+        for field in ADJUDICATION_FIELDS:
+            row[field] = old.get(field, "")
+    return preserved
+
+
+def adjudications_complete(rows: list[dict[str, str]]) -> bool:
+    return bool(rows) and all(
+        all(
+            row.get(field, "").strip()
+            for field in ADJUDICATION_FIELDS
+            if field != "adjudicated_matched_claim_span"
+        )
+        for row in rows
+    )
+
+
+def validate_adjudications(rows: list[dict[str, str]]) -> None:
+    for row_number, row in enumerate(rows, start=2):
+        sample_id = row.get("sample_id", "").strip()
+        location = f"adjudication:{row_number} ({sample_id or 'missing sample_id'})"
+        for field, allowed in LABEL_FIELDS.items():
+            value = row.get(f"adjudicated_{field}", "").strip().lower()
+            if value not in allowed:
+                raise ValueError(
+                    f"{location}: adjudicated_{field} must be one of {sorted(allowed)}"
+                )
+        span = row.get("adjudicated_matched_claim_span", "").strip()
+        dependency = row["adjudicated_label_semantic_dependency"].strip().lower()
+        if dependency == "yes" and not span:
+            raise ValueError(f"{location}: adjudicated dependency 'yes' requires a span")
+        if span and span not in row["claim_text"]:
+            raise ValueError(f"{location}: adjudicated span is not an exact claim substring")
+        if not row.get("adjudicator_id", "").strip():
+            raise ValueError(f"{location}: adjudicator_id is required")
+        if not row.get("adjudication_notes", "").strip():
+            raise ValueError(f"{location}: adjudication_notes is required")
+
+
+def build_adjudicated_annotations(
+    aligned: list[tuple[dict[str, str], dict[str, str]]],
+    adjudications: list[dict[str, str]],
+) -> list[dict[str, str]]:
+    by_id = {row["sample_id"]: row for row in adjudications}
+    output = []
+    for row_a, row_b in aligned:
+        sample_id = row_a["sample_id"]
+        differs = any(row_a[field] != row_b[field] for field in LABEL_FIELDS)
+        if differs:
+            decision = by_id[sample_id]
+            labels = {
+                field: decision[f"adjudicated_{field}"] for field in LABEL_FIELDS
+            }
+            span = decision["adjudicated_matched_claim_span"]
+            note = (
+                f"Human adjudication by {decision['adjudicator_id']}: "
+                f"{decision['adjudication_notes']}"
+            )
+        else:
+            labels = {field: row_a[field] for field in LABEL_FIELDS}
+            span = row_a["matched_claim_span"]
+            note = "Annotators A and B agreed on all four label fields."
+        output.append(
+            {
+                "sample_id": sample_id,
+                **{field: row_a[field] for field in PAIR_FIELDS},
+                **labels,
+                "matched_claim_span": span,
+                "confidence_1_to_5": str(
+                    min(int(row_a["confidence_1_to_5"]), int(row_b["confidence_1_to_5"]))
+                ),
+                "annotator_id": "gold_adjudicated_v1",
+                "notes": note,
+            }
+        )
+    validate_annotations(output, "adjudicated gold labels")
+    return output
+
+
 def write_csv(path: Path, rows: list[dict[str, str]], fieldnames: list[str]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8", newline="") as handle:
@@ -204,6 +309,7 @@ def main() -> int:
     parser.add_argument("--summary", type=Path, default=DEFAULT_SUMMARY)
     parser.add_argument("--disagreements", type=Path, default=DEFAULT_DISAGREEMENTS)
     parser.add_argument("--adjudication-template", type=Path, default=DEFAULT_ADJUDICATION)
+    parser.add_argument("--adjudicated-output", type=Path, default=DEFAULT_ADJUDICATED)
     args = parser.parse_args()
 
     rows_a = read_csv(args.annotator_a)
@@ -221,6 +327,11 @@ def main() -> int:
     aligned = align_annotations(rows_a, rows_b)
     summary = summarize_agreement(aligned)
     disagreements = build_disagreements(aligned)
+    adjudication_rows = disagreements
+    if args.adjudication_template.exists():
+        adjudication_rows = preserve_existing_adjudications(
+            disagreements, read_csv(args.adjudication_template)
+        )
 
     args.summary.parent.mkdir(parents=True, exist_ok=True)
     args.summary.write_text(
@@ -237,10 +348,21 @@ def main() -> int:
         "adjudication_notes",
     ]
     write_csv(args.disagreements, disagreements, disagreement_fields)
-    write_csv(args.adjudication_template, disagreements, disagreement_fields)
+    write_csv(args.adjudication_template, adjudication_rows, disagreement_fields)
     print(f"wrote {args.summary}")
     print(f"wrote {args.disagreements} ({len(disagreements)} disagreements)")
     print(f"wrote {args.adjudication_template}")
+    if adjudications_complete(adjudication_rows):
+        validate_adjudications(adjudication_rows)
+        adjudicated = build_adjudicated_annotations(aligned, adjudication_rows)
+        write_csv(
+            args.adjudicated_output,
+            adjudicated,
+            ["sample_id", *PAIR_FIELDS, *ANNOTATION_FIELDS],
+        )
+        print(f"wrote {args.adjudicated_output} ({len(adjudicated)} gold labels)")
+    else:
+        print("waiting for complete human adjudication; gold labels were not generated")
     return 0
 
 

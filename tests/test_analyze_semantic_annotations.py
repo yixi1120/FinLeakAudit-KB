@@ -8,9 +8,12 @@ sys.path.insert(0, str(EXPERIMENTS_DIR))
 
 from analyze_semantic_annotations import (  # noqa: E402
     align_annotations,
+    build_adjudicated_annotations,
     build_disagreements,
     cohens_kappa,
+    preserve_existing_adjudications,
     summarize_agreement,
+    validate_adjudications,
     validate_annotations,
 )
 
@@ -72,6 +75,54 @@ class SemanticAnnotationAnalysisTests(unittest.TestCase):
     def test_kappa_for_partial_agreement(self):
         value = cohens_kappa(["yes", "yes", "no", "no"], ["yes", "no", "no", "no"])
         self.assertAlmostEqual(value, 0.5)
+
+    def test_preserves_completed_human_adjudication(self):
+        rows_a = [annotation(dependency="yes", annotator="a")]
+        rows_b = [annotation(dependency="no", annotator="b")]
+        generated = build_disagreements(align_annotations(rows_a, rows_b))
+        existing = [dict(generated[0])]
+        existing[0].update(
+            {
+                "adjudicated_label_semantic_dependency": "no",
+                "adjudicated_label_relation": "irrelevant",
+                "adjudicated_label_exclusive_to_post_cutoff": "no",
+                "adjudicated_label_should_remove": "no",
+                "adjudicated_matched_claim_span": "",
+                "adjudicator_id": "coordinator",
+                "adjudication_notes": "Pre-cutoff evidence is sufficient.",
+            }
+        )
+
+        preserved = preserve_existing_adjudications(generated, existing)
+
+        self.assertEqual(preserved[0]["adjudicator_id"], "coordinator")
+        self.assertEqual(
+            preserved[0]["adjudicated_label_semantic_dependency"], "no"
+        )
+        self.assertEqual(generated[0]["adjudicated_label_semantic_dependency"], "")
+
+    def test_builds_valid_gold_labels_from_adjudication(self):
+        rows_a = [annotation(dependency="yes", annotator="a")]
+        rows_b = [annotation(dependency="no", annotator="b")]
+        aligned = align_annotations(rows_a, rows_b)
+        decisions = build_disagreements(aligned)
+        decisions[0].update(
+            {
+                "adjudicated_label_semantic_dependency": "no",
+                "adjudicated_label_relation": "irrelevant",
+                "adjudicated_label_exclusive_to_post_cutoff": "no",
+                "adjudicated_label_should_remove": "no",
+                "adjudicated_matched_claim_span": "",
+                "adjudicator_id": "coordinator",
+                "adjudication_notes": "Pre-cutoff evidence is sufficient.",
+            }
+        )
+
+        validate_adjudications(decisions)
+        gold = build_adjudicated_annotations(aligned, decisions)
+
+        self.assertEqual(gold[0]["label_semantic_dependency"], "no")
+        self.assertEqual(gold[0]["annotator_id"], "gold_adjudicated_v1")
 
 
 if __name__ == "__main__":

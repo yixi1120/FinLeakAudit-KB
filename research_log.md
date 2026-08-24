@@ -184,6 +184,18 @@
   - Time-Safe 成为最后的护城河
   - 建议从 "Verified" 改为 "Evidence-Grounded" 或 "Time-Constrained"
 
+## 2026-08-25 — Semantic Attribution 双人标注与第三方裁决
+
+- Annotator A 与 Annotator B 分别完成同一批 79 条 claim-evidence pairs。
+- 三分类 semantic dependency 一致率为 77/79（97.5%），Cohen's kappa 为
+  0.952；`yes` 对 `other` 的二分类判断为 79/79 一致。
+- 13 条至少存在一个字段分歧，由协调者 Lu Ziyang 于 2026-08-25 确认裁决，生成
+  `semantic_annotation_adjudicated_v1.csv` 共 79 条 consolidated labels。
+- 分析脚本已加入人工裁决保护：重跑时保留已有裁决，并在裁决完整后自动生成整合
+  标签，避免覆盖人工结果。
+- 当前仍待两位标注者完成独立盲标声明；完成前不得将 consolidated labels 描述为
+  publication-ready gold labels。
+
 ---
 
 ## 待办
