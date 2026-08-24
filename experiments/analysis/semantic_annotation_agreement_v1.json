@@ -1,0 +1,70 @@
+{
+  "n_pairs": 79,
+  "field_metrics": {
+    "label_semantic_dependency": {
+      "agreement_count": 77,
+      "agreement_rate": 0.9746835443037974,
+      "cohens_kappa": 0.9515634580012262,
+      "annotator_a_distribution": {
+        "no": 35,
+        "uncertain": 3,
+        "yes": 41
+      },
+      "annotator_b_distribution": {
+        "no": 37,
+        "uncertain": 1,
+        "yes": 41
+      }
+    },
+    "label_relation": {
+      "agreement_count": 69,
+      "agreement_rate": 0.8734177215189873,
+      "cohens_kappa": 0.6831127156036904,
+      "annotator_a_distribution": {
+        "contradict": 7,
+        "irrelevant": 14,
+        "support": 58
+      },
+      "annotator_b_distribution": {
+        "contradict": 6,
+        "irrelevant": 12,
+        "support": 61
+      }
+    },
+    "label_exclusive_to_post_cutoff": {
+      "agreement_count": 78,
+      "agreement_rate": 0.9873417721518988,
+      "cohens_kappa": 0.9749524413443249,
+      "annotator_a_distribution": {
+        "no": 38,
+        "yes": 41
+      },
+      "annotator_b_distribution": {
+        "no": 37,
+        "uncertain": 1,
+        "yes": 41
+      }
+    },
+    "label_should_remove": {
+      "agreement_count": 77,
+      "agreement_rate": 0.9746835443037974,
+      "cohens_kappa": 0.9515634580012262,
+      "annotator_a_distribution": {
+        "no": 35,
+        "uncertain": 3,
+        "yes": 41
+      },
+      "annotator_b_distribution": {
+        "no": 37,
+        "uncertain": 1,
+        "yes": 41
+      }
+    }
+  },
+  "semantic_dependency_yes_vs_other": {
+    "agreement_count": 79,
+    "agreement_rate": 1.0,
+    "cohens_kappa": 1.0
+  },
+  "semantic_dependency_disagreement_count": 2
+}
