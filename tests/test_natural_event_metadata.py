@@ -81,6 +81,91 @@ class NaturalEventMetadataTests(unittest.TestCase):
                         (manifest["event_id"], document["document_id"]), selected
                     )
 
+    def test_completed_second_verification_is_valid(self):
+        with (DATA / "natural_second_verification_batch_v1.csv").open(
+            encoding="utf-8", newline=""
+        ) as handle:
+            rows = list(csv.DictReader(handle))
+        self.assertEqual(len(rows), 139)
+        allowed = {
+            "url_content_match": {"yes", "no", "uncertain"},
+            "timestamp_evidence_match": {"yes", "no", "uncertain"},
+            "archive_hash_match": {"yes", "no"},
+            "decision": {"accept", "reject", "needs_adjudication"},
+        }
+        review_fields = [
+            "second_verifier_id",
+            *allowed,
+            "verification_notes",
+            "verified_at",
+        ]
+        for row in rows:
+            self.assertTrue(all(row[field].strip() for field in review_fields))
+            for field, values in allowed.items():
+                self.assertIn(row[field], values)
+            datetime.fromisoformat(row["verified_at"])
+            if row["decision"] == "accept":
+                self.assertEqual(
+                    (
+                        row["url_content_match"],
+                        row["timestamp_evidence_match"],
+                        row["archive_hash_match"],
+                    ),
+                    ("yes", "yes", "yes"),
+                )
+
+    def test_second_verification_exceptions_are_adjudicated(self):
+        with (DATA / "natural_second_verification_batch_v1.csv").open(
+            encoding="utf-8", newline=""
+        ) as handle:
+            verification = list(csv.DictReader(handle))
+        expected = {
+            row["document_id"]
+            for row in verification
+            if row["decision"] in {"reject", "needs_adjudication"}
+        }
+        with (DATA / "natural_second_verification_adjudication_v1.csv").open(
+            encoding="utf-8", newline=""
+        ) as handle:
+            adjudication = list(csv.DictReader(handle))
+        self.assertEqual({row["document_id"] for row in adjudication}, expected)
+        self.assertTrue(
+            all(
+                row["coordinator_decision"].strip()
+                and row["metadata_action"].strip()
+                and row["rationale"].strip()
+                and row["adjudicator_id"].strip()
+                and row["adjudicated_at"].strip()
+                for row in adjudication
+            )
+        )
+
+    def test_crowdstrike_second_verifier_correction_and_blocks(self):
+        manifest = json.loads(
+            (DATA / "natural_001.json").read_text(encoding="utf-8")
+        )
+        tech_alert = next(
+            row
+            for row in manifest["documents"]
+            if row["document_id"] == "natural_001_doc_011"
+        )
+        self.assertEqual(tech_alert["available_at"], "2024-07-19T05:30:00+00:00")
+        self.assertEqual(tech_alert["revised_at"], "2024-07-19T09:45:00+00:00")
+        with (DATA / "natural_001_retrieval_units_v1.csv").open(
+            encoding="utf-8", newline=""
+        ) as handle:
+            units = {row["retrieval_unit_id"]: row for row in csv.DictReader(handle)}
+        for unit_id in (
+            "natural_001_doc_016_body_v1",
+            "natural_001_doc_018_body_v1",
+            "natural_001_doc_019_body_v1",
+            "natural_001_doc_020_body_v1",
+        ):
+            self.assertEqual(
+                units[unit_id]["ingest_status"],
+                "blocked_historical_snapshot_required",
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

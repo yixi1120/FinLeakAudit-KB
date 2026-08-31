@@ -430,9 +430,9 @@
       "archive_path": "raw/natural_010/natural_010_doc_019.pdf",
       "content_sha256": "1f367bbfb8edf764c35e50d3839365b6831c0b8436f13c8626c09a7f55ac5491",
       "license_or_use_note": "Public primary-source document retained as a research snapshot.",
-      "source_verification_status": "verified_primary_source",
-      "verified_by": "engineering_line_source_completion_2026-08-19",
-      "verification_note": "Missing event body added from the primary-source filing package. No relevance score or top-k position was assigned during collection."
+      "source_verification_status": "second_verifier_date_only_bound",
+      "verified_by": "verifier_b_and_coordinator_2026-08-31",
+      "verification_note": "The DOJ page proves publication on 2024-01-16 but not an exact time. 23:59:59 America/New_York is retained only as a conservative date-level upper bound; the entire date remains post-cutoff."
     }
   ],
   "outcome_time": "2024-01-17T16:00:00-05:00",

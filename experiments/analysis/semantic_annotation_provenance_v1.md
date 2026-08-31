@@ -14,11 +14,11 @@ or gold labels are reported. It is intentionally not a completion certificate.
 ## Independence checklist
 
 - [x] Annotator A and annotator B are two different people.
-- [ ] Both received the blind batch, not the coordinator key.
-- [ ] Neither viewed model identity, case identity, Clean/Audited predictions,
+- [x] Both received the blind batch, not the coordinator key.
+- [x] Neither viewed model identity, case identity, Clean/Audited predictions,
       outcome labels, automatic audit output, or leave-one-out results.
-- [ ] They did not discuss individual samples before both files were frozen.
-- [ ] Each annotator used a distinct, truthful `annotator_id` on all 79 rows.
+- [x] They did not discuss individual samples before both files were frozen.
+- [x] Each annotator used a distinct, truthful `annotator_id` on all 79 rows.
 - [x] The coordinator recorded the file hashes and repository freeze times below.
 
 | Artifact | Human owner | Frozen at (ISO 8601) | SHA-256 |
@@ -29,8 +29,10 @@ or gold labels are reported. It is intentionally not a completion certificate.
 The current canonical files were frozen in commits `b452085` and `ab12c2a`.
 Annotator A's labels originated in `be16042` and were refined in `57ad722`;
 `b452085` normalized four exact claim spans without changing the four label
-fields. Human independence attestations remain pending and must not be inferred
-from Git metadata.
+fields. Both annotators confirmed the remaining independence conditions to the
+coordinator in writing via WeChat; Lu Ziyang recorded those confirmations on
+2026-08-31. The attestations are coordinator-reported and are not inferred from
+Git metadata.
 
 ## Agreement and adjudication
 
@@ -58,14 +60,15 @@ Current generated artifacts:
   after adjudication, SHA-256
   `1a98b66fa9c0760ce27e4dc85a8599d999a76d37c8fef9f70136e19baac41341`.
 
-The consolidated file is technically frozen, but it must not be described as
-publication-ready gold labels until the remaining annotator independence
-attestations above are completed.
+The consolidated file is frozen as the publication-ready gold-label set after
+the coordinator recorded both annotators' written independence confirmations.
 
 ## Sign-off
 
-- Coordinator: Lu Ziyang (recorded 2026-08-25)
-- Second annotator: Chen Junwei (independence attestation pending)
+- Coordinator: Lu Ziyang (final record completed 2026-08-31)
+- Annotator A: Zhang Yating (written independence confirmation recorded
+  2026-08-31)
+- Annotator B: Chen Junwei (written independence confirmation recorded
+  2026-08-31)
 - Adjudicator: Lu Ziyang (13 decisions confirmed 2026-08-25)
-- Gold-label freeze date: provisional 2026-08-25; final sign-off pending
-  annotator attestations
+- Gold-label freeze date: 2026-08-31

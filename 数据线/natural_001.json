@@ -238,14 +238,14 @@
     {
       "document_id": "natural_001_doc_011",
       "title": "Tech Alert | Windows crashes related to Falcon Sensor",
-      "text": "Tech Alert | Windows crashes related to Falcon Sensor | 2024-07-19. Published: 2024-07-19 09:45 AM UTC.",
+      "text": "Tech Alert | Windows crashes related to Falcon Sensor | 2024-07-19. Published: 2024-07-19 05:30 AM UTC. Updated: 2024-07-19 09:45 AM UTC.",
       "text_status": "verbatim_or_source_grounded_extract",
       "source_url": "https://www.crowdstrike.com/wp-content/uploads/2024/07/Tech-Alert-Windows-crashes-related-to-Falcon-Sensor-2024-07-19.pdf",
       "canonical_url": "https://www.crowdstrike.com/wp-content/uploads/2024/07/Tech-Alert-Windows-crashes-related-to-Falcon-Sensor-2024-07-19.pdf",
       "source_type": "company_technical_alert",
-      "original_published_at": "2024-07-19T09:45:00+00:00",
-      "available_at": "2024-07-19T09:45:00+00:00",
-      "revised_at": null,
+      "original_published_at": "2024-07-19T05:30:00+00:00",
+      "available_at": "2024-07-19T05:30:00+00:00",
+      "revised_at": "2024-07-19T09:45:00+00:00",
       "vendor_indexed_at": null,
       "timestamp_timezone_basis": "Timestamp printed in the original CrowdStrike PDF in UTC.",
       "timestamp_source_url": "https://www.crowdstrike.com/wp-content/uploads/2024/07/Tech-Alert-Windows-crashes-related-to-Falcon-Sensor-2024-07-19.pdf",
@@ -253,9 +253,9 @@
       "archive_path": "raw/natural_001/natural_001_doc_011.pdf",
       "content_sha256": "5d4cfac4aa2d8b5a002f6359f6a612824b30768d0a2f2c8a2174dc2364afa6eb",
       "license_or_use_note": "Copyrighted/public web source; no open-content license verified. Retained only as a research snapshot and not for redistribution.",
-      "source_verification_status": "verified",
-      "verified_by": "data_line_initial_verification_2026-08-07",
-      "verification_note": "Post-cutoff, before outcome_time. Primary PDF snapshot downloaded. vendor_indexed_at is null because no third-party vendor copy or vendor-index timestamp was used."
+      "source_verification_status": "second_verifier_corrected",
+      "verified_by": "verifier_b_and_coordinator_2026-08-31",
+      "verification_note": "Post-cutoff, before outcome_time. The primary PDF revision log identifies 05:30 UTC as Tech Alert Published and 09:45 UTC as Updated. The correction does not change temporal class membership."
     },
     {
       "document_id": "natural_001_doc_012",

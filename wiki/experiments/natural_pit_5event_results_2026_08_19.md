@@ -43,14 +43,25 @@ direction:
 - The five events were selected for heterogeneity, not sampled from production traffic.
 - The unfiltered condition is deliberately bounded by outcome time and therefore serves
   as a point-in-time replay stress test.
-- Explicit citation is not complete semantic attribution; Annotator B and adjudication
-  remain pending.
+- Explicit citation is not complete semantic attribution; the separate 79-pair semantic
+  attribution set completed dual annotation and coordinator adjudication on 2026-08-31.
 - Two outputs contained invalid evidence IDs, so citation validity must be checked
   rather than assumed.
 - Timestamp filtering is a strong deterministic baseline, not the complete planned
   FinLeakAudit semantic operator stack.
 - Ten model-event observations are adequate for an RA portfolio pilot, not a paper-level
   general claim.
+
+# Post-run source-verification amendment
+
+Independent verification completed on 2026-08-31 for 139 sampled source records:
+133 were accepted, one timestamp was rejected, and five required coordinator
+adjudication. `natural_001_doc_011` was corrected from 09:45 UTC to 05:30 UTC as
+its first publication time; 09:45 UTC is the update time. Both timestamps are
+post-cutoff and before the outcome bound, so Clean/Unfiltered/Audited membership,
+retrieved text, model inputs, and the reported pilot metrics are unchanged. Four
+date-only CrowdStrike pages remain blocked, and the JetBlue court document retains
+an explicitly labeled date-only conservative upper bound.
 
 # Reproduce
 

@@ -184,6 +184,18 @@
   - Time-Safe 成为最后的护城河
   - 建议从 "Verified" 改为 "Evidence-Grounded" 或 "Time-Constrained"
 
+## 2026-08-31 — 双线交叉核验完成
+
+- 协调者记录 Zhang Yating 与 Chen Junwei 通过微信提交的书面盲标独立性确认，79 条
+  consolidated labels 正式冻结为 gold-label set。
+- Natural corpus 第二核验完成 139 条：133 accept、1 reject、5
+  needs_adjudication；139/139 本地归档 SHA-256 匹配，原始十列零改动。
+- `natural_001_doc_011` 的首次发布时间由 09:45 UTC 修正为 05:30 UTC，09:45 UTC
+  记录为更新时间；两个时间均为 cutoff 后，实验条件和既有指标不变。
+- 四个无法证明精确首次可用时间的 CrowdStrike 页面继续 blocked；JetBlue 法院文件
+  保留日期级保守上界并明确不作为精确时间。
+- 完成记录：`wiki/experiments/team_verification_completion_2026_08_31.md`。
+
 ## 2026-08-25 — Semantic Attribution 双人标注与第三方裁决
 
 - Annotator A 与 Annotator B 分别完成同一批 79 条 claim-evidence pairs。
@@ -193,8 +205,8 @@
   `semantic_annotation_adjudicated_v1.csv` 共 79 条 consolidated labels。
 - 分析脚本已加入人工裁决保护：重跑时保留已有裁决，并在裁决完整后自动生成整合
   标签，避免覆盖人工结果。
-- 当前仍待两位标注者完成独立盲标声明；完成前不得将 consolidated labels 描述为
-  publication-ready gold labels。
+- 两位标注者的独立盲标声明已由协调者于 2026-08-31 记录，consolidated labels
+  正式冻结为 publication-ready gold labels。
 
 ---
 
