@@ -1,0 +1,510 @@
+{
+  "by_model": {
+    "deepseek": {
+      "citation_only": {
+        "accuracy": 0.96875,
+        "accuracy_wilson_95": [
+          0.8425573603233156,
+          0.9944621398972968
+        ],
+        "evaluated": 32,
+        "excluded_uncertain": 0,
+        "f1": 0.9714285714285714,
+        "fn": 1,
+        "fp": 0,
+        "precision": 1.0,
+        "precision_wilson_95": [
+          0.8156818626193444,
+          1.0
+        ],
+        "recall": 0.9444444444444444,
+        "recall_wilson_95": [
+          0.7424269900391908,
+          0.9901248091312229
+        ],
+        "specificity": 1.0,
+        "tn": 14,
+        "tp": 17
+      },
+      "embedding_similarity": {
+        "accuracy": 0.71875,
+        "accuracy_wilson_95": [
+          0.5462549043349592,
+          0.8443541957679932
+        ],
+        "evaluated": 32,
+        "excluded_uncertain": 0,
+        "f1": 0.6666666666666666,
+        "fn": 9,
+        "fp": 0,
+        "precision": 1.0,
+        "precision_wilson_95": [
+          0.700854948272956,
+          1.0
+        ],
+        "recall": 0.5,
+        "recall_wilson_95": [
+          0.2903102136885988,
+          0.7096897863114012
+        ],
+        "specificity": 1.0,
+        "tn": 14,
+        "tp": 9
+      },
+      "lexical_overlap": {
+        "accuracy": 0.78125,
+        "accuracy_wilson_95": [
+          0.6124500620603573,
+          0.8897616380720099
+        ],
+        "evaluated": 32,
+        "excluded_uncertain": 0,
+        "f1": 0.7586206896551725,
+        "fn": 7,
+        "fp": 0,
+        "precision": 1.0,
+        "precision_wilson_95": [
+          0.7411670300055737,
+          1.0
+        ],
+        "recall": 0.6111111111111112,
+        "recall_wilson_95": [
+          0.3861904144211462,
+          0.7969475353714573
+        ],
+        "specificity": 1.0,
+        "tn": 14,
+        "tp": 11
+      },
+      "llm_judge": {
+        "accuracy": 0.9375,
+        "accuracy_wilson_95": [
+          0.7985287670813637,
+          0.982689433124541
+        ],
+        "evaluated": 32,
+        "excluded_uncertain": 0,
+        "f1": 0.9411764705882353,
+        "fn": 2,
+        "fp": 0,
+        "precision": 1.0,
+        "precision_wilson_95": [
+          0.8063923170025952,
+          1.0
+        ],
+        "recall": 0.8888888888888888,
+        "recall_wilson_95": [
+          0.6720023466389031,
+          0.9689804776352089
+        ],
+        "specificity": 1.0,
+        "tn": 14,
+        "tp": 16
+      }
+    },
+    "qwen": {
+      "citation_only": {
+        "accuracy": 0.875,
+        "accuracy_wilson_95": [
+          0.6397717251782153,
+          0.965022512573731
+        ],
+        "evaluated": 16,
+        "excluded_uncertain": 0,
+        "f1": 0.9,
+        "fn": 0,
+        "fp": 2,
+        "precision": 0.8181818181818182,
+        "precision_wilson_95": [
+          0.5230194356457672,
+          0.9486323107214163
+        ],
+        "recall": 1.0,
+        "recall_wilson_95": [
+          0.700854948272956,
+          1.0
+        ],
+        "specificity": 0.7142857142857143,
+        "tn": 5,
+        "tp": 9
+      },
+      "embedding_similarity": {
+        "accuracy": 0.5,
+        "accuracy_wilson_95": [
+          0.27999563470387406,
+          0.7200043652961259
+        ],
+        "evaluated": 16,
+        "excluded_uncertain": 0,
+        "f1": 0.19999999999999998,
+        "fn": 8,
+        "fp": 0,
+        "precision": 1.0,
+        "precision_wilson_95": [
+          0.20654931179180275,
+          1.0
+        ],
+        "recall": 0.1111111111111111,
+        "recall_wilson_95": [
+          0.019890887416909923,
+          0.4349997083707909
+        ],
+        "specificity": 1.0,
+        "tn": 7,
+        "tp": 1
+      },
+      "lexical_overlap": {
+        "accuracy": 0.4375,
+        "accuracy_wilson_95": [
+          0.2309865228140567,
+          0.6682144375606189
+        ],
+        "evaluated": 16,
+        "excluded_uncertain": 0,
+        "f1": 0.1818181818181818,
+        "fn": 8,
+        "fp": 1,
+        "precision": 0.5,
+        "precision_wilson_95": [
+          0.09453120463920085,
+          0.9054687953607992
+        ],
+        "recall": 0.1111111111111111,
+        "recall_wilson_95": [
+          0.019890887416909923,
+          0.4349997083707909
+        ],
+        "specificity": 0.8571428571428571,
+        "tn": 6,
+        "tp": 1
+      },
+      "llm_judge": {
+        "accuracy": 1.0,
+        "accuracy_wilson_95": [
+          0.8063923170025952,
+          1.0
+        ],
+        "evaluated": 16,
+        "excluded_uncertain": 0,
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "precision_wilson_95": [
+          0.700854948272956,
+          1.0
+        ],
+        "recall": 1.0,
+        "recall_wilson_95": [
+          0.700854948272956,
+          1.0
+        ],
+        "specificity": 1.0,
+        "tn": 7,
+        "tp": 9
+      }
+    },
+    "zhipu": {
+      "citation_only": {
+        "accuracy": 0.9333333333333333,
+        "accuracy_wilson_95": [
+          0.7867654148312584,
+          0.9815229763754831
+        ],
+        "evaluated": 30,
+        "excluded_uncertain": 1,
+        "f1": 0.9333333333333333,
+        "fn": 0,
+        "fp": 2,
+        "precision": 0.875,
+        "precision_wilson_95": [
+          0.6397717251782153,
+          0.965022512573731
+        ],
+        "recall": 1.0,
+        "recall_wilson_95": [
+          0.7846891945970195,
+          0.9999999999999998
+        ],
+        "specificity": 0.875,
+        "tn": 14,
+        "tp": 14
+      },
+      "embedding_similarity": {
+        "accuracy": 0.6666666666666666,
+        "accuracy_wilson_95": [
+          0.4878005150467802,
+          0.8076950200327357
+        ],
+        "evaluated": 30,
+        "excluded_uncertain": 1,
+        "f1": 0.4444444444444445,
+        "fn": 10,
+        "fp": 0,
+        "precision": 1.0,
+        "precision_wilson_95": [
+          0.5101091596030786,
+          0.9999999999999999
+        ],
+        "recall": 0.2857142857142857,
+        "recall_wilson_95": [
+          0.11721378562701742,
+          0.5464908452599742
+        ],
+        "specificity": 1.0,
+        "tn": 16,
+        "tp": 4
+      },
+      "lexical_overlap": {
+        "accuracy": 0.8333333333333334,
+        "accuracy_wilson_95": [
+          0.6643564934133499,
+          0.9266345767456822
+        ],
+        "evaluated": 30,
+        "excluded_uncertain": 1,
+        "f1": 0.782608695652174,
+        "fn": 5,
+        "fp": 0,
+        "precision": 1.0,
+        "precision_wilson_95": [
+          0.700854948272956,
+          1.0
+        ],
+        "recall": 0.6428571428571429,
+        "recall_wilson_95": [
+          0.3876442292429552,
+          0.8365526834990504
+        ],
+        "specificity": 1.0,
+        "tn": 16,
+        "tp": 9
+      },
+      "llm_judge": {
+        "accuracy": 0.9,
+        "accuracy_wilson_95": [
+          0.7437891726682572,
+          0.9654001115225813
+        ],
+        "evaluated": 30,
+        "excluded_uncertain": 1,
+        "f1": 0.888888888888889,
+        "fn": 2,
+        "fp": 1,
+        "precision": 0.9230769230769231,
+        "precision_wilson_95": [
+          0.6668604882863951,
+          0.986289578909774
+        ],
+        "recall": 0.8571428571428571,
+        "recall_wilson_95": [
+          0.6005862027626628,
+          0.959906079092351
+        ],
+        "specificity": 0.9375,
+        "tn": 15,
+        "tp": 12
+      }
+    }
+  },
+  "error_sample_ids": {
+    "citation_only": {
+      "false_negative": [
+        "semantic_v1_074"
+      ],
+      "false_positive": [
+        "semantic_v1_009",
+        "semantic_v1_017",
+        "semantic_v1_057",
+        "semantic_v1_073"
+      ]
+    },
+    "embedding_similarity": {
+      "false_negative": [
+        "semantic_v1_001",
+        "semantic_v1_003",
+        "semantic_v1_008",
+        "semantic_v1_011",
+        "semantic_v1_014",
+        "semantic_v1_015",
+        "semantic_v1_020",
+        "semantic_v1_021",
+        "semantic_v1_025",
+        "semantic_v1_028",
+        "semantic_v1_029",
+        "semantic_v1_035",
+        "semantic_v1_039",
+        "semantic_v1_040",
+        "semantic_v1_045",
+        "semantic_v1_047",
+        "semantic_v1_048",
+        "semantic_v1_050",
+        "semantic_v1_054",
+        "semantic_v1_055",
+        "semantic_v1_056",
+        "semantic_v1_060",
+        "semantic_v1_065",
+        "semantic_v1_068",
+        "semantic_v1_074",
+        "semantic_v1_078",
+        "semantic_v1_079"
+      ],
+      "false_positive": []
+    },
+    "lexical_overlap": {
+      "false_negative": [
+        "semantic_v1_003",
+        "semantic_v1_004",
+        "semantic_v1_008",
+        "semantic_v1_014",
+        "semantic_v1_015",
+        "semantic_v1_021",
+        "semantic_v1_023",
+        "semantic_v1_027",
+        "semantic_v1_028",
+        "semantic_v1_035",
+        "semantic_v1_039",
+        "semantic_v1_048",
+        "semantic_v1_055",
+        "semantic_v1_056",
+        "semantic_v1_060",
+        "semantic_v1_065",
+        "semantic_v1_067",
+        "semantic_v1_070",
+        "semantic_v1_074",
+        "semantic_v1_079"
+      ],
+      "false_positive": [
+        "semantic_v1_073"
+      ]
+    },
+    "llm_judge": {
+      "false_negative": [
+        "semantic_v1_039",
+        "semantic_v1_048",
+        "semantic_v1_055",
+        "semantic_v1_074"
+      ],
+      "false_positive": [
+        "semantic_v1_077"
+      ]
+    }
+  },
+  "gold_distribution": {
+    "no": 37,
+    "uncertain": 1,
+    "yes": 41
+  },
+  "gold_uncertain_policy": "exclude from binary metrics",
+  "lexical_parameters": {
+    "margin_threshold": 0.08,
+    "selection": "pre-specified defaults; not tuned on gold labels",
+    "threshold": 0.35
+  },
+  "overall": {
+    "citation_only": {
+      "accuracy": 0.9358974358974359,
+      "accuracy_wilson_95": [
+        0.8585640445777796,
+        0.9723106848014726
+      ],
+      "evaluated": 78,
+      "excluded_uncertain": 1,
+      "f1": 0.9411764705882352,
+      "fn": 1,
+      "fp": 4,
+      "precision": 0.9090909090909091,
+      "precision_wilson_95": [
+        0.7884076071311003,
+        0.9640778070224068
+      ],
+      "recall": 0.975609756097561,
+      "recall_wilson_95": [
+        0.8740493782190663,
+        0.9956814684788643
+      ],
+      "specificity": 0.8918918918918919,
+      "tn": 33,
+      "tp": 40
+    },
+    "embedding_similarity": {
+      "accuracy": 0.6538461538461539,
+      "accuracy_wilson_95": [
+        0.5433019428779368,
+        0.7499479616088581
+      ],
+      "evaluated": 78,
+      "excluded_uncertain": 1,
+      "f1": 0.5090909090909091,
+      "fn": 27,
+      "fp": 0,
+      "precision": 1.0,
+      "precision_wilson_95": [
+        0.7846891945970195,
+        0.9999999999999998
+      ],
+      "recall": 0.34146341463414637,
+      "recall_wilson_95": [
+        0.21558808175443028,
+        0.4945016360129264
+      ],
+      "specificity": 1.0,
+      "tn": 37,
+      "tp": 14
+    },
+    "lexical_overlap": {
+      "accuracy": 0.7307692307692307,
+      "accuracy_wilson_95": [
+        0.6232309971458905,
+        0.8166438595843016
+      ],
+      "evaluated": 78,
+      "excluded_uncertain": 1,
+      "f1": 0.6666666666666667,
+      "fn": 20,
+      "fp": 1,
+      "precision": 0.9545454545454546,
+      "precision_wilson_95": [
+        0.7820195397089796,
+        0.991930572468161
+      ],
+      "recall": 0.5121951219512195,
+      "recall_wilson_95": [
+        0.3648450854451408,
+        0.6574557054958318
+      ],
+      "specificity": 0.972972972972973,
+      "tn": 36,
+      "tp": 21
+    },
+    "llm_judge": {
+      "accuracy": 0.9358974358974359,
+      "accuracy_wilson_95": [
+        0.8585640445777796,
+        0.9723106848014726
+      ],
+      "evaluated": 78,
+      "excluded_uncertain": 1,
+      "f1": 0.9367088607594938,
+      "fn": 4,
+      "fp": 1,
+      "precision": 0.9736842105263158,
+      "precision_wilson_95": [
+        0.8650512375427469,
+        0.9953394123657999
+      ],
+      "recall": 0.9024390243902439,
+      "recall_wilson_95": [
+        0.774523185681833,
+        0.9614029153702622
+      ],
+      "specificity": 0.972972972972973,
+      "tn": 36,
+      "tp": 37
+    }
+  },
+  "prediction_policy": "yes is positive; no/uncertain are other",
+  "sample_count": 79,
+  "schema_version": "finleakaudit_semantic_baselines_v1",
+  "task": "binary claim-to-post-cutoff-evidence semantic dependency"
+}

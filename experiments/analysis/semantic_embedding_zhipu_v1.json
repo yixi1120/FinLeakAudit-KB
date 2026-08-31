@@ -1,0 +1,12 @@
+{
+  "dimensions": 512,
+  "margin_threshold": 0.03,
+  "model": "embedding-3",
+  "provider": "zhipu",
+  "sample_count": 79,
+  "schema_version": "finleakaudit_semantic_embedding_v1",
+  "selection": "pre-specified defaults; not tuned on gold labels",
+  "threshold": 0.65,
+  "total_tokens": 3852,
+  "unique_text_count": 119
+}

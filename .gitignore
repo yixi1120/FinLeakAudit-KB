@@ -33,6 +33,9 @@ experiments/results/*.csv
 experiments/analysis/semantic_annotation_key_*.csv
 experiments/analysis/semantic_annotations_annotator_*.csv
 
+# The v1 coordinator key is publishable after the gold labels were frozen.
+!experiments/analysis/semantic_annotation_key_v1.csv
+
 # Secrets
 .env
 *.key

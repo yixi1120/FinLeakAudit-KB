@@ -196,6 +196,19 @@
   保留日期级保守上界并明确不作为精确时间。
 - 完成记录：`wiki/experiments/team_verification_completion_2026_08_31.md`。
 
+## 2026-08-31 — Semantic attribution baselines 完成
+
+- 在冻结的 79 条人工 gold labels 上完成 citation-only、lexical overlap、
+  Embedding-3 similarity 和 blinded DeepSeek judge 四种基线。
+- 二分类评测排除 1 条 gold `uncertain`：citation-only F1 0.941、LLM judge
+  F1 0.937、lexical F1 0.667、embedding F1 0.509。
+- citation-only 出现 4 个 false positives 和 1 个 citation-free false
+  negative，说明显式引用不能等同于 semantic dependency；但当前 controlled
+  sample 仍使 citation-only 成为最强基线，不能宣称 Full FinLeakAudit 已胜出。
+- 新增可复现 runner、统一 evaluator、逐样本输出、Wilson 95% 区间和离线测试；
+  完整报告见
+  `wiki/experiments/semantic_attribution_baselines_2026_08_31.md`。
+
 ## 2026-08-25 — Semantic Attribution 双人标注与第三方裁决
 
 - Annotator A 与 Annotator B 分别完成同一批 79 条 claim-evidence pairs。

@@ -136,15 +136,27 @@ Prepare the blinded claim-evidence annotation batch and coordinator key:
 python3 experiments/prepare_semantic_annotations.py
 ```
 
-Run the provisional lexical attribution baseline without model calls:
+After the dual annotations and adjudication are frozen, run the reproducible
+citation-only and lexical attribution comparison without model calls:
 
 ```bash
-python3 experiments/lexical_attribution_baseline.py
+python3 experiments/evaluate_semantic_baselines.py
 ```
 
-The lexical baseline does not establish semantic dependence. Precision,
-recall, and F1 are computed only after two independent annotators complete and
-adjudicate the semantic labels.
+To reproduce the API-based semantic baselines, first generate their blinded
+predictions and then include them in the evaluator:
+
+```bash
+python3 experiments/run_semantic_embedding_baseline.py
+python3 experiments/run_semantic_llm_judge.py --model deepseek
+python3 experiments/evaluate_semantic_baselines.py \
+  --llm-judge experiments/analysis/semantic_llm_judge_deepseek_v1.jsonl \
+  --embedding experiments/analysis/semantic_embedding_zhipu_v1.csv
+```
+
+The embedding and LLM scripts never receive the gold-label file. The evaluator
+joins predictions to frozen gold only after inference. Thresholds are declared
+in the output metadata and were not tuned on the 79 labels.
 
 ## Run Offline Logic Tests
 

@@ -113,6 +113,23 @@ See the [baseline report](wiki/experiments/baseline_comparison_v4_2026_07_26.md)
 [policy summary](wiki/experiments/three_model_v4_baseline_summary_2026_07_26.csv),
 and [30-row case table](wiki/experiments/three_model_v4_case_results_2026_07_26.csv).
 
+The separately frozen 79-pair human annotation set also supports a binary
+claim-evidence attribution comparison (78 decisive gold labels; one uncertain
+label excluded):
+
+| Attribution baseline | Precision | Recall | F1 |
+|---|---:|---:|---:|
+| Citation-only | 90.9% | 97.6% | 94.1% |
+| Lexical overlap | 95.5% | 51.2% | 66.7% |
+| Embedding similarity | 100.0% | 34.1% | 50.9% |
+| DeepSeek blind LLM judge | 97.4% | 90.2% | 93.7% |
+
+Citation-only was strongest on this controlled sample, but produced four false
+positives and one false negative. These results establish neither generalization
+nor a Full FinLeakAudit advantage; they identify the hard-negative and
+citation-free cases needed in the next dataset expansion. See the
+[semantic baseline report](wiki/experiments/semantic_attribution_baselines_2026_08_31.md).
+
 ## Natural Point-in-Time Replay Pilot
 
 A separate five-event pilot uses frozen queries and directly archived primary-source
@@ -148,8 +165,9 @@ prevalence. See the
 | Leave-one-out marginal sensitivity | Implemented |
 | Three-model runner, retries, resume, and non-overwriting names | Implemented |
 | Logic, metric, and v4 data validation tests | Implemented |
-| Lexical claim-evidence attribution proxy | Implemented; Annotator B and adjudication pending |
-| Citation-free semantic attribution | Planned |
+| Dual human semantic attribution and adjudication | Implemented for 79 claim-evidence pairs |
+| Citation, lexical, embedding, and blind LLM-judge attribution baselines | Implemented |
+| Citation-free semantic audit operator in the revision pipeline | Planned |
 | Market-open and trading-calendar alignment | Planned |
 | Original/revision/vendor timestamp handling | Planned |
 | Support/contradiction operator evaluation | Planned |
@@ -221,6 +239,10 @@ python3 experiments/analyze.py \
   --group-by dataset_tier
 
 python3 experiments/analyze_baselines.py
+
+python3 experiments/evaluate_semantic_baselines.py \
+  --llm-judge experiments/analysis/semantic_llm_judge_deepseek_v1.jsonl \
+  --embedding experiments/analysis/semantic_embedding_zhipu_v1.csv
 ```
 
 Generated raw JSONL and CSV files under `experiments/results/` are ignored by
@@ -282,8 +304,9 @@ Start with:
 8. The 10-event natural corpus is a direct primary-source candidate feed, not a
    preserved web-search SERP or production RAG trace. Its offline top-k has not
    yet been run through the three forecasting models.
-9. Natural-source metadata is engineering-validated, but the independent
-   second-verifier batch and Annotator B semantic labels remain incomplete.
+9. Natural-source metadata has independent second verification and the 79-pair
+   semantic labels are frozen, but the attribution set is small and derived
+   from controlled cases; it is not yet a natural claim-evidence benchmark.
 
 ## Claim Boundary
 
