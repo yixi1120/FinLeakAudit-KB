@@ -239,6 +239,24 @@
   一次性 Test 评测。协议见
   `wiki/experiments/natural_semantic_hardset_protocol_v1.md`。
 
+## 2026-09-03 — Qwen 自然回放与论文结果快照
+
+- 本地 Qwen2.5-14B-Instruct Q4_K_M 完成 5 个自然事件、15 次预测调用，0 错误；
+  运行结束后关闭 llama.cpp 服务。
+- 三模型自然回放合计 15 个 model-event runs、45 次调用：13/15 有效 exact-ID
+  未来引用，6/15 发生 Clean-to-Unfiltered 方向变化，6/6 在删除 cutoff 后证据后
+  恢复 Clean 方向；Wilson 95% CI 为 61.0%–100%。
+- Aggregate accuracy 为 Clean 6/15、Unfiltered 12/15、Audited 5/15；Unfiltered
+  增幅属于 outcome-bounded hindsight inflation。
+- Qwen CrowdStrike 理由使用了未来事故语义并写出对应 document ID，但省略 chunk
+  suffix，严格 exact-ID citation detector 因此漏检；该例是结构化引用接口失效，
+  不能草率称为完全 citation-free。
+- Qwen Capital One 在 Clean 与 Unfiltered 均为 UP 时，Audited 变为 NEUTRAL；
+  这是删除后上下文稀疏造成的 revision instability，不计为 recovery failure。
+- 新增自动生成的论文指标 CSV、三张图、结果快照与 Results 草稿，完整报告见
+  `wiki/experiments/natural_pit_5event_three_model_results_2026_09_03.md` 和
+  `wiki/experiments/paper_results_snapshot_2026_09_03.md`。
+
 ## 2026-08-25 — Semantic Attribution 双人标注与第三方裁决
 
 - Annotator A 与 Annotator B 分别完成同一批 79 条 claim-evidence pairs。

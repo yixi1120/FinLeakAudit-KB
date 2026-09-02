@@ -1,0 +1,9 @@
+study,model,n_model_cases,model_calls,future_cited_n,future_cited_rate,direction_flip_n,direction_flip_rate,recovered_flip_n,recovery_rate_among_flips,recovery_wilson_95_low,recovery_wilson_95_high,clean_correct_n,clean_accuracy,contaminated_correct_n,contaminated_accuracy,audited_correct_n,audited_accuracy,audited_matches_clean_n,audited_drift_without_initial_flip_n,total_tokens
+controlled_injection,All,30,210,28,0.9333333333333333,12,0.4,12,1.0,0.7574992425007574,1.0,8,0.26666666666666666,18,0.6,8,0.26666666666666666,30,0,133134
+controlled_injection,DeepSeek,10,70,10,1.0,5,0.5,5,1.0,0.5655085052479191,1.0,3,0.3,7,0.7,3,0.3,10,0,46416
+controlled_injection,Zhipu,10,70,9,0.9,3,0.3,3,1.0,0.43849391955098227,1.0,3,0.3,6,0.6,3,0.3,10,0,43695
+controlled_injection,Qwen2.5-14B,10,70,9,0.9,4,0.4,4,1.0,0.5100999795960008,1.0,2,0.2,5,0.5,2,0.2,10,0,43023
+natural_replay,All,15,45,13,0.8666666666666667,6,0.4,6,1.0,0.6096569663469354,0.9999999999999999,6,0.4,12,0.8,5,0.3333333333333333,14,1,314884
+natural_replay,DeepSeek,5,15,5,1.0,3,0.6,3,1.0,0.4384939195509822,1.0,1,0.2,4,0.8,1,0.2,5,0,103955
+natural_replay,Zhipu,5,15,4,0.8,1,0.2,1,1.0,0.20654329147389294,1.0,3,0.6,4,0.8,3,0.6,5,0,102585
+natural_replay,Qwen2.5-14B,5,15,4,0.8,2,0.4,2,1.0,0.3423719528896193,1.0,2,0.4,4,0.8,1,0.2,4,1,108344

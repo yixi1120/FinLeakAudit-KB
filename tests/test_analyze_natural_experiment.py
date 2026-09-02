@@ -54,6 +54,7 @@ class AnalyzeNaturalExperimentTests(unittest.TestCase):
         self.assertEqual(overall["recovery_rate_among_flips"], 1.0)
         self.assertEqual(overall["audited_matches_clean_rate"], 1.0)
         self.assertEqual(overall["explicit_future_citation_rate"], 0.5)
+        self.assertEqual(overall["audited_drift_without_initial_flip_count"], 0)
         self.assertEqual(overall["total_tokens"], 80)
         self.assertEqual(overall["invalid_citation_id_count"], 0)
 
@@ -62,6 +63,17 @@ class AnalyzeNaturalExperimentTests(unittest.TestCase):
 
         self.assertAlmostEqual(low, 0.5101, places=3)
         self.assertAlmostEqual(high, 1.0, places=6)
+
+    def test_reports_audited_drift_when_no_initial_flip_occurred(self):
+        row = result("a", flipped=False, cited=True)
+        row["audited"]["prediction"] = "NEUTRAL"
+        row["metrics"]["audited_recovered_clean_direction"] = False
+
+        overall = build_summary([row])[0]
+
+        self.assertEqual(overall["direction_flip_count"], 0)
+        self.assertEqual(overall["audited_drift_without_initial_flip_count"], 1)
+        self.assertEqual(overall["audited_drift_without_initial_flip_rate"], 1.0)
 
 
 if __name__ == "__main__":

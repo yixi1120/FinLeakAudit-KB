@@ -18,10 +18,11 @@ WIKI = ROOT / "wiki" / "experiments"
 DEFAULT_INPUTS = [
     RESULTS / "deepseek_natural_pit_5event_v1_results.jsonl",
     RESULTS / "zhipu_natural_pit_5event_v1_results.jsonl",
+    RESULTS / "qwen_natural_pit_5event_v1_results.jsonl",
 ]
-DEFAULT_SUMMARY = ANALYSIS / "natural_pit_5event_summary_v1.csv"
-DEFAULT_CASES = ANALYSIS / "natural_pit_5event_case_results_v1.csv"
-DEFAULT_REPORT = WIKI / "natural_pit_5event_results_2026_08_19.md"
+DEFAULT_SUMMARY = ANALYSIS / "natural_pit_5event_three_model_summary_v1.csv"
+DEFAULT_CASES = ANALYSIS / "natural_pit_5event_three_model_case_results_v1.csv"
+DEFAULT_REPORT = WIKI / "natural_pit_5event_three_model_results_2026_09_03.md"
 CONDITIONS = ("clean", "unfiltered", "audited")
 
 
@@ -99,6 +100,16 @@ def summarize_rows(rows: list[dict], scope: str, model: str) -> dict:
     recovered_flips = [
         row for row in flipped if row["metrics"]["audited_recovered_clean_direction"]
     ]
+    nonflips = [
+        row
+        for row in rows
+        if not row["metrics"]["prediction_changed_clean_to_unfiltered"]
+    ]
+    audited_drift_without_initial_flip = [
+        row
+        for row in nonflips
+        if row["audited"]["prediction"] != row["clean"]["prediction"]
+    ]
     recovery_low, recovery_high = wilson_interval(len(recovered_flips), len(flipped))
     citation_checks = [
         citation_validation(row, condition) for row in rows for condition in CONDITIONS
@@ -118,6 +129,12 @@ def summarize_rows(rows: list[dict], scope: str, model: str) -> dict:
         "direction_flip_count": len(flipped),
         "audited_matches_clean_rate": divide(
             sum(row["metrics"]["audited_recovered_clean_direction"] for row in rows), n
+        ),
+        "audited_drift_without_initial_flip_count": len(
+            audited_drift_without_initial_flip
+        ),
+        "audited_drift_without_initial_flip_rate": divide(
+            len(audited_drift_without_initial_flip), len(nonflips)
         ),
         "recovery_rate_among_flips": divide(len(recovered_flips), len(flipped)),
         "recovery_count_among_flips": len(recovered_flips),
@@ -190,6 +207,10 @@ def build_case_rows(rows: list[dict]) -> list[dict]:
                 "audited_recovered_clean_direction": metrics[
                     "audited_recovered_clean_direction"
                 ],
+                "audited_drift_without_initial_flip": (
+                    not metrics["prediction_changed_clean_to_unfiltered"]
+                    and row["audited"]["prediction"] != row["clean"]["prediction"]
+                ),
                 "clean_correct": metrics["clean_correct"],
                 "unfiltered_correct": metrics["unfiltered_correct"],
                 "audited_correct": metrics["audited_correct"],
@@ -220,9 +241,9 @@ def markdown_report(summary: list[dict], cases: list[dict]) -> str:
     crowdstrike = [row for row in cases if row["event_id"] == "natural_001"]
     lines = [
         "---",
-        "title: Natural point-in-time replay — five-event pilot",
-        "date: 2026-08-19",
-        "status: controlled-natural-source-replay-pilot",
+        "title: Natural point-in-time replay — five-event three-model pilot",
+        "date: 2026-09-03",
+        "status: completed-three-model-natural-source-replay-pilot",
         "---",
         "",
         "# Scope",
@@ -237,7 +258,7 @@ def markdown_report(summary: list[dict], cases: list[dict]) -> str:
         f"Across {all_row['n_model_events']} model-event runs and "
         f"{all_row['model_calls']} prediction calls, cutoff-postdating evidence appeared in "
         f"{percent(all_row['future_retrieval_rate'])} of unfiltered top-k contexts and was "
-        f"explicitly cited in {percent(all_row['explicit_future_citation_rate'])}. Direction "
+        f"validly cited by exact ID in {percent(all_row['explicit_future_citation_rate'])}. Direction "
         f"changed in {percent(all_row['direction_flip_rate'])} of runs. Among changed runs, "
         f"timestamp removal restored the Clean direction in "
         f"{percent(all_row['recovery_rate_among_flips'])} "
@@ -252,13 +273,13 @@ def markdown_report(summary: list[dict], cases: list[dict]) -> str:
         "",
         f"Citation-format validation found {all_row['invalid_citation_id_count']} invalid IDs "
         f"in {all_row['predictions_with_invalid_citations']}/{all_row['model_calls']} "
-        "predictions: one output invented unavailable chunk suffixes and another shortened "
-        "chunk IDs to document IDs.",
+        "predictions. Errors include unavailable chunk suffixes and shortened document-level "
+        "IDs, showing why semantic use cannot be inferred from exact-ID matching alone.",
         "",
         "# Model summary",
         "",
-        "| Model | Runs | Future cited | Direction flip | Recovery on flips | Clean acc. | Unfiltered acc. | Audited acc. | Tokens |",
-        "|---|---:|---:|---:|---:|---:|---:|---:|---:|",
+        "| Model | Runs | Future cited | Direction flip | Recovery on flips | Audited drift on non-flips | Clean acc. | Unfiltered acc. | Audited acc. | Tokens |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for row in model_rows:
         lines.append(
@@ -266,6 +287,7 @@ def markdown_report(summary: list[dict], cases: list[dict]) -> str:
             f"{percent(row['explicit_future_citation_rate'])} | "
             f"{percent(row['direction_flip_rate'])} | "
             f"{percent(row['recovery_rate_among_flips'])} | "
+            f"{row['audited_drift_without_initial_flip_count']} | "
             f"{percent(row['clean_accuracy'])} | "
             f"{percent(row['unfiltered_accuracy'])} | "
             f"{percent(row['audited_accuracy'])} | {row['total_tokens']} |"
@@ -275,7 +297,7 @@ def markdown_report(summary: list[dict], cases: list[dict]) -> str:
             "",
             "# CrowdStrike case study",
             "",
-            "The same outcome-bounded event source changed both model forecasts toward DOWN.",
+            "The same outcome-bounded event source changed all three model forecasts toward DOWN.",
             "Removing all post-cutoff chunks returned each model to its own cutoff-safe",
             "direction:",
             "",
@@ -297,13 +319,17 @@ def markdown_report(summary: list[dict], cases: list[dict]) -> str:
             "- The five events were selected for heterogeneity, not sampled from production traffic.",
             "- The unfiltered condition is deliberately bounded by outcome time and therefore serves",
             "  as a point-in-time replay stress test.",
-            "- Explicit citation is not complete semantic attribution; Annotator B and adjudication",
-            "  remain pending.",
-            "- Two outputs contained invalid evidence IDs, so citation validity must be checked",
-            "  rather than assumed.",
+            "- Exact-ID citation is not complete semantic attribution; human gold labels for the",
+            "  new natural hard set remain future work.",
+            f"- {all_row['predictions_with_invalid_citations']} outputs contained invalid evidence IDs, so citation validity must be checked",
+            "  rather than assumed. Qwen's CrowdStrike rationale named future documents but",
+            "  omitted their chunk suffixes, causing exact-ID leakage detection to miss them.",
+            "- Audited is Unfiltered top-k minus post-cutoff chunks, not a new cutoff-time top-k",
+            "  retrieval. One Qwen non-flip changed after deletion because the revised context was",
+            "  sparser than Clean; this revision instability is reported separately from recovery.",
             "- Timestamp filtering is a strong deterministic baseline, not the complete planned",
             "  FinLeakAudit semantic operator stack.",
-            "- Ten model-event observations are adequate for an RA portfolio pilot, not a paper-level",
+            f"- {all_row['n_model_events']} model-event observations are adequate for an RA portfolio pilot, not a paper-level",
             "  general claim.",
             "",
             "# Reproduce",
@@ -311,15 +337,16 @@ def markdown_report(summary: list[dict], cases: list[dict]) -> str:
             "```bash",
             "python3 experiments/run_natural_experiment.py --model deepseek --minimal --run-name natural_pit_5event_v1",
             "python3 experiments/run_natural_experiment.py --model zhipu --minimal --run-name natural_pit_5event_v1",
+            "python3 experiments/run_natural_experiment.py --model qwen --minimal --run-name natural_pit_5event_v1",
             "python3 experiments/analyze_natural_experiment.py",
             "```",
             "",
             "# RA-safe wording",
             "",
             "Built a point-in-time replay for five natural financial events and evaluated",
-            "two LLMs across 30 prediction calls. Post-cutoff evidence was explicitly cited",
-            "in 9/10 model-event runs and changed the forecast direction in 4/10; timestamp",
-            "removal restored the corresponding cutoff-safe direction in all four changed",
+            "three LLMs across 45 prediction calls. Post-cutoff evidence was validly cited by",
+            "exact ID in 13/15 model-event runs and changed the forecast direction in 6/15;",
+            "timestamp removal restored the corresponding cutoff-safe direction in all six changed",
             "runs. This is a small outcome-bounded stress test, not an estimate of leakage",
             "prevalence in deployed systems.",
             "",

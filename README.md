@@ -147,26 +147,34 @@ timestamp-only input; no recovery advantage is claimed.
 ## Natural Point-in-Time Replay Pilot
 
 A separate five-event pilot uses frozen queries and directly archived primary-source
-documents rather than hand-written evidence. DeepSeek and Zhipu were each run under
-three conditions: cutoff-safe Clean retrieval, outcome-bounded Unfiltered retrieval,
-and timestamp-audited revision.
+documents rather than hand-written evidence. DeepSeek, Zhipu, and local Qwen2.5-14B
+were each run under three conditions: cutoff-safe Clean retrieval, outcome-bounded
+Unfiltered retrieval, and timestamp-audited revision.
 
 | Model | Future cited | Clean-to-Unfiltered change | Recovery on changed runs | Clean / Unfiltered / Audited accuracy |
 |---|---:|---:|---:|---:|
 | DeepSeek | 5/5 | 3/5 | 3/3 | 1/5 / 4/5 / 1/5 |
 | Zhipu | 4/5 | 1/5 | 1/1 | 3/5 / 4/5 / 3/5 |
+| Qwen2.5-14B | 4/5 | 2/5 | 2/2 | 2/5 / 4/5 / 1/5 |
 
-Across 10 model-event runs and 30 prediction calls, cutoff-postdating evidence
-was explicitly cited in 9/10 runs and changed direction in 4/10. Removing all
+Across 15 model-event runs and 45 prediction calls, cutoff-postdating evidence
+was validly cited by exact ID in 13/15 runs and changed direction in 6/15. Removing all
 post-cutoff chunks from the actual Unfiltered top-k restored the corresponding
-Clean direction in all four changed runs. Aggregate outcome accuracy was 4/10
-Clean, 8/10 Unfiltered, and 4/10 Audited; the temporary increase is hindsight
+Clean direction in all six changed runs. Aggregate outcome accuracy was 6/15
+Clean, 12/15 Unfiltered, and 5/15 Audited; the temporary increase is hindsight
 inflation in this replay, not valid forecasting performance.
+
+The Qwen run also exposed two important failure modes. Its CrowdStrike rationale
+named post-cutoff documents but omitted required chunk suffixes, so exact-ID matching
+missed the semantic use. In one non-flipped Capital One run, Audited diverged from
+Clean because deletion left a sparser context; this is revision instability, not a
+failed recovery.
 
 This is an outcome-bounded stress test over a constructed candidate feed, not a
 preserved production retrieval trace and not an estimate of real-world leakage
 prevalence. See the
-[five-event replay report](wiki/experiments/natural_pit_5event_results_2026_08_19.md).
+[three-model five-event replay report](wiki/experiments/natural_pit_5event_three_model_results_2026_09_03.md)
+and [paper results snapshot](wiki/experiments/paper_results_snapshot_2026_09_03.md).
 
 ## Implemented vs Planned
 
@@ -188,7 +196,7 @@ prevalence. See the
 | Original/revision/vendor timestamp handling | Planned |
 | Support/contradiction operator evaluation | Planned |
 | Natural point-in-time candidate corpus and offline lexical retrieval | Implemented |
-| Natural replay model experiment | Five-event DeepSeek/Zhipu pilot implemented; Qwen and full 10-event run pending |
+| Natural replay model experiment | Five-event three-model pilot implemented; full 10-event run pending |
 
 ## Quick Start
 

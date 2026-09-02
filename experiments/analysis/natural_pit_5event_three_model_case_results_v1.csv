@@ -1,0 +1,16 @@
+model,model_id,event_id,ticker,outcome_label,outcome_return,clean_prediction,unfiltered_prediction,audited_prediction,future_evidence_retrieved_count,future_evidence_cited,direction_flipped,audited_recovered_clean_direction,audited_drift_without_initial_flip,clean_correct,unfiltered_correct,audited_correct,total_tokens,invalid_citation_id_count
+deepseek,deepseek-chat,natural_001,CRWD,DOWN,-0.11103337,NEUTRAL,DOWN,NEUTRAL,3,True,True,True,False,False,True,False,20741,0
+deepseek,deepseek-chat,natural_002,NVDA,UP,0.09319649,UP,UP,UP,2,True,False,True,False,True,True,True,21454,0
+deepseek,deepseek-chat,natural_004,SBUX,UP,0.23172788,DOWN,UP,DOWN,2,True,True,True,False,False,True,False,19502,0
+deepseek,deepseek-chat,natural_007,COF,UP,0.00116595,NEUTRAL,UP,NEUTRAL,2,True,True,True,False,False,True,False,23078,0
+deepseek,deepseek-chat,natural_010,JBLU,DOWN,-0.04294479,NEUTRAL,NEUTRAL,NEUTRAL,2,True,False,True,False,False,False,False,19180,0
+qwen,qwen2.5-14b-instruct-q4_k_m,natural_001,CRWD,DOWN,-0.11103337,NEUTRAL,DOWN,NEUTRAL,3,False,True,True,False,False,True,False,21758,2
+qwen,qwen2.5-14b-instruct-q4_k_m,natural_002,NVDA,UP,0.09319649,UP,UP,UP,2,True,False,True,False,True,True,True,22390,0
+qwen,qwen2.5-14b-instruct-q4_k_m,natural_004,SBUX,UP,0.23172788,DOWN,UP,DOWN,2,True,True,True,False,False,True,False,20755,0
+qwen,qwen2.5-14b-instruct-q4_k_m,natural_007,COF,UP,0.00116595,UP,UP,NEUTRAL,2,True,False,False,True,True,True,False,24086,6
+qwen,qwen2.5-14b-instruct-q4_k_m,natural_010,JBLU,DOWN,-0.04294479,NEUTRAL,NEUTRAL,NEUTRAL,2,True,False,True,False,False,False,False,19355,0
+zhipu,glm-4-flashx-250414,natural_001,CRWD,DOWN,-0.11103337,UP,DOWN,UP,3,True,True,True,False,False,True,False,20449,0
+zhipu,glm-4-flashx-250414,natural_002,NVDA,UP,0.09319649,UP,UP,UP,2,True,False,True,False,True,True,True,21544,2
+zhipu,glm-4-flashx-250414,natural_004,SBUX,UP,0.23172788,UP,UP,UP,2,True,False,True,False,True,True,True,19537,0
+zhipu,glm-4-flashx-250414,natural_007,COF,UP,0.00116595,UP,UP,UP,2,True,False,True,False,True,True,True,22409,0
+zhipu,glm-4-flashx-250414,natural_010,JBLU,DOWN,-0.04294479,UP,UP,UP,2,False,False,True,False,False,False,False,18646,3

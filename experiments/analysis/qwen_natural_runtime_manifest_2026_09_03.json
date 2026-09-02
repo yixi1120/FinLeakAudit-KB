@@ -1,0 +1,56 @@
+{
+  "schema_version": "finleakaudit_local_qwen_runtime_manifest_v1",
+  "run_date_hkt": "2026-09-03",
+  "model": "Qwen2.5-14B-Instruct-GGUF",
+  "quantization": "Q4_K_M",
+  "model_id_sent_to_server": "qwen2.5-14b-instruct-q4_k_m",
+  "llama_cpp": {
+    "version": 10107,
+    "commit": "c0bc8591e",
+    "build": "AppleClang 21.0.0.21000101 for Darwin arm64"
+  },
+  "server_parameters": {
+    "host": "127.0.0.1",
+    "port": 8080,
+    "ctx_size": 32768,
+    "n_gpu_layers": "all",
+    "threads": 8,
+    "parallel_slots": 1
+  },
+  "hardware": {
+    "model": "MacBook Air Mac17,3",
+    "chip": "Apple M5",
+    "memory_gb": 24,
+    "cpu_cores": 10
+  },
+  "model_shards": [
+    {
+      "filename": "qwen2.5-14b-instruct-q4_k_m-00001-of-00003.gguf",
+      "sha256": "a09ea5e7b1eafb1b30b241726c3cc3c905c96f14ad41e246ffa5f44e53904f68"
+    },
+    {
+      "filename": "qwen2.5-14b-instruct-q4_k_m-00002-of-00003.gguf",
+      "sha256": "21b9457d079680d284e90ef69607c4b2d8ef64a09d4729cb7b5e1357bdba41ae"
+    },
+    {
+      "filename": "qwen2.5-14b-instruct-q4_k_m-00003-of-00003.gguf",
+      "sha256": "c8d37006760a387a35216e070e6664d7da927f10be8eb870fef2e3d4833d9976"
+    }
+  ],
+  "experiment": {
+    "runner": "experiments/run_natural_experiment.py",
+    "run_name": "natural_pit_5event_v1",
+    "events": 5,
+    "prediction_calls": 15,
+    "temperature": 0.0,
+    "max_tokens": 700,
+    "attempts_per_event": [1, 1, 1, 1, 1],
+    "runtime_seconds": 966.375,
+    "first_result_created_at_utc": "2026-09-02T19:18:03.866131+00:00",
+    "last_result_created_at_utc": "2026-09-02T19:32:01.730217+00:00",
+    "result_path": "experiments/results/qwen_natural_pit_5event_v1_results.jsonl",
+    "result_sha256": "b341f1b0224bdfa0efd5618aca6873213eba2ab60589ce604ab6dccfcfbbb237",
+    "errors": 0
+  },
+  "shutdown_verified": true
+}

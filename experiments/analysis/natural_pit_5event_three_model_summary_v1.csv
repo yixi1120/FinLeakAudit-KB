@@ -1,0 +1,5 @@
+scope,model,n_model_events,model_calls,future_retrieval_rate,explicit_future_citation_rate,direction_flip_rate,direction_flip_count,audited_matches_clean_rate,audited_drift_without_initial_flip_count,audited_drift_without_initial_flip_rate,recovery_rate_among_flips,recovery_count_among_flips,recovery_wilson_95_low,recovery_wilson_95_high,clean_accuracy,unfiltered_accuracy,audited_accuracy,mean_confidence_delta_unfiltered_minus_clean,total_tokens,predictions_with_invalid_citations,invalid_citation_id_count
+all,all,15,45,1.0,0.8666666666666667,0.4,6,0.9333333333333333,1,0.1111111111111111,1.0,6,0.6096569663469354,1.0,0.4,0.8,0.3333333333333333,0.0066666666666666576,314884,4,13
+model,deepseek,5,15,1.0,1.0,0.6,3,1.0,0,0.0,1.0,3,0.4384939195509822,1.0,0.2,0.8,0.2,0.07999999999999999,103955,0,0
+model,qwen,5,15,1.0,0.8,0.4,2,0.8,1,0.3333333333333333,1.0,2,0.3423719528896193,1.0,0.4,0.8,0.2,-0.039999999999999994,108344,2,8
+model,zhipu,5,15,1.0,0.8,0.2,1,1.0,0,0.0,1.0,1,0.20654329147389294,1.0,0.6,0.8,0.6,-0.020000000000000018,102585,2,5

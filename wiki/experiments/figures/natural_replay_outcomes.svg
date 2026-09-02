@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="105" y="38" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#17212b">Natural point-in-time replay audit</text>
+<text x="105" y="66" font-family="Arial, sans-serif" font-size="14" fill="#586674">15 model-event runs across three LLMs</text>
+<line x1="105" y1="415.0" x2="795" y2="415.0" stroke="#dce2e7" stroke-width="1"/>
+<text x="91" y="420.0" text-anchor="end" font-family="Arial, sans-serif" font-size="13" fill="#586674">0</text>
+<line x1="105" y1="352.0" x2="795" y2="352.0" stroke="#dce2e7" stroke-width="1"/>
+<text x="91" y="357.0" text-anchor="end" font-family="Arial, sans-serif" font-size="13" fill="#586674">20</text>
+<line x1="105" y1="289.0" x2="795" y2="289.0" stroke="#dce2e7" stroke-width="1"/>
+<text x="91" y="294.0" text-anchor="end" font-family="Arial, sans-serif" font-size="13" fill="#586674">40</text>
+<line x1="105" y1="226.0" x2="795" y2="226.0" stroke="#dce2e7" stroke-width="1"/>
+<text x="91" y="231.0" text-anchor="end" font-family="Arial, sans-serif" font-size="13" fill="#586674">60</text>
+<line x1="105" y1="163.0" x2="795" y2="163.0" stroke="#dce2e7" stroke-width="1"/>
+<text x="91" y="168.0" text-anchor="end" font-family="Arial, sans-serif" font-size="13" fill="#586674">80</text>
+<line x1="105" y1="100.0" x2="795" y2="100.0" stroke="#dce2e7" stroke-width="1"/>
+<text x="91" y="105.0" text-anchor="end" font-family="Arial, sans-serif" font-size="13" fill="#586674">100</text>
+<text x="25" y="257.5" transform="rotate(-90 25 257.5)" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#34424f">Rate (%)</text>
+<rect x="141.2" y="142.0" width="100.0" height="273.0" rx="3" fill="#2274a5"/>
+<text x="191.2" y="132.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#17212b">86.7</text>
+<text x="191.2" y="443.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#34424f"><tspan x="191.2" dy="0">Valid future</tspan><tspan x="191.2" dy="17">citation</tspan></text>
+<rect x="313.7" y="289.0" width="100.0" height="126.0" rx="3" fill="#d95f43"/>
+<text x="363.8" y="279.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#17212b">40.0</text>
+<text x="363.8" y="443.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#34424f">Direction changed</text>
+<rect x="486.2" y="100.0" width="100.0" height="315.0" rx="3" fill="#2f855a"/>
+<text x="536.2" y="90.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#17212b">100.0</text>
+<text x="536.2" y="443.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#34424f"><tspan x="536.2" dy="0">Recovered</tspan><tspan x="536.2" dy="17">if changed</tspan></text>
+<rect x="658.7" y="380.0" width="100.0" height="35.0" rx="3" fill="#8b5fa8"/>
+<text x="708.8" y="370.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#17212b">11.1</text>
+<text x="708.8" y="443.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#34424f"><tspan x="708.8" dy="0">Audited drift</tspan><tspan x="708.8" dy="17">if no flip</tspan></text>
+</svg>

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="105" y="38" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#17212b">Claim-evidence attribution on frozen gold</text>
+<text x="105" y="66" font-family="Arial, sans-serif" font-size="14" fill="#586674">78 decisive pairs; one uncertain gold label excluded</text>
+<line x1="105" y1="415.0" x2="795" y2="415.0" stroke="#dce2e7" stroke-width="1"/>
+<text x="91" y="420.0" text-anchor="end" font-family="Arial, sans-serif" font-size="13" fill="#586674">0</text>
+<line x1="105" y1="352.0" x2="795" y2="352.0" stroke="#dce2e7" stroke-width="1"/>
+<text x="91" y="357.0" text-anchor="end" font-family="Arial, sans-serif" font-size="13" fill="#586674">20</text>
+<line x1="105" y1="289.0" x2="795" y2="289.0" stroke="#dce2e7" stroke-width="1"/>
+<text x="91" y="294.0" text-anchor="end" font-family="Arial, sans-serif" font-size="13" fill="#586674">40</text>
+<line x1="105" y1="226.0" x2="795" y2="226.0" stroke="#dce2e7" stroke-width="1"/>
+<text x="91" y="231.0" text-anchor="end" font-family="Arial, sans-serif" font-size="13" fill="#586674">60</text>
+<line x1="105" y1="163.0" x2="795" y2="163.0" stroke="#dce2e7" stroke-width="1"/>
+<text x="91" y="168.0" text-anchor="end" font-family="Arial, sans-serif" font-size="13" fill="#586674">80</text>
+<line x1="105" y1="100.0" x2="795" y2="100.0" stroke="#dce2e7" stroke-width="1"/>
+<text x="91" y="105.0" text-anchor="end" font-family="Arial, sans-serif" font-size="13" fill="#586674">100</text>
+<text x="25" y="257.5" transform="rotate(-90 25 257.5)" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#34424f">F1 (%)</text>
+<rect x="141.2" y="118.5" width="100.0" height="296.5" rx="3" fill="#3667a6"/>
+<text x="191.2" y="108.5" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#17212b">94.1</text>
+<text x="191.2" y="443.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#34424f">Citation-only</text>
+<rect x="313.7" y="205.0" width="100.0" height="210.0" rx="3" fill="#e3a12f"/>
+<text x="363.8" y="195.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#17212b">66.7</text>
+<text x="363.8" y="443.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#34424f">Lexical overlap</text>
+<rect x="486.2" y="254.6" width="100.0" height="160.4" rx="3" fill="#7a8b99"/>
+<text x="536.2" y="244.6" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#17212b">50.9</text>
+<text x="536.2" y="443.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#34424f">Embedding</text>
+<rect x="658.7" y="119.9" width="100.0" height="295.1" rx="3" fill="#2f855a"/>
+<text x="708.8" y="109.9" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#17212b">93.7</text>
+<text x="708.8" y="443.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#34424f">DeepSeek LLM judge</text>
+</svg>
