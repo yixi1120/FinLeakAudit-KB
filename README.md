@@ -130,6 +130,13 @@ nor a Full FinLeakAudit advantage; they identify the hard-negative and
 citation-free cases needed in the next dataset expansion. See the
 [semantic baseline report](wiki/experiments/semantic_attribution_baselines_2026_08_31.md).
 
+The online-loop follow-up also found that a blind LLM judge can make a
+high-confidence error when future evidence merely confirms an already known
+fact. The implemented `full_semantic` policy therefore uses deterministic time
+validation for compliance removal and semantic attribution for diagnosis. On
+the controlled additive-leak setup, its revised input is identical to the
+timestamp-only input; no recovery advantage is claimed.
+
 ## Natural Point-in-Time Replay Pilot
 
 A separate five-event pilot uses frozen queries and directly archived primary-source
@@ -167,7 +174,8 @@ prevalence. See the
 | Logic, metric, and v4 data validation tests | Implemented |
 | Dual human semantic attribution and adjudication | Implemented for 79 claim-evidence pairs |
 | Citation, lexical, embedding, and blind LLM-judge attribution baselines | Implemented |
-| Citation-free semantic audit operator in the revision pipeline | Planned |
+| Citation-free semantic audit operator in the revision pipeline | Experimental implementation; controlled smoke validated |
+| Full semantic audit with timestamp-governed compliance removal | Implemented in controlled runner; paper-scale run pending |
 | Market-open and trading-calendar alignment | Planned |
 | Original/revision/vendor timestamp handling | Planned |
 | Support/contradiction operator evaluation | Planned |
@@ -307,6 +315,9 @@ Start with:
 9. Natural-source metadata has independent second verification and the 79-pair
    semantic labels are frozen, but the attribution set is small and derived
    from controlled cases; it is not yet a natural claim-evidence benchmark.
+10. The online semantic smoke test produced a high-confidence false positive
+    when post-cutoff evidence merely confirmed a fact already present before
+    cutoff. LLM attribution therefore does not control compliance deletion.
 
 ## Claim Boundary
 

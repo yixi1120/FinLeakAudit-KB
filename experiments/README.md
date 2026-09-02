@@ -158,6 +158,30 @@ The embedding and LLM scripts never receive the gold-label file. The evaluator
 joins predictions to frozen gold only after inference. Thresholds are declared
 in the output metadata and were not tuned on the 79 labels.
 
+Run one end-to-end semantic audit case without starting local Qwen:
+
+```bash
+python3 experiments/run_experiment.py \
+  --model zhipu \
+  --cases 数据线/cases_pilot_v4_mixed10_candidate.jsonl \
+  --case-id case_005 \
+  --audit-policy full_semantic \
+  --judge-model deepseek \
+  --run-name full_semantic_case005
+```
+
+Audit policies have deliberately separate meanings:
+
+- `citation_only`: remove future evidence explicitly cited by the predictor.
+- `timestamp_only`: remove every item known to be post-cutoff.
+- `semantic_llm`: experimental selective baseline; remove only future evidence
+  judged semantically used.
+- `full_semantic`: use timestamp rules for compliance removal and the blinded
+  LLM judge only for claim-evidence contamination attribution.
+
+`semantic_llm` must not be presented as a point-in-time compliance guarantee.
+The judge can make high-confidence false-positive or false-negative decisions.
+
 ## Run Offline Logic Tests
 
 The regression tests do not start a model server or call an API:

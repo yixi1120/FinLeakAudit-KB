@@ -209,6 +209,22 @@
   完整报告见
   `wiki/experiments/semantic_attribution_baselines_2026_08_31.md`。
 
+## 2026-09-02 — Semantic audit 闭环与失败诊断
+
+- 将 blinded LLM claim-evidence attribution 接入 controlled runner，新增
+  `citation_only`、`timestamp_only`、实验性 `semantic_llm` 和
+  `full_semantic` 四种策略。
+- DeepSeek `case_002` smoke 完成 `DOWN -> UP -> DOWN`，3 个语义 pairs 全部
+  判定依赖并删除 `e4`；该 case 有显式引用，只验证工程闭环。
+- Zhipu predictor + DeepSeek judge 的 `case_005` 发现 high-confidence false
+  positive：cutoff 前 evidence 已包含 inventory glut，Judge 仍以 0.90 判定
+  依赖 cutoff 后确认信息。
+- 据此冻结架构边界：时间规则掌握 point-in-time 合规删除权；semantic Judge
+  负责污染归因与解释，不单独决定 future evidence 能否保留。
+- 新增 `--case-id` 精确运行、pair-level audit log、删除依据和 semantic
+  调用级短重试。完整记录见
+  `wiki/experiments/full_semantic_loop_smoke_2026_09_02.md`。
+
 ## 2026-08-25 — Semantic Attribution 双人标注与第三方裁决
 
 - Annotator A 与 Annotator B 分别完成同一批 79 条 claim-evidence pairs。

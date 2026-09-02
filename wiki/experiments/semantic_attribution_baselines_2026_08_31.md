@@ -94,3 +94,18 @@ Tracked outputs:
 The embedding endpoint and model parameters follow the official Zhipu
 Embedding-3 documentation:
 https://docs.bigmodel.cn/cn/guide/models/embedding/embedding-3
+
+# Online-loop follow-up (2026-09-02)
+
+The blinded judge was integrated into the controlled experiment runner. A
+`case_005` smoke run produced a high-confidence semantic false positive: the
+judge treated post-cutoff confirmation of an inventory glut as a new dependency,
+although pre-cutoff evidence already stated that the company faced a severe
+inventory glut. This confirms that the LLM judge cannot be the sole authority
+for point-in-time evidence removal.
+
+The runner now separates compliance from attribution. `full_semantic` removes
+all known post-cutoff evidence using deterministic timestamps, while semantic
+judgments describe claim contamination. The selective `semantic_llm` policy is
+retained only as an experimental baseline. Full details are in
+`wiki/experiments/full_semantic_loop_smoke_2026_09_02.md`.

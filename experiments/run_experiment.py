@@ -17,6 +17,7 @@ from typing import Optional
 from config import DEFAULT_CASES_PATH, MODELS, RESULTS_DIR, ModelConfig
 from finleakaudit import audit_prediction, temporal_availability_check
 from prompts import SYSTEM_PROMPT, build_prediction_prompt
+from semantic_attribution import call_semantic_judge
 
 
 def read_jsonl(path: Path) -> list[dict]:
@@ -51,6 +52,24 @@ def default_run_name(cases_path: Path) -> str:
     """Derive a stable run name from the cases file name."""
     stem = cases_path.stem
     return re.sub(r"[^A-Za-z0-9_.-]+", "_", stem).strip("_") or "cases"
+
+
+def select_cases(
+    cases: list[dict],
+    case_ids: list[str] | None,
+    limit: int | None,
+) -> list[dict]:
+    selected = list(cases)
+    if case_ids:
+        requested = set(case_ids)
+        available = {str(case.get("case_id")) for case in cases}
+        missing = sorted(requested - available)
+        if missing:
+            raise ValueError(f"Unknown case_id(s): {', '.join(missing)}")
+        selected = [
+            case for case in cases if str(case.get("case_id")) in requested
+        ]
+    return selected[:limit] if limit is not None else selected
 
 
 def extract_json(text: str) -> dict:
@@ -145,6 +164,53 @@ def is_future_evidence(evidence: dict, case: dict) -> bool:
     return result["temporal_status"] == "future_leakage"
 
 
+def run_semantic_attribution(
+    case: dict,
+    evidence_seen: list[dict],
+    prediction_output: dict,
+    judge_config: ModelConfig,
+) -> list[dict]:
+    """Judge every rationale-claim and future-evidence pair blindly."""
+    prediction_cutoff = case.get("prediction_cutoff") or case.get("prediction_date")
+    temporal_results = temporal_availability_check(
+        evidence_seen,
+        prediction_cutoff=prediction_cutoff,
+    )
+    evidence_by_id = {item["id"]: item for item in evidence_seen}
+    pre_cutoff_evidence = [
+        evidence_by_id[item["evidence_id"]]
+        for item in temporal_results
+        if item["temporal_status"] == "valid"
+    ]
+    future_evidence = [
+        evidence_by_id[item["evidence_id"]]
+        for item in temporal_results
+        if item["temporal_status"] == "future_leakage"
+    ]
+
+    judgments = []
+    for claim_index, claim in enumerate(
+        prediction_output.get("rationale") or []
+    ):
+        claim_text = str(claim.get("claim", ""))
+        for evidence in future_evidence:
+            judgment = call_semantic_judge(
+                judge_config,
+                claim=claim_text,
+                pre_cutoff_evidence=pre_cutoff_evidence,
+                post_cutoff_evidence=evidence,
+            )
+            judgments.append(
+                {
+                    "claim_index": claim_index,
+                    "claim": claim_text,
+                    "evidence_id": evidence["id"],
+                    **judgment,
+                }
+            )
+    return judgments
+
+
 def run_evidence_ablation(
     case: dict,
     model_config: ModelConfig,
@@ -201,6 +267,9 @@ def run_case(
     model_config: ModelConfig,
     seed: int,
     with_ablation: bool = False,
+    audit_policy: str = "citation_only",
+    judge_config: ModelConfig | None = None,
+    semantic_confidence_threshold: float = 0.7,
 ) -> dict:
     clean_evidence = shuffled(case["clean_evidence"], seed)
     leaky_evidence = insert_leaked_evidence(
@@ -215,7 +284,23 @@ def run_case(
     leaky = normalize_prediction(
         call_chat(model_config, build_prediction_prompt(case, leaky_evidence))
     )
-    audit = audit_prediction(case, leaky)
+    semantic_judgments = []
+    if audit_policy in {"semantic_llm", "full_semantic"}:
+        if judge_config is None:
+            raise ValueError("semantic audit policy requires a judge model")
+        semantic_judgments = run_semantic_attribution(
+            case,
+            evidence_seen=leaky_evidence,
+            prediction_output=leaky,
+            judge_config=judge_config,
+        )
+    audit = audit_prediction(
+        case,
+        leaky,
+        policy=audit_policy,
+        semantic_judgments=semantic_judgments,
+        semantic_confidence_threshold=semantic_confidence_threshold,
+    )
     # Revision must start from the evidence the leaky forecast actually saw.
     audited_evidence = [
         ev
@@ -240,6 +325,10 @@ def run_case(
         "outcome_return": case.get("outcome_return"),
         "model": model_config.name,
         "model_id": model_config.model,
+        "audit_policy": audit_policy,
+        "judge_model": judge_config.name if judge_config else None,
+        "judge_model_id": judge_config.model if judge_config else None,
+        "semantic_confidence_threshold": semantic_confidence_threshold,
         "seed": seed,
         "clean": clean,
         "leaky": leaky,
@@ -247,7 +336,10 @@ def run_case(
         "audited_evidence_order": [ev["id"] for ev in audited_evidence],
         "audited": audited,
         "metrics": {
-            "leaky_cited_future": audit["leakage_detected"],
+            "leaky_cited_future": audit["citation_report"]["has_leakage"],
+            "leaky_semantic_future": audit["semantic_report"]["has_leakage"],
+            "audit_leakage_detected": audit["leakage_detected"],
+            "audit_complete": audit["audit_complete"],
             "prediction_flipped_clean_to_leaky": clean["prediction"]
             != leaky["prediction"],
             "audited_recovered_clean_direction": audited["prediction"]
@@ -275,6 +367,9 @@ def run_case_with_retry(
     retries: int,
     retry_delay: float,
     with_ablation: bool,
+    audit_policy: str = "citation_only",
+    judge_config: ModelConfig | None = None,
+    semantic_confidence_threshold: float = 0.7,
 ) -> tuple[Optional[dict], list[dict]]:
     """Run one case, retrying transient API and parsing failures."""
     errors = []
@@ -286,6 +381,9 @@ def run_case_with_retry(
                 model_config,
                 seed=seed,
                 with_ablation=with_ablation,
+                audit_policy=audit_policy,
+                judge_config=judge_config,
+                semantic_confidence_threshold=semantic_confidence_threshold,
             )
             result["attempt"] = attempt
             return result, errors
@@ -320,6 +418,12 @@ def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", default="qwen", choices=sorted(MODELS))
     parser.add_argument("--cases", type=Path, default=DEFAULT_CASES_PATH)
+    parser.add_argument(
+        "--case-id",
+        action="append",
+        dest="case_ids",
+        help="Run a specific case ID; repeat to select multiple cases.",
+    )
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--seed", type=int, default=17)
     parser.add_argument("--retries", type=int, default=2)
@@ -328,6 +432,27 @@ def main(argv: list[str]) -> int:
         "--with-ablation",
         action="store_true",
         help="Run leave-one-evidence-out ablation for each case.",
+    )
+    parser.add_argument(
+        "--audit-policy",
+        choices=[
+            "citation_only",
+            "timestamp_only",
+            "semantic_llm",
+            "full_semantic",
+        ],
+        default="citation_only",
+    )
+    parser.add_argument(
+        "--judge-model",
+        choices=["deepseek", "zhipu"],
+        default="deepseek",
+        help="Blinded judge used by semantic_llm and full_semantic policies.",
+    )
+    parser.add_argument(
+        "--semantic-confidence-threshold",
+        type=float,
+        default=0.7,
     )
     parser.add_argument(
         "--run-name",
@@ -340,18 +465,33 @@ def main(argv: list[str]) -> int:
     args = parser.parse_args(argv)
 
     model_config = MODELS[args.model]
+    judge_config = (
+        MODELS[args.judge_model]
+        if args.audit_policy in {"semantic_llm", "full_semantic"}
+        else None
+    )
+    if judge_config and judge_config.api_key.startswith("missing-"):
+        raise RuntimeError(
+            f"API key for semantic judge {args.judge_model} is not configured"
+        )
     cases = read_jsonl(args.cases)
-    if args.limit is not None:
-        cases = cases[: args.limit]
+    cases = select_cases(cases, args.case_ids, args.limit)
 
     run_name = args.run_name or default_run_name(args.cases)
     result_kind = "ablation_results" if args.with_ablation else "results"
     error_kind = "ablation_errors" if args.with_ablation else "errors"
+    policy_suffix = (
+        "" if args.audit_policy == "citation_only" else f"_{args.audit_policy}"
+    )
     output_path = (
-        args.output or RESULTS_DIR / f"{args.model}_{run_name}_{result_kind}.jsonl"
+        args.output
+        or RESULTS_DIR
+        / f"{args.model}_{run_name}{policy_suffix}_{result_kind}.jsonl"
     )
     error_path = (
-        args.errors or RESULTS_DIR / f"{args.model}_{run_name}_{error_kind}.jsonl"
+        args.errors
+        or RESULTS_DIR
+        / f"{args.model}_{run_name}{policy_suffix}_{error_kind}.jsonl"
     )
     if args.overwrite and output_path.exists():
         output_path.unlink()
@@ -386,6 +526,9 @@ def main(argv: list[str]) -> int:
             retries=args.retries,
             retry_delay=args.retry_delay,
             with_ablation=args.with_ablation,
+            audit_policy=args.audit_policy,
+            judge_config=judge_config,
+            semantic_confidence_threshold=args.semantic_confidence_threshold,
         )
         for error in errors:
             error["elapsed_seconds"] = round(time.time() - started, 3)
@@ -398,11 +541,13 @@ def main(argv: list[str]) -> int:
         result["elapsed_seconds"] = round(time.time() - started, 3)
         append_jsonl(output_path, result)
         print(
-            "  clean={clean} leaky={leaky} audited={audited} leakage={leakage}".format(
+            "  clean={clean} leaky={leaky} audited={audited} "
+            "citation={citation} semantic={semantic}".format(
                 clean=result["clean"]["prediction"],
                 leaky=result["leaky"]["prediction"],
                 audited=result["audited"]["prediction"],
-                leakage=result["metrics"]["leaky_cited_future"],
+                citation=result["metrics"]["leaky_cited_future"],
+                semantic=result["metrics"]["leaky_semantic_future"],
             ),
             flush=True,
         )

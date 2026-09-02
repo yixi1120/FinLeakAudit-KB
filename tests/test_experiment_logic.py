@@ -76,6 +76,62 @@ class AuditedEvidenceTests(unittest.TestCase):
         self.assertEqual(result["audited"]["prediction"], "DOWN")
         self.assertTrue(result["metrics"]["audited_recovered_clean_direction"])
 
+    def test_semantic_policy_closes_citation_free_revision_loop(self):
+        def uncited_prediction(config, prompt):
+            prediction = self.prediction_for_prompt(prompt)
+            if "e4" in prompt:
+                prediction["rationale"] = [
+                    {
+                        "claim": "The latest result is strongly positive.",
+                        "evidence_ids": ["e1"],
+                    }
+                ]
+            return prediction
+
+        judge = ModelConfig(
+            name="judge",
+            base_url="http://unused",
+            api_key="unused",
+            model="judge-v1",
+        )
+        judgment = {
+            "semantic_dependency": "yes",
+            "relation": "support",
+            "confidence": 0.95,
+            "reason": "The latest result appears only in future evidence.",
+            "judge_model": "judge",
+            "judge_model_id": "judge-v1",
+            "usage": {},
+            "raw_content": "{}",
+        }
+        with (
+            patch.object(
+                run_experiment,
+                "call_chat",
+                side_effect=uncited_prediction,
+            ),
+            patch.object(
+                run_experiment,
+                "call_semantic_judge",
+                return_value=judgment,
+            ) as semantic_call,
+        ):
+            result = run_experiment.run_case(
+                self.case,
+                self.model,
+                seed=18,
+                audit_policy="semantic_llm",
+                judge_config=judge,
+            )
+
+        semantic_call.assert_called_once()
+        self.assertFalse(result["metrics"]["leaky_cited_future"])
+        self.assertTrue(result["metrics"]["leaky_semantic_future"])
+        self.assertEqual(result["audit"]["removed_evidence_ids"], ["e4"])
+        self.assertEqual(result["audited_evidence_order"], ["e1"])
+        self.assertEqual(result["audited"]["prediction"], "DOWN")
+        self.assertTrue(result["metrics"]["audited_recovered_clean_direction"])
+
 
 class TemporalAvailabilityTests(unittest.TestCase):
     def test_absolute_timestamp_overrides_misleading_relative_label(self):
@@ -111,6 +167,27 @@ class TemporalAvailabilityTests(unittest.TestCase):
         result = temporal_availability_check([evidence], cutoff)[0]
 
         self.assertEqual(result["temporal_status"], "valid")
+
+
+class CaseSelectionTests(unittest.TestCase):
+    def setUp(self):
+        self.cases = [
+            {"case_id": "case_1"},
+            {"case_id": "case_2"},
+            {"case_id": "case_3"},
+        ]
+
+    def test_select_specific_case_preserves_dataset_order(self):
+        selected = run_experiment.select_cases(
+            self.cases, ["case_3", "case_1"], None
+        )
+        self.assertEqual(
+            [case["case_id"] for case in selected], ["case_1", "case_3"]
+        )
+
+    def test_unknown_case_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, "case_9"):
+            run_experiment.select_cases(self.cases, ["case_9"], None)
 
 
 class PredictorVisibilityTests(unittest.TestCase):
