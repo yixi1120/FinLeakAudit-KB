@@ -1,0 +1,68 @@
+{
+  "schema_version": "finleakaudit_natural_semantic_hardset_manifest_v1",
+  "freeze_date": "2026-09-02",
+  "purpose": "blinded semantic dependency evaluation on natural replay rationales",
+  "source_results": [
+    {
+      "path": "experiments/results/deepseek_natural_pit_5event_v1_results.jsonl",
+      "sha256": "66103e2edf328a25764cbb31b70e1c9471a068143b5b7f9a78aa61e3ee7ea38f"
+    },
+    {
+      "path": "experiments/results/zhipu_natural_pit_5event_v1_results.jsonl",
+      "sha256": "114ef381224a9354414fc59f0842642938a40b20f84ad2237c9a71d618b75675"
+    }
+  ],
+  "split_policy": "event-level random split before semantic labeling",
+  "split_seed": 29,
+  "dev_event_count": 2,
+  "dev_events": [
+    "natural_007",
+    "natural_004"
+  ],
+  "test_events": [
+    "natural_002",
+    "natural_001",
+    "natural_010"
+  ],
+  "shuffle_seeds": {
+    "dev": 29001,
+    "test": 29002
+  },
+  "counts": {
+    "events": 5,
+    "model_event_runs": 10,
+    "claims": 38,
+    "pairs_total": 82,
+    "pairs_dev": 32,
+    "pairs_test": 50,
+    "explicit_future_citations_dev": 15,
+    "explicit_future_citations_test": 23
+  },
+  "blinding": {
+    "hidden_from_annotators": [
+      "event_id",
+      "model",
+      "model_id",
+      "evidence_id",
+      "timestamps",
+      "explicit citation flag",
+      "market outcome",
+      "forecast correctness"
+    ],
+    "coordinator_key_ignored_until_gold_freeze": true
+  },
+  "outputs": {
+    "dev_blind": {
+      "path": "experiments/analysis/natural_semantic_hard_dev_blind_v1.csv",
+      "sha256": "8f140bb2ab42cafca774a34c0a7ee1d5e9ae5857eefd1f844c660b493beb0ac7"
+    },
+    "test_blind": {
+      "path": "experiments/analysis/natural_semantic_hard_test_blind_v1.csv",
+      "sha256": "84e9761a186c510e877559a7368fc44e5fc9c4dfacbbdcfd10ec8a56c9d44f82"
+    },
+    "coordinator_key": {
+      "path": "experiments/analysis/natural_semantic_hard_key_v1.csv",
+      "sha256": "1448e46a09a584b2fa026ad1b500f25bb1285819b49a4fcf2d2d6721e73ce4c6"
+    }
+  }
+}

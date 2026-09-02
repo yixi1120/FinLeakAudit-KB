@@ -225,6 +225,20 @@
   调用级短重试。完整记录见
   `wiki/experiments/full_semantic_loop_smoke_2026_09_02.md`。
 
+## 2026-09-02 — Natural Semantic Hard Set v1 冻结
+
+- 从 5 个自然 point-in-time replay 事件的 DeepSeek/Zhipu 原始理由中构造
+  38 个 claim、82 个 claim × post-cutoff-evidence pairs。
+- 在新语义标签产生前使用固定种子 `29` 做事件级切分：Dev 2 事件 32 pairs，
+  Test 3 事件 50 pairs；同一事件及其证据不跨 split。
+- 生成器会从本地归档重建完整模型可见文本，并验证检索顺序、结果日志预览和
+  cutoff 后证据成员均未漂移。
+- 盲标表隐藏事件、模型、证据 ID、显式引用、时间戳、结果与预测正确性；协调密钥
+  在 gold 冻结前保持本地且被 Git 忽略。
+- 冻结顺序为：双人 Dev 盲标与裁决 → 仅用 Dev 调参 → 方法冻结 → Test 双人盲标 →
+  一次性 Test 评测。协议见
+  `wiki/experiments/natural_semantic_hardset_protocol_v1.md`。
+
 ## 2026-08-25 — Semantic Attribution 双人标注与第三方裁决
 
 - Annotator A 与 Annotator B 分别完成同一批 79 条 claim-evidence pairs。

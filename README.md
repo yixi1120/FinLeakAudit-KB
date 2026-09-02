@@ -130,6 +130,13 @@ nor a Full FinLeakAudit advantage; they identify the hard-negative and
 citation-free cases needed in the next dataset expansion. See the
 [semantic baseline report](wiki/experiments/semantic_attribution_baselines_2026_08_31.md).
 
+A second, pre-label event-level split is now frozen from the natural replay
+outputs: 38 real model-written claims form 82 claim-by-post-cutoff-evidence
+pairs, divided into a 32-pair Dev set and a 50-pair label-held-out Test set. The
+blinded files hide event, model, evidence-ID, citation, timestamp, outcome, and
+forecast-correctness metadata. No Test result is reported yet. See the
+[Natural Semantic Hard Set protocol](wiki/experiments/natural_semantic_hardset_protocol_v1.md).
+
 The online-loop follow-up also found that a blind LLM judge can make a
 high-confidence error when future evidence merely confirms an already known
 fact. The implemented `full_semantic` policy therefore uses deterministic time
@@ -174,6 +181,7 @@ prevalence. See the
 | Logic, metric, and v4 data validation tests | Implemented |
 | Dual human semantic attribution and adjudication | Implemented for 79 claim-evidence pairs |
 | Citation, lexical, embedding, and blind LLM-judge attribution baselines | Implemented |
+| Natural semantic hard-set Dev/Test split | Frozen before labeling: 32 Dev / 50 Test pairs |
 | Citation-free semantic audit operator in the revision pipeline | Experimental implementation; controlled smoke validated |
 | Full semantic audit with timestamp-governed compliance removal | Implemented in controlled runner; paper-scale run pending |
 | Market-open and trading-calendar alignment | Planned |
