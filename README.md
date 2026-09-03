@@ -168,13 +168,16 @@ The Qwen run also exposed two important failure modes. Its CrowdStrike rationale
 named post-cutoff documents but omitted required chunk suffixes, so exact-ID matching
 missed the semantic use. In one non-flipped Capital One run, Audited diverged from
 Clean because deletion left a sparser context; this is revision instability, not a
-failed recovery.
+failed recovery. A one-call diagnostic then preserved the surviving evidence order,
+backfilled two cutoff-safe items, and restored the direction from `NEUTRAL` to the
+Clean `UP`. The backfilled sequence exactly matched Clean in this event, so this is
+evidence for a sparse-context failure mode, not yet a general Backfill result.
 
 This is an outcome-bounded stress test over a constructed candidate feed, not a
 preserved production retrieval trace and not an estimate of real-world leakage
 prevalence. See the
 [three-model five-event replay report](wiki/experiments/natural_pit_5event_three_model_results_2026_09_03.md)
-and [paper results snapshot](wiki/experiments/paper_results_snapshot_2026_09_03.md).
+and [revision refill protocol](wiki/experiments/natural_revision_refill_baseline_protocol_v1.md).
 
 ## Implemented vs Planned
 
@@ -197,6 +200,7 @@ and [paper results snapshot](wiki/experiments/paper_results_snapshot_2026_09_03.
 | Support/contradiction operator evaluation | Planned |
 | Natural point-in-time candidate corpus and offline lexical retrieval | Implemented |
 | Natural replay model experiment | Five-event three-model pilot implemented; full 10-event run pending |
+| Rank-preserving safe backfill revision | Runner and Qwen one-event smoke implemented; three-model comparison pending |
 
 ## Quick Start
 
@@ -326,8 +330,8 @@ Start with:
 7. The results do not establish how often leakage occurs in deployed financial
    RAG systems.
 8. The 10-event natural corpus is a direct primary-source candidate feed, not a
-   preserved web-search SERP or production RAG trace. Its offline top-k has not
-   yet been run through the three forecasting models.
+   preserved web-search SERP or production RAG trace. Only the frozen five-event
+   subset has been run through all three forecasting models.
 9. Natural-source metadata has independent second verification and the 79-pair
    semantic labels are frozen, but the attribution set is small and derived
    from controlled cases; it is not yet a natural claim-evidence benchmark.

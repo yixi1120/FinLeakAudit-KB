@@ -257,6 +257,18 @@
   `wiki/experiments/natural_pit_5event_three_model_results_2026_09_03.md` 和
   `wiki/experiments/paper_results_snapshot_2026_09_03.md`。
 
+## 2026-09-03 — Revision Backfill 最小诊断
+
+- 新增独立 Rank-Preserving Backfill runner：先从实际 Unfiltered top-k 删除 cutoff
+  后证据，再按 cutoff-safe 检索排名补齐，不改写原始 Sparse Audited 结果。
+- 离线验证显示五事件均能安全补齐至 8 条且无重复；其中四个事件的补齐序列与 Clean
+  相同，`natural_010` 因候选排序与父文档限额交互而不同。
+- Qwen `natural_007` 新增一次调用：Clean `UP`、Unfiltered `UP`、Sparse Audited
+  `NEUTRAL`、Backfilled Audited `UP`；补齐序列与 Clean 完全一致且引用 ID 有效。
+- 该单事件 smoke 支持上下文稀疏是本次 revision drift 的原因，但不用于宣称 Backfill
+  在总体上更优。协议与记录见
+  `wiki/experiments/natural_revision_refill_baseline_protocol_v1.md`。
+
 ## 2026-08-25 — Semantic Attribution 双人标注与第三方裁决
 
 - Annotator A 与 Annotator B 分别完成同一批 79 条 claim-evidence pairs。
