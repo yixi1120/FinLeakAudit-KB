@@ -16,17 +16,16 @@ citation validity, claim-evidence attribution, marginal forecast sensitivity, an
 leakage-driven revision. In a controlled 10-case study across three LLMs, post-cutoff
 evidence was cited in 28/30 model-case runs and changed the forecast category in
 12/30. Removing temporally invalid evidence restored the corresponding Clean category
-in 12/12 changed runs, with a Wilson 95% interval of 75.7% to 100%. A five-event
-natural-source replay across the same three models produced six direction changes in
-15 model-event runs; all six returned to the Clean category after timestamp-based
-removal, with a Wilson interval of 61.0% to 100%. A separate 79-pair human annotation
-study found that citation-only attribution remained slightly stronger than a blinded
-LLM judge on the controlled sample, while exposing both malformed citations and
-support-without-dependence errors. In a 15-call paired revision follow-up,
-rank-preserving cutoff-safe backfill matched the Clean direction in 15/15 runs and
-removed the replay's single sparse-deletion drift. Twelve backfilled inputs were
-identical to Clean, and only one paired drift was corrected, so this does not establish
-a general performance advantage. These findings support the feasibility of
+in 12/12 changed runs, with a Wilson 95% interval of 75.7% to 100%. A 10-event
+natural-source replay across the same three models produced 13 direction changes in
+30 model-event runs. Sparse deletion recovered 11/13 changes, while rank-preserving
+cutoff-safe backfill recovered 13/13 and matched the Clean direction in 30/30 runs
+(Wilson 95% interval 88.6% to 100%). Backfill corrected three Sparse mismatches, but
+24/30 inputs were identical to Clean and the exact paired McNemar p-value was 0.25.
+A separate 79-pair human annotation study found that citation-only attribution
+remained slightly stronger than a blinded LLM judge on the controlled sample, while
+exposing both malformed citations and support-without-dependence errors. These
+findings support the feasibility of
 evidence-level temporal auditing but do not estimate leakage prevalence or demonstrate
 improved forecasting accuracy. We release the pipeline, frozen replay artifacts, and
 failure-preserving evaluation protocol as a controlled research pilot.
@@ -165,7 +164,7 @@ tests the premise and pipeline; it is not a sample of naturally occurring leakag
 
 ## 5.2 Natural Point-in-Time Replay
 
-Five selected events use frozen queries, archived primary-source documents, lexical
+Ten selected events use frozen queries, archived primary-source documents, lexical
 retrieval, and top-k evidence. Clean retrieval is bounded by the prediction cutoff;
 Unfiltered retrieval is bounded by outcome time. This is a constructed candidate-feed
 stress test, not a production retrieval trace.
@@ -217,20 +216,17 @@ changed direction. All 12 changed runs returned to Clean after removal, with a W
 
 ## 7.2 Natural Replay
 
-Across 15 model-event runs and 45 calls, post-cutoff evidence was validly cited by
-exact ID in 13/15 runs and direction changed in 6/15. All six changed runs returned to
-Clean after sparse deletion, with a Wilson interval of 61.0% to 100%. One Qwen
-non-flipped run drifted after sparse deletion.
+Across 30 model-event runs and 120 retained predictions, post-cutoff evidence was
+explicitly cited in 27/30 Unfiltered runs and direction changed in 13/30. Sparse
+deletion recovered 11/13 changes. Rank-preserving cutoff-safe backfill recovered
+13/13 changes (Wilson 95% interval 77.2% to 100%) and matched the Clean direction in
+30/30 runs (Wilson 95% interval 88.6% to 100%). On 17 non-flipped runs, Sparse drifted
+in 1/17 and Backfilled in 0/17.
 
-A separate 15-call paired follow-up evaluated rank-preserving cutoff-safe backfill.
-Both Sparse and Backfilled revision recovered all 6/6 initial direction changes. On
-the nine non-flipped runs, Sparse drifted in 1/9 and Backfilled in 0/9. Backfilled
-matched the Clean direction in 15/15 runs (Wilson 95% interval 79.6% to 100%) and used
-at least one citation in every output, with 53/53 cited IDs valid. However, 12/15
-backfilled evidence sequences were
-identical to Clean, and the drift comparison contains only one discordant pair. The
-result diagnoses a concrete context-sparsity failure but does not demonstrate a
-statistically reliable general improvement.
+Backfill corrected three Sparse mismatches, but its evidence sequence was identical
+to Clean in 24/30 runs. The exact paired McNemar p-value was 0.25. The result therefore
+diagnoses concrete context-sparsity failures and demonstrates replay consistency in
+this sample; it does not establish a statistically reliable general advantage.
 
 ## 7.3 Attribution Baselines
 
@@ -248,13 +244,17 @@ and 0.509. The current data do not show semantic-judge superiority.
 - Qwen Capital One: Clean and Unfiltered were both UP, while Sparse Audited became
   NEUTRAL after deletion left six rather than eight items. Rank-preserving safe
   backfill restored UP.
+- DeepSeek Intel: Clean was UP and Unfiltered became DOWN, but Sparse remained DOWN;
+  safe backfill restored UP.
+- Qwen Exxon: Clean was NEUTRAL and Unfiltered became UP, but Sparse remained UP;
+  safe backfill restored NEUTRAL.
 - DeepSeek JetBlue: Backfilled preserved the Clean `NEUTRAL` direction despite a
   non-identical evidence sequence, but confidence increased from 0.65 to 0.85. Matching
   direction therefore does not imply identical model state or calibration.
 
-The generated tables and current prose are maintained in
-`wiki/writing/results_draft_v1.md` and
-`wiki/experiments/natural_revision_refill_three_model_results_2026_09_06.md`.
+The current natural-replay table, comparison figure, and detailed integrity checks are
+maintained in
+`wiki/experiments/natural_pit_10event_three_model_results_2026_09_06.md`.
 
 # 8. Discussion
 
@@ -266,13 +266,14 @@ the evidence distribution.
 
 The Backfilled baseline tests whether sparse revision side effects can be reduced
 without reintroducing future evidence. It must be evaluated independently rather than
-retroactively replacing Sparse Audited results. The current comparison removes one
-observed drift, but its tiny discordant count and frequent input identity with Clean
-make this a failure diagnosis rather than a method-superiority result.
+retroactively replacing Sparse Audited results. The current comparison corrects three
+observed Sparse mismatches, but the exact paired test is not significant and inputs
+are frequently identical to Clean. It remains a failure diagnosis rather than a
+method-superiority result.
 
 # 9. Limitations and Ethics
 
-- Five natural events and 15 model-event runs are too small for prevalence claims.
+- Ten natural events and 30 model-event runs are too small for prevalence claims.
 - Event selection is purposive and outcome-bounded.
 - Controlled injections are intentionally easy relative to production retrieval.
 - Natural semantic Test labels are not yet available.
@@ -307,7 +308,7 @@ policy comparisons are required before broader claims.
 - [x] Random seeds or deterministic retrieval policies recorded where applicable.
 - [x] Error rows and malformed citation IDs retained.
 - [x] Unit and data-validation tests provided.
-- [x] Backfilled baseline complete across all three models and five events.
-- [ ] Full ten-event natural replay complete.
+- [x] Full ten-event, three-model natural replay complete.
+- [x] Backfilled baseline complete across all three models and ten events.
 - [ ] Natural semantic Test gold frozen and evaluated once.
 - [ ] Final bibliography and venue formatting complete.

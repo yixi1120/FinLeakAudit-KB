@@ -144,45 +144,42 @@ validation for compliance removal and semantic attribution for diagnosis. On
 the controlled additive-leak setup, its revised input is identical to the
 timestamp-only input; no recovery advantage is claimed.
 
-## Natural Point-in-Time Replay Pilot
+## Natural Point-in-Time Replay
 
-A separate five-event pilot uses frozen queries and directly archived primary-source
+A 10-event controlled replay uses frozen queries and directly archived primary-source
 documents rather than hand-written evidence. DeepSeek, Zhipu, and local Qwen2.5-14B
-were each run under three conditions: cutoff-safe Clean retrieval, outcome-bounded
-Unfiltered retrieval, and timestamp-audited revision.
+were each run under four conditions: cutoff-safe Clean retrieval, outcome-bounded
+Unfiltered retrieval, Sparse Audited deletion, and rank-preserving Backfilled Audited
+revision.
 
-| Model | Future cited | Clean-to-Unfiltered change | Recovery on changed runs | Clean / Unfiltered / Audited accuracy |
+| Model | Future cited | Direction change | Sparse / Backfill recovery | Clean / Unfiltered / Sparse / Backfill accuracy |
 |---|---:|---:|---:|---:|
-| DeepSeek | 5/5 | 3/5 | 3/3 | 1/5 / 4/5 / 1/5 |
-| Zhipu | 4/5 | 1/5 | 1/1 | 3/5 / 4/5 / 3/5 |
-| Qwen2.5-14B | 4/5 | 2/5 | 2/2 | 2/5 / 4/5 / 1/5 |
+| DeepSeek | 10/10 | 7/10 | 6/7 / 7/7 | 3/10 / 6/10 / 4/10 / 3/10 |
+| Zhipu | 8/10 | 1/10 | 1/1 / 1/1 | 4/10 / 5/10 / 4/10 / 4/10 |
+| Qwen2.5-14B | 9/10 | 5/10 | 4/5 / 5/5 | 4/10 / 5/10 / 3/10 / 4/10 |
 
-Across 15 model-event runs and 45 prediction calls, cutoff-postdating evidence
-was validly cited by exact ID in 13/15 runs and changed direction in 6/15. Removing all
-post-cutoff chunks from the actual Unfiltered top-k restored the corresponding
-Clean direction in all six changed runs. Aggregate outcome accuracy was 6/15
-Clean, 12/15 Unfiltered, and 5/15 Audited; the temporary increase is hindsight
-inflation in this replay, not valid forecasting performance.
+Across 30 model-event runs and 120 retained prediction outputs, cutoff-postdating
+evidence was explicitly cited in 27/30 Unfiltered runs and changed direction in 13/30.
+Sparse deletion recovered 11/13 changes; Backfilled revision recovered 13/13 and
+matched the Clean direction in 30/30 runs. On 17 non-flipped runs, Sparse introduced
+one drift and Backfilled introduced none. The exact paired McNemar p-value is 0.25,
+so this does not establish a statistically reliable general advantage.
 
-The Qwen run also exposed two important failure modes. Its CrowdStrike rationale
-named post-cutoff documents but omitted required chunk suffixes, so exact-ID matching
-missed the semantic use. In one non-flipped Capital One run, Audited diverged from
-Clean because deletion left a sparser context; this is revision instability, not a
-failed recovery.
+Backfill corrected three observed Sparse mismatches: DeepSeek Intel and Qwen Exxon
+recovery failures, plus a Qwen Capital One non-flip drift. However, 24/30 Backfilled
+evidence sequences were identical to Clean. The result demonstrates a concrete
+context-reconstruction failure mode, not a universal method improvement.
 
-A 15-call paired follow-up tested rank-preserving cutoff-safe backfill across all three
-models and five events. Both Sparse and Backfilled revision recovered all 6/6 initial
-direction changes. On nine non-flipped runs, Sparse produced 1/9 revision drift and
-Backfilled produced 0/9; Backfilled matched the Clean direction in 15/15 runs. Twelve
-of the 15 Backfilled evidence sequences were identical to Clean and only one paired
-drift was corrected, so this is a useful failure diagnosis rather than evidence of a
-general or statistically reliable method advantage.
+Outcome accuracy was 11/30 Clean, 16/30 Unfiltered, 11/30 Sparse, and 11/30 Backfilled.
+The Unfiltered increase is hindsight inflation, not valid forecasting performance.
+Citation validation also retained 30 invalid IDs across 11/90 base-condition outputs
+and 8 invalid IDs across 3/30 Backfilled outputs, including shortened, fabricated, and
+misformatted IDs.
 
 This is an outcome-bounded stress test over a constructed candidate feed, not a
 preserved production retrieval trace and not an estimate of real-world leakage
 prevalence. See the
-[three-model five-event replay report](wiki/experiments/natural_pit_5event_three_model_results_2026_09_03.md)
-and [three-model revision refill report](wiki/experiments/natural_revision_refill_three_model_results_2026_09_06.md).
+[10-event three-model replay report](wiki/experiments/natural_pit_10event_three_model_results_2026_09_06.md).
 
 ## Implemented vs Planned
 
@@ -204,8 +201,8 @@ and [three-model revision refill report](wiki/experiments/natural_revision_refil
 | Original/revision/vendor timestamp handling | Planned |
 | Support/contradiction operator evaluation | Planned |
 | Natural point-in-time candidate corpus and offline lexical retrieval | Implemented |
-| Natural replay model experiment | Five-event three-model pilot implemented; full 10-event run pending |
-| Rank-preserving safe backfill revision | Five-event three-model comparison implemented; 15/15 directions matched Clean |
+| Natural replay model experiment | 10-event three-model run implemented; 30 model-event results |
+| Rank-preserving safe backfill revision | 10-event three-model comparison implemented; 30/30 directions matched Clean |
 
 ## Quick Start
 
@@ -236,6 +233,13 @@ Run the five-event natural replay after exporting a cloud-model key:
 python3 experiments/run_natural_experiment.py \
   --model deepseek --minimal --run-name natural_pit_5event_v1
 python3 experiments/analyze_natural_experiment.py
+```
+
+Regenerate the current frozen 10-event analysis, report, and comparison figure:
+
+```bash
+python3 experiments/analyze_natural_10event.py
+python3 -m unittest tests.test_analyze_natural_10event -v
 ```
 
 For cloud models, export keys in the shell. Do not commit them:
@@ -335,8 +339,8 @@ Start with:
 7. The results do not establish how often leakage occurs in deployed financial
    RAG systems.
 8. The 10-event natural corpus is a direct primary-source candidate feed, not a
-   preserved web-search SERP or production RAG trace. Only the frozen five-event
-   subset has been run through all three forecasting models.
+   preserved web-search SERP or production RAG trace. Event selection is purposive,
+   and 30 model-event observations remain too small for prevalence claims.
 9. Natural-source metadata has independent second verification and the 79-pair
    semantic labels are frozen, but the attribution set is small and derived
    from controlled cases; it is not yet a natural claim-evidence benchmark.

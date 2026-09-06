@@ -1,6 +1,6 @@
 # FinLeakAudit Knowledge Base — 全局索引
 
-> 最后更新：2026-07-26
+> 最后更新：2026-09-06
 > 维护方式：每次新增/修改 wiki 页面后更新本索引
 
 ---
@@ -86,6 +86,8 @@
 - [[semantic_attribution_annotation_protocol_v1]] — 79 个 claim-evidence pair 的双人盲标协议
 - [[natural_point_in_time_data_protocol_v1]] — 自然检索候选语料与时间台账收集规范
 - [[team_submission_review_2026_08_08]] — 标注线与自然数据线交付物的人话版复核和验收清单
+- [[natural_remaining5_eligibility_2026_09_06]] — 后五个自然事件的时点、来源与检索资格验收
+- [[natural_pit_10event_three_model_results_2026_09_06]] — 十事件、三模型、四条件回放结果
 
 ---
 
@@ -97,3 +99,4 @@
 - [[abstract_drafts]]
 - [[reviewer_attacks]]
 - [[ra_application_project_brief_2026_07_26]] — RA 简历、邮件和面试用项目表述
+- [[workshop_paper_draft_v1]] — 当前 workshop 论文草稿与复现清单

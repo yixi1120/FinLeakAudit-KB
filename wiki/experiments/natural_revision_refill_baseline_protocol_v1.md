@@ -101,12 +101,28 @@ Backfilled evidence IDs 与 Clean 的顺序完全一致，新增的两条证据�
 Backfilled 输入与 Clean 完全相同，不进行统计显著性或总体优越性声明。完整报告见
 [`natural_revision_refill_three_model_results_2026_09_06.md`](natural_revision_refill_three_model_results_2026_09_06.md)。
 
+## 十事件扩展结果
+
+同日完成后五事件并与首批冻结结果合并，共得到 30 个 model-event pairs：
+
+- 13 个初始翻转：Sparse 恢复 11/13，Backfilled 恢复 13/13。
+- 17 个非翻转：Sparse drift 1/17，Backfilled drift 0/17。
+- Backfilled 与 Clean 方向一致 30/30，Wilson 95% CI 为 88.6%–100%。
+- Backfilled evidence sequence 与 Clean 完全相同 24/30。
+- Backfill 修正 DeepSeek `natural_005`、Qwen `natural_006` 和 Qwen
+  `natural_007` 三处 Sparse 不一致。
+- 配对 exact McNemar `p=0.25`，未达到统计显著。
+
+该扩展支持 Backfill 作为上下文稀疏诊断和 revision consistency baseline，但仍不支持
+一般优越性结论。完整报告见
+[`natural_pit_10event_three_model_results_2026_09_06.md`](natural_pit_10event_three_model_results_2026_09_06.md)。
+
 ## 最小验证顺序
 
 1. [已完成] 对 Qwen `natural_007` 运行一次 Backfilled prediction，结果由 Sparse
    `NEUTRAL` 回到 Clean `UP`。
 2. [已完成] 固定 runner 和指标后，扩展到三个模型的五事件，共 15 个新增调用。
-3. 若扩展完整十事件模型回放，再比较 Sparse 与 Backfilled。
+3. [已完成] 扩展至完整十事件、三个模型，并进行 Sparse 与 Backfilled 配对比较。
 4. 无论结果正负，保留所有失败与 citation-format errors。
 
 ## 命令

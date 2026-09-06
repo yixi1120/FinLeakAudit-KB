@@ -283,6 +283,28 @@
 - 新增自动分析器、逐事件 CSV、聚合 CSV 和正式结果报告；当前结论限定为删除后
   上下文稀疏的失败诊断，不宣称 Backfill 已取得统计可靠的总体优势。
 
+## 2026-09-06 — Natural Replay 扩展至十事件
+
+- 对后五个自然事件完成独立资格验收：67 条二次来源核验记录全部为 `accept`，归档
+  哈希和时间证据均匹配；十事件均可构造 Clean、Unfiltered、Sparse 与 Backfilled
+  四种条件。
+- DeepSeek、Zhipu 与本地 Qwen 完成新增五事件回放；与冻结的首批五事件合并后，共
+  10 个事件、30 个 model-event runs、120 个保留预测输出。
+- Unfiltered 中 27/30 显式引用未来证据，13/30 出现方向变化。Sparse 恢复 11/13，
+  Backfilled 恢复 13/13，并在全部 30/30 runs 上匹配 Clean 方向。
+- Backfill 修正三处 Sparse 不一致：DeepSeek Intel、Qwen Exxon 的恢复失败，以及
+  Qwen Capital One 的非翻转漂移。17 个非翻转 runs 中，Sparse drift 为 1/17，
+  Backfilled 为 0/17。
+- 24/30 个 Backfilled 输入序列与 Clean 完全相同，配对 exact McNemar `p=0.25`；
+  因此只报告样本内一致性和失败诊断，不宣称方法具有统计显著优势。
+- Accuracy 为 Clean 11/30、Unfiltered 16/30、Sparse 11/30、Backfilled 11/30；
+  Unfiltered 的较高值属于 outcome-bounded hindsight inflation。
+- 引用完整性检查保留了原始失败：90 个基础条件输出中 11 个输出含 30 个无效 ID，
+  30 个 Backfilled 输出中 3 个含 8 个无效 ID。Qwen 有一个事件级超时并成功重试，
+  错误记录未删除。
+- 新增十事件分析器、冻结指标测试、逐事件和聚合 CSV、正式报告及对比图；Qwen 服务
+  在本地实验后关闭。
+
 ## 2026-08-25 — Semantic Attribution 双人标注与第三方裁决
 
 - Annotator A 与 Annotator B 分别完成同一批 79 条 claim-evidence pairs。
