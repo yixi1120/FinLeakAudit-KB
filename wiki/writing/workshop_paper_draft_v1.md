@@ -1,8 +1,8 @@
 ---
 title: "FinLeakAudit: Evidence-Level Point-in-Time Auditing for Financial Agentic RAG"
-status: structured-draft
+status: results-draft
 target: workshop-paper
-date: 2026-09-03
+date: 2026-09-06
 ---
 
 # Abstract
@@ -22,8 +22,11 @@ natural-source replay across the same three models produced six direction change
 removal, with a Wilson interval of 61.0% to 100%. A separate 79-pair human annotation
 study found that citation-only attribution remained slightly stronger than a blinded
 LLM judge on the controlled sample, while exposing both malformed citations and
-support-without-dependence errors. A one-event Qwen diagnostic further showed that
-rank-preserving safe backfill removed a sparse-deletion revision drift. These findings support the feasibility of
+support-without-dependence errors. In a 15-call paired revision follow-up,
+rank-preserving cutoff-safe backfill matched the Clean direction in 15/15 runs and
+removed the replay's single sparse-deletion drift. Twelve backfilled inputs were
+identical to Clean, and only one paired drift was corrected, so this does not establish
+a general performance advantage. These findings support the feasibility of
 evidence-level temporal auditing but do not estimate leakage prevalence or demonstrate
 improved forecasting accuracy. We release the pipeline, frozen replay artifacts, and
 failure-preserving evaluation protocol as a controlled research pilot.
@@ -217,11 +220,17 @@ changed direction. All 12 changed runs returned to Clean after removal, with a W
 Across 15 model-event runs and 45 calls, post-cutoff evidence was validly cited by
 exact ID in 13/15 runs and direction changed in 6/15. All six changed runs returned to
 Clean after sparse deletion, with a Wilson interval of 61.0% to 100%. One Qwen
-non-flipped run drifted after sparse deletion. In a pre-specified one-call diagnostic,
-rank-preserving cutoff-safe backfill restored this run from `NEUTRAL` to the Clean
-`UP` category. The backfilled evidence sequence exactly matched Clean for this event.
-This isolates context sparsity as a plausible explanation for this failure, but does
-not establish a general advantage from one event.
+non-flipped run drifted after sparse deletion.
+
+A separate 15-call paired follow-up evaluated rank-preserving cutoff-safe backfill.
+Both Sparse and Backfilled revision recovered all 6/6 initial direction changes. On
+the nine non-flipped runs, Sparse drifted in 1/9 and Backfilled in 0/9. Backfilled
+matched the Clean direction in 15/15 runs (Wilson 95% interval 79.6% to 100%) and used
+at least one citation in every output, with 53/53 cited IDs valid. However, 12/15
+backfilled evidence sequences were
+identical to Clean, and the drift comparison contains only one discordant pair. The
+result diagnoses a concrete context-sparsity failure but does not demonstrate a
+statistically reliable general improvement.
 
 ## 7.3 Attribution Baselines
 
@@ -238,11 +247,14 @@ and 0.509. The current data do not show semantic-judge superiority.
   support-without-dependence false positive.
 - Qwen Capital One: Clean and Unfiltered were both UP, while Sparse Audited became
   NEUTRAL after deletion left six rather than eight items. Rank-preserving safe
-  backfill restored UP in a one-call smoke test.
+  backfill restored UP.
+- DeepSeek JetBlue: Backfilled preserved the Clean `NEUTRAL` direction despite a
+  non-identical evidence sequence, but confidence increased from 0.65 to 0.85. Matching
+  direction therefore does not imply identical model state or calibration.
 
 The generated tables and current prose are maintained in
 `wiki/writing/results_draft_v1.md` and
-`wiki/experiments/paper_results_snapshot_2026_09_03.md`.
+`wiki/experiments/natural_revision_refill_three_model_results_2026_09_06.md`.
 
 # 8. Discussion
 
@@ -254,7 +266,9 @@ the evidence distribution.
 
 The Backfilled baseline tests whether sparse revision side effects can be reduced
 without reintroducing future evidence. It must be evaluated independently rather than
-retroactively replacing Sparse Audited results.
+retroactively replacing Sparse Audited results. The current comparison removes one
+observed drift, but its tiny discordant count and frequent input identity with Clean
+make this a failure diagnosis rather than a method-superiority result.
 
 # 9. Limitations and Ethics
 
@@ -293,8 +307,7 @@ policy comparisons are required before broader claims.
 - [x] Random seeds or deterministic retrieval policies recorded where applicable.
 - [x] Error rows and malformed citation IDs retained.
 - [x] Unit and data-validation tests provided.
-- [x] Backfilled runner and one-event Qwen diagnostic provided.
-- [ ] Backfilled baseline complete across all three models and five events.
+- [x] Backfilled baseline complete across all three models and five events.
 - [ ] Full ten-event natural replay complete.
 - [ ] Natural semantic Test gold frozen and evaluated once.
 - [ ] Final bibliography and venue formatting complete.

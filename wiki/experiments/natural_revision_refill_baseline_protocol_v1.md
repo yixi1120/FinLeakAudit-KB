@@ -87,12 +87,26 @@ Backfilled evidence IDs 与 Clean 的顺序完全一致，新增的两条证据�
 逐项运行记录见
 [`natural_revision_refill_smoke_2026_09_03.md`](natural_revision_refill_smoke_2026_09_03.md)。
 
+## 三模型结果
+
+2026-09-06 完成三个模型、五事件共 15 个 Backfilled 调用，0 错误：
+
+- 6 个初始翻转：Sparse 与 Backfilled 均恢复 6/6。
+- 9 个非翻转：Sparse drift 1/9，Backfilled drift 0/9。
+- Backfilled 与 Clean 方向一致 15/15，Wilson 95% CI 为 79.6%–100%。
+- Backfilled evidence sequence 与 Clean 完全相同 12/15。
+- 15 个输出均有引用，共 53 个 evidence ID，53/53 有效。
+
+唯一被纠正的 drift 是 Qwen `natural_007`。由于只有一个 discordant pair，且多数
+Backfilled 输入与 Clean 完全相同，不进行统计显著性或总体优越性声明。完整报告见
+[`natural_revision_refill_three_model_results_2026_09_06.md`](natural_revision_refill_three_model_results_2026_09_06.md)。
+
 ## 最小验证顺序
 
 1. [已完成] 对 Qwen `natural_007` 运行一次 Backfilled prediction，结果由 Sparse
    `NEUTRAL` 回到 Clean `UP`。
-2. 固定 runner 和指标后，扩展到三个模型的五事件，共 15 个新增调用。
-3. 若 drift 降低，再在完整十事件集合上比较 Sparse 与 Backfilled。
+2. [已完成] 固定 runner 和指标后，扩展到三个模型的五事件，共 15 个新增调用。
+3. 若扩展完整十事件模型回放，再比较 Sparse 与 Backfilled。
 4. 无论结果正负，保留所有失败与 citation-format errors。
 
 ## 命令

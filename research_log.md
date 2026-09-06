@@ -269,6 +269,20 @@
   在总体上更优。协议与记录见
   `wiki/experiments/natural_revision_refill_baseline_protocol_v1.md`。
 
+## 2026-09-06 — Revision Backfill 三模型对照完成
+
+- DeepSeek、Zhipu、Qwen 在固定五事件上完成 15 个 Backfilled Audited 新调用，0 错误；
+  原有 Clean、Unfiltered 与 Sparse Audited 结果未重跑或覆盖。
+- 6 个 Clean-to-Unfiltered 初始翻转中，Sparse 与 Backfilled 均恢复 6/6；9 个非翻转
+  run 中，Sparse drift 为 1/9，Backfilled drift 为 0/9。
+- Backfilled 与 Clean 方向一致 15/15（Wilson 95% CI 79.6%–100%），但 12/15 的
+  evidence sequence 与 Clean 完全相同，且 drift 改善只有一个 discordant pair。
+- JetBlue 的三个 Backfilled 序列与 Clean 不同但方向仍一致；DeepSeek confidence
+  从 0.65 升至 0.85，说明方向一致不等于校准或模型状态完全一致。
+- 15 个 Backfilled 输出均有引用，共 53 个 evidence ID，53/53 有效。
+- 新增自动分析器、逐事件 CSV、聚合 CSV 和正式结果报告；当前结论限定为删除后
+  上下文稀疏的失败诊断，不宣称 Backfill 已取得统计可靠的总体优势。
+
 ## 2026-08-25 — Semantic Attribution 双人标注与第三方裁决
 
 - Annotator A 与 Annotator B 分别完成同一批 79 条 claim-evidence pairs。

@@ -168,16 +168,21 @@ The Qwen run also exposed two important failure modes. Its CrowdStrike rationale
 named post-cutoff documents but omitted required chunk suffixes, so exact-ID matching
 missed the semantic use. In one non-flipped Capital One run, Audited diverged from
 Clean because deletion left a sparser context; this is revision instability, not a
-failed recovery. A one-call diagnostic then preserved the surviving evidence order,
-backfilled two cutoff-safe items, and restored the direction from `NEUTRAL` to the
-Clean `UP`. The backfilled sequence exactly matched Clean in this event, so this is
-evidence for a sparse-context failure mode, not yet a general Backfill result.
+failed recovery.
+
+A 15-call paired follow-up tested rank-preserving cutoff-safe backfill across all three
+models and five events. Both Sparse and Backfilled revision recovered all 6/6 initial
+direction changes. On nine non-flipped runs, Sparse produced 1/9 revision drift and
+Backfilled produced 0/9; Backfilled matched the Clean direction in 15/15 runs. Twelve
+of the 15 Backfilled evidence sequences were identical to Clean and only one paired
+drift was corrected, so this is a useful failure diagnosis rather than evidence of a
+general or statistically reliable method advantage.
 
 This is an outcome-bounded stress test over a constructed candidate feed, not a
 preserved production retrieval trace and not an estimate of real-world leakage
 prevalence. See the
 [three-model five-event replay report](wiki/experiments/natural_pit_5event_three_model_results_2026_09_03.md)
-and [revision refill protocol](wiki/experiments/natural_revision_refill_baseline_protocol_v1.md).
+and [three-model revision refill report](wiki/experiments/natural_revision_refill_three_model_results_2026_09_06.md).
 
 ## Implemented vs Planned
 
@@ -200,7 +205,7 @@ and [revision refill protocol](wiki/experiments/natural_revision_refill_baseline
 | Support/contradiction operator evaluation | Planned |
 | Natural point-in-time candidate corpus and offline lexical retrieval | Implemented |
 | Natural replay model experiment | Five-event three-model pilot implemented; full 10-event run pending |
-| Rank-preserving safe backfill revision | Runner and Qwen one-event smoke implemented; three-model comparison pending |
+| Rank-preserving safe backfill revision | Five-event three-model comparison implemented; 15/15 directions matched Clean |
 
 ## Quick Start
 

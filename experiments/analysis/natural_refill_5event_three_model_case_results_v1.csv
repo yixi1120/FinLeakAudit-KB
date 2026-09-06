@@ -1,0 +1,16 @@
+model,event_id,ticker,clean_prediction,unfiltered_prediction,sparse_audited_prediction,backfilled_audited_prediction,clean_confidence,backfilled_confidence,initial_flip,sparse_matches_clean,backfilled_matches_clean,sparse_drift_without_initial_flip,backfilled_drift_without_initial_flip,backfilled_matches_clean_sequence,added_evidence_count,backfilled_correct,all_citations_valid,invalid_citation_id_count,total_tokens,elapsed_seconds
+deepseek,natural_001,CRWD,NEUTRAL,DOWN,NEUTRAL,NEUTRAL,0.55,0.55,True,True,True,False,False,True,3,False,True,0,7124,4.196
+deepseek,natural_002,NVDA,UP,UP,UP,UP,0.75,0.75,False,True,True,False,False,True,2,True,True,0,7752,3.291
+deepseek,natural_004,SBUX,DOWN,UP,DOWN,DOWN,0.65,0.65,True,True,True,False,False,True,2,False,True,0,7653,3.561
+deepseek,natural_007,COF,NEUTRAL,UP,NEUTRAL,NEUTRAL,0.55,0.55,True,True,True,False,False,True,2,False,True,0,8335,3.544
+deepseek,natural_010,JBLU,NEUTRAL,NEUTRAL,NEUTRAL,NEUTRAL,0.65,0.85,False,True,True,False,False,False,2,False,True,0,6829,3.298
+qwen,natural_001,CRWD,NEUTRAL,DOWN,NEUTRAL,NEUTRAL,0.75,0.75,True,True,True,False,False,True,3,False,True,0,7511,127.037
+qwen,natural_002,NVDA,UP,UP,UP,UP,0.65,0.65,False,True,True,False,False,True,2,True,True,0,8182,146.505
+qwen,natural_004,SBUX,DOWN,UP,DOWN,DOWN,0.65,0.65,True,True,True,False,False,True,2,False,True,0,8035,135.842
+qwen,natural_007,COF,UP,UP,NEUTRAL,UP,0.65,0.65,False,False,True,True,False,True,2,True,True,0,8663,107.242
+qwen,natural_010,JBLU,NEUTRAL,NEUTRAL,NEUTRAL,NEUTRAL,0.75,0.75,False,True,True,False,False,False,2,False,True,0,6932,126.307
+zhipu,natural_001,CRWD,UP,DOWN,UP,UP,0.65,0.65,True,True,True,False,False,True,3,False,True,0,6968,5.182
+zhipu,natural_002,NVDA,UP,UP,UP,UP,0.8,0.8,False,True,True,False,False,True,2,True,True,0,7794,9.055
+zhipu,natural_004,SBUX,UP,UP,UP,UP,0.65,0.65,False,True,True,False,False,True,2,True,True,0,7582,7.697
+zhipu,natural_007,COF,UP,UP,UP,UP,0.65,0.65,False,True,True,False,False,True,2,True,True,0,8079,5.325
+zhipu,natural_010,JBLU,UP,UP,UP,UP,0.65,0.65,False,True,True,False,False,False,2,False,True,0,6629,4.586
