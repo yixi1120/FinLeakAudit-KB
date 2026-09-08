@@ -1,7 +1,7 @@
 # Paper Build
 
-This directory contains a workshop-neutral, anonymized two-column draft. It is not
-yet formatted for a specific venue.
+This directory contains a workshop-neutral two-column draft. It is not yet formatted
+for a specific venue.
 
 Build from this directory with:
 
@@ -9,9 +9,10 @@ Build from this directory with:
 make
 ```
 
-The draft intentionally keeps the authors and repository URL anonymous. Replace the
-article class with the selected venue template and confirm author order and
-contributions before submission.
+The author order is frozen as Ziyang Lu, Junwei Chen, and Yating Zhang. The repository
+URL remains omitted until the target venue's review and artifact rules are confirmed.
+Replace the article class with the selected venue template and confirm affiliations,
+contact details, and the contribution statement before submission.
 
 Current evidence boundary:
 

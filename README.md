@@ -15,15 +15,15 @@ finished benchmark.
 
 ## Manuscript
 
-The repository now includes a workshop-neutral, anonymized two-column manuscript:
+The repository now includes a workshop-neutral two-column manuscript:
 
 - [LaTeX source](paper/main.tex)
 - [checked BibTeX bibliography](paper/references.bib)
 - [compiled draft PDF](output/pdf/FinLeakAudit_workshop_draft_v1.pdf)
 
 Build it with `make` from `paper/`. The current draft is intentionally not tied to a
-venue template; author order, non-anonymous repository links, and venue formatting
-must be finalized before submission.
+venue template; affiliations, repository disclosure, contribution statements, and
+venue formatting must be finalized before submission.
 
 ## Research Problem
 
