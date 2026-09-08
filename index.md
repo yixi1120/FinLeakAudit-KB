@@ -100,3 +100,4 @@
 - [[reviewer_attacks]]
 - [[ra_application_project_brief_2026_07_26]] — RA 简历、邮件和面试用项目表述
 - [[workshop_paper_draft_v1]] — 当前 workshop 论文草稿与复现清单
+- [[bibliography_audit_2026_09_08]] — 论文引用的主来源核验与撤稿处置记录

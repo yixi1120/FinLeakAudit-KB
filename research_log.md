@@ -305,6 +305,19 @@
 - 新增十事件分析器、冻结指标测试、逐事件和聚合 CSV、正式报告及对比图；Qwen 服务
   在本地实验后关闭。
 
+## 2026-09-08 — Workshop 可编译初稿与引用审计
+
+- 新建 `paper/main.tex`：完成匿名、双栏、workshop-neutral 的 4 页可编译初稿，覆盖
+  Introduction、Related Work、问题定义、审计协议、数据、实验、结果、限制与伦理。
+- 新建 `paper/references.bib`，对 14 篇实际引用逐项核验官方 ACL Anthology、NeurIPS、
+  DOI 或 arXiv 页面；不再使用知识库摘要直接充当论文证据。
+- 发现 `FinAgent-RAG` (`arXiv:2605.05409`) 已由作者撤稿，官方理由为实验设计存在重大
+  方法错误。已从支持性引用和 baseline 候选中排除，并保留撤稿审计记录。
+- 论文数字与冻结结果重新对齐：controlled 30 runs、natural 30 runs、attribution 78 个
+  decisive labels；未把尚未标注的 natural semantic Test set 写成结果。
+- LaTeX 经 `pdflatex -> bibtex -> pdflatex x2` 编译，引用全部解析；最终 PDF 逐页检查
+  无重叠、截断、空白页或损坏表格。
+
 ## 2026-08-25 — Semantic Attribution 双人标注与第三方裁决
 
 - Annotator A 与 Annotator B 分别完成同一批 79 条 claim-evidence pairs。
@@ -325,6 +338,6 @@
 - [x] 跑 Experiment A 注入实验确认 premise（2026-07-07 三模型 5-case pilot）
 - [ ] 扩展 Experiment A 到 20–50 cases
 - [x] 实现 evidence ablation（2026-07-12，DeepSeek/Zhipu 5-case pilot）
-- [ ] 实现 semantic leakage detection
-- [ ] 补充自然泄漏检测（Experiment B）实验设计
+- [x] 实现 semantic leakage detection（controlled attribution baseline + online smoke）
+- [x] 补充自然泄漏检测（Experiment B）实验设计并完成 10-event replay
 - [ ] 生成 contribution_matrix.md 和 baseline_matrix.md

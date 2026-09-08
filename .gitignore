@@ -17,6 +17,12 @@ venv/
 
 # Local review and rendered artifacts
 tmp/
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.log
+paper/*.out
+paper/main.pdf
 
 # Model files (large)
 *.gguf

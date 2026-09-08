@@ -6,13 +6,15 @@ ccf_level: preprint
 arxiv: "2605.05409"
 tags: [agentic-rag, financial-qa, self-verification, program-of-thought, adaptive-router]
 status: deep-read
-collision_risk: medium
-must_cite: true
+publication_status: withdrawn
+collision_risk: excluded
+must_cite: false
 ---
 
 # 一句话总结
 
-金融文档 QA 的 Agentic RAG：对比检索器 + PoT 数值推理 + 自适应路由 + 自校验。Self-verification 和 Query Refinement 循环与我们相关。
+金融文档 QA 的 Agentic RAG：对比检索器 + PoT 数值推理 + 自适应路由 + 自校验。
+该预印本已于 2026-07-05 撤稿，作者说明实验设计存在重大方法错误，结论不再受支持。
 
 # 研究任务
 
@@ -52,10 +54,16 @@ Medium — 模块相似但任务完全不同
 
 # 可以引用的位置
 
-- Related Work: temporal hard negatives 设计参考
-- Method: self-verification 参考
-- Experiments: cost/latency evaluation 参考
+- 不作为支持性引用。
+- 如讨论研究筛选或撤稿处置，可明确标注 withdrawn 后提及。
 
-# 待确认问题
+# 撤稿核验
 
-- [ ] Contrastive Financial Retriever 的 temporal hard negatives 具体怎么构造？
+- 核验日期：2026-09-08
+- 官方页面：https://arxiv.org/abs/2605.05409
+- 页面状态：withdrawn
+- 作者说明：实验设计存在影响结论有效性的重大方法错误，且无法在当前框架内修复。
+
+# 处置
+
+从论文 Related Work、baseline 与结果支撑列表中排除；保留本卡作为研究审计记录。

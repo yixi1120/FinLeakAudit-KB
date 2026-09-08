@@ -1,6 +1,6 @@
 ---
 title: "FinLeakAudit: Evidence-Level Point-in-Time Auditing for Financial Agentic RAG"
-status: results-draft
+status: latex-draft-synced
 target: workshop-paper
 date: 2026-09-06
 ---
@@ -66,29 +66,43 @@ Our current contributions are deliberately bounded:
 
 ## 2.1 Financial LLMs and Agentic RAG
 
-Discuss CARAG, MarketSenseAI, Multi-HyDE, FinAgent-RAG, and representative financial
-LLM foundations. The distinction is that FinLeakAudit audits a host forecasting
-workflow rather than proposing a stronger predictor.
+SEP uses self-reflection and reinforcement learning to produce explainable stock
+predictions. MarketSenseAI 2.0 combines agents and RAG over prices, filings, earnings
+calls, news, and macroeconomic material. CARAG retrieves structured evidence from a
+causal-temporal knowledge graph for post-earnings price-shock prediction, while TRACE
+produces temporally grounded knowledge-graph evidence chains. These systems aim to
+improve or explain forecasts; FinLeakAudit instead audits the evidence boundary of a
+host forecasting workflow.
 
 ## 2.2 Look-Ahead Bias and Financial Leakage
 
-Discuss Profit Mirage, Look-Ahead-Bench, Leakage-Aware Benchmarking, and OpenFinGym.
-Position FinLeakAudit at the retrieved-evidence and claim-revision level. Do not claim
-to be the first study of financial-agent leakage.
+Profit Mirage studies leakage rooted in model memory and out-of-window
+generalization. Look-Ahead-Bench evaluates look-ahead bias in practical point-in-time
+financial workflows. Leakage-Aware Benchmarking distinguishes target timestamps from
+decision-time observability in macro factor ranking, while OpenFinGym prevents runtime
+train-test leakage at the execution boundary. FinLeakAudit is complementary: it audits
+the availability and downstream use of individual retrieved items and reruns the
+forecast after removal. It does not claim to be the first financial-agent leakage
+study.
 
 ## 2.3 Evidence Attribution and Forecast Faithfulness
 
-Discuss citation faithfulness, textual entailment, evidence ablation, and LLM
-Forecasters Faithfulness. Leave-one-out results are marginal sensitivity, not causal
-effects.
+ALCE evaluates correctness and completeness of citations in generated answers.
+Recent work on LLM forecasters uses evidence ablation to show that forecasts may
+change while stated reasoning remains stable. This motivates separating exact
+citation, semantic dependence, and behavioral sensitivity. FinLeakAudit reports
+leave-one-out changes as marginal sensitivity, not causal effects.
 
 ## 2.4 Verification and Revision
 
-Discuss VERAFI, FinVet, FLAIRR-TS, and SHARP. Distinguish leakage-driven revision from
-accuracy-driven self-correction.
+VERAFI verifies calculations and regulatory constraints, SHARP audits and edits
+human-readable trading rules, and FLAIRR-TS refines forecasting prompts for accuracy.
+FinLeakAudit instead triggers revision when retrieved evidence was unavailable at the
+historical cutoff.
 
-TODO: convert the existing paper cards into a checked bibliography and add only claims
-supported by primary paper text.
+The checked BibTeX bibliography and cited primary-source URLs are maintained in
+`paper/references.bib`. FinAgent-RAG is excluded from supporting claims because its
+authors withdrew the preprint for methodological errors.
 
 # 3. Problem Formulation
 
@@ -311,4 +325,5 @@ policy comparisons are required before broader claims.
 - [x] Full ten-event, three-model natural replay complete.
 - [x] Backfilled baseline complete across all three models and ten events.
 - [ ] Natural semantic Test gold frozen and evaluated once.
-- [ ] Final bibliography and venue formatting complete.
+- [x] Primary-source bibliography frozen in `paper/references.bib`.
+- [ ] Target venue selected and venue template applied.

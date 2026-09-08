@@ -1,6 +1,6 @@
 # Collision Matrix — FinLeakAudit vs Competitors
 
-> 最后更新：2026-07-12
+> 最后更新：2026-09-08
 
 ## Master Comparison Table
 
@@ -13,7 +13,7 @@
 | SEP (WWW 2024) | ✓ | ✗ | ✗ | ✗ | ✗ | Medium |
 | TRACE | ✓ | ✗ | ✓ (KG-based) | partial | ✗ | High |
 | FLAIRR-TS | partial | ✓ | ✗ | ✗ | ✓ (accuracy-driven) | Medium |
-| FinAgent-RAG | ✗ (QA) | ✓ | partial (hard negatives) | ✗ | ✗ (self-verify for QA) | Medium |
+| FinAgent-RAG (withdrawn) | ✗ (QA) | ✓ | partial (hard negatives) | ✗ | ✗ (self-verify for QA) | Excluded |
 | Multi-HyDE | ✗ (QA) | ✓ | ✗ | ✗ | ✗ | Medium |
 | SHARP | ✓ (trading) | ✗ | ✗ | ✓ (policy audit) | ✓ (policy edits) | Medium |
 | VERAFI | ✗ (QA/Compliance) | ✓ | ✗ | ✗ (compliance check) | ✗ | High |
@@ -47,7 +47,7 @@
 | TRACE | Yes | KG-based baseline |
 | SHARP | Yes | Related Work (auditable agents trend) |
 | VERAFI | Yes | Related Work (verification background) |
-| FinAgent-RAG | Yes | Related Work (self-verification, temporal hard negatives) |
+| FinAgent-RAG | No | Withdrawn for methodological errors; do not use as supporting evidence |
 | FinVet | Optional | Fact-checking related work |
 | FinCARDS | Optional | Evidence card reference |
 | ATSF | Optional | Paradigm background |

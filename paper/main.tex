@@ -1,0 +1,326 @@
+\documentclass[10pt,twocolumn]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[margin=0.72in,columnsep=0.23in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
+
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+
+\newcommand{\system}{FinLeakAudit}
+\newcommand{\up}{\textsc{up}}
+\newcommand{\down}{\textsc{down}}
+\newcommand{\neutral}{\textsc{neutral}}
+\newcommand{\clean}{\textsc{Clean}}
+\newcommand{\unfiltered}{\textsc{Unfiltered}}
+\newcommand{\sparse}{\textsc{Sparse}}
+\newcommand{\backfill}{\textsc{Backfilled}}
+
+\title{FinLeakAudit: Evidence-Level Point-in-Time Auditing\\
+for Financial Agentic RAG}
+\author{Anonymous Authors}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Financial forecasting systems built on retrieval-augmented large language models can
+silently consume evidence that was unavailable at a historical prediction cutoff.
+This can produce plausible rationales and inflated backtests without preserving the
+information set available to a real decision maker. We present \system{}, an
+evidence-level audit protocol separating point-in-time availability, citation
+validity, claim--evidence attribution, marginal forecast sensitivity, and
+leakage-driven revision. In a controlled 10-case study across three LLMs,
+post-cutoff evidence was cited in 28/30 model-case runs and changed 12/30 forecast
+categories; removing it restored the corresponding cutoff-safe category in 12/12
+changed runs. A 10-event primary-source replay produced 13 changes in 30 model-event
+runs. Sparse deletion recovered 11/13, while rank-preserving cutoff-safe backfill
+recovered 13/13 and matched the Clean direction in 30/30 runs. However, 24/30
+backfilled inputs were identical to Clean and the exact paired McNemar test was not
+significant ($p=0.25$). On 78 decisive human-labeled claim--evidence pairs,
+citation-only attribution achieved F1 0.941 and a blinded LLM judge achieved F1
+0.937. The results establish a reproducible audit pilot and expose concrete failure
+modes; they do not estimate real-world leakage prevalence or demonstrate improved
+forecasting accuracy.
+\end{abstract}
+
+\section{Introduction}
+
+Retrieval-augmented generation (RAG) gives language models access to explicit
+non-parametric evidence and provenance \cite{lewis2020rag}. In financial forecasting,
+that evidence must also obey a historical information boundary: a document is usable
+only if it was available by the prediction cutoff. Agentic RAG complicates this
+requirement because retrieval, synthesis, citation, and forecast revision can each
+introduce or conceal look-ahead information.
+
+Recent systems combine LLM agents with filings, earnings calls, news, and structured
+financial context \cite{fatouros2025marketsenseai,li2026carag}. At the same time,
+financial-LLM studies report memorization-driven profit inflation and decision-time
+availability failures \cite{li2025profitmirage,benhenda2026lookahead,guan2026leakageaware}.
+These works motivate a narrower question: when a retrieved item postdates the cutoff,
+can we trace whether the forecast used it, measure its marginal impact, and revise the
+forecast without silently changing the evaluation target?
+
+We study four research questions:
+\begin{enumerate}
+  \item Does post-cutoff evidence alter forecasts under controlled injection?
+  \item Does the effect appear in a small replay built from archived primary sources?
+  \item Does deletion restore the cutoff-safe prediction, and can deletion itself
+        introduce revision instability?
+  \item How well do citation, lexical, embedding, and LLM-based methods identify
+        claim--evidence dependence?
+\end{enumerate}
+
+Our contributions are deliberately bounded. First, we define an evidence-level
+point-in-time audit protocol with separate predictor, auditor, and evaluator views.
+Second, we introduce paired \clean{}, contaminated, \sparse{}, and \backfill{}
+conditions that distinguish leakage recovery from deletion-induced drift. Third, we
+release a reproducible pilot spanning three models, two forecast stress tests, a
+human-labeled attribution set, and failure-preserving logs.
+
+\section{Related Work}
+
+\paragraph{Financial forecasting with LLMs.}
+SEP trains self-reflective LLMs to produce explainable stock predictions
+\cite{koa2024sep}. MarketSenseAI 2.0 combines agents and RAG over news, prices,
+fundamentals, filings, and macroeconomic material \cite{fatouros2025marketsenseai}.
+CARAG retrieves structured evidence from a causal-temporal knowledge graph for
+post-earnings price-shock prediction \cite{li2026carag}, while TRACE produces
+temporally grounded knowledge-graph evidence chains \cite{ding2026trace}. These are
+forecasting systems; \system{} instead audits the evidence boundary of a host
+forecasting workflow.
+
+\paragraph{Temporal leakage in financial AI.}
+Profit Mirage studies leakage rooted in model memory and evaluates out-of-window
+generalization \cite{li2025profitmirage}. Look-Ahead-Bench evaluates look-ahead bias
+in practical point-in-time workflows \cite{benhenda2026lookahead}, and leakage-aware
+macro factor ranking explicitly distinguishes target timestamps from decision-time
+observability \cite{guan2026leakageaware}. OpenFinGym prevents runtime train--test
+leakage at the execution boundary \cite{zhang2026openfingym}. \system{} is
+complementary: it audits the availability and downstream use of individual retrieved
+items, then reruns the forecast after removal.
+
+\paragraph{Attribution, verification, and revision.}
+ALCE evaluates whether generated claims carry correct and complete citations
+\cite{gao2023alce}. Evidence ablation in LLM forecasters shows that a forecast can
+change while its stated reasoning remains stable \cite{sarfati2026forecasters}, which
+motivates separating explicit citation from behavioral sensitivity. In finance,
+VERAFI validates calculations and regulatory constraints \cite{akinfaderin2025verafi},
+and SHARP audits and edits human-readable trading rules \cite{chen2026sharp}.
+FLAIRR-TS revises forecasting prompts to improve accuracy
+\cite{jalori2025flairr}. Our revision trigger is neither policy performance nor
+prediction error; it is evidence unavailability at the historical cutoff.
+
+\section{Problem Formulation}
+
+For event $j$, let $\tau_j$ denote the prediction cutoff, $h_j$ the forecast
+horizon, and $E_j=\{e_1,\ldots,e_k\}$ the retrieved evidence. Each item has a
+verifiable availability time $a(e_i)$. Its point-in-time validity is
+\begin{equation}
+  v(e_i;\tau_j)=\mathbb{1}[a(e_i)\leq\tau_j].
+\end{equation}
+A predictor $f$ maps predictor-visible evidence text and IDs to a categorical
+forecast $y\in\{\up,\down,\neutral\}$, confidence, claims, and cited IDs. The
+predictor never sees availability timestamps, audit labels, or outcomes.
+
+We compare four conditions. \clean{} retrieves cutoff-safe top-$k$ evidence.
+\unfiltered{} retrieves up to the outcome boundary and may contain future items.
+\sparse{} removes all known post-cutoff items from the actual \unfiltered{} set.
+\backfill{} preserves the surviving order and fills empty slots with the highest
+ranked cutoff-safe items not already present.
+
+An initial flip occurs when $y_C\neq y_U$. Recovery is defined only on flips and
+requires $y_R=y_C$. Revision drift is defined only when $y_C=y_U$ but $y_R\neq y_C$.
+Leave-one-out reruns are reported as marginal sensitivity, not causal effects.
+
+\section{Audit Protocol}
+
+\begin{figure}[t]
+\centering
+\fbox{\parbox{0.94\columnwidth}{\centering
+Retrieved evidence $\rightarrow$ point-in-time availability $\rightarrow$
+citation validation $\rightarrow$ claim--evidence attribution $\rightarrow$
+marginal ablation $\rightarrow$ forecast revision}}
+\caption{The audit pipeline. Predictor, auditor, and evaluator receive distinct
+views; outcome labels never enter prediction or removal decisions.}
+\label{fig:pipeline}
+\end{figure}
+
+\paragraph{Availability and visibility.}
+The temporal operator receives timezone-aware timestamps and provenance. The
+predictor receives only evidence IDs and text. The evaluator alone receives outcome
+labels. Natural cases use archived primary-source timestamps with independent human
+cross-checking. Market-calendar alignment and revision/vendor timestamp modeling are
+not yet complete.
+
+\paragraph{Citation and semantic attribution.}
+Cited strings are checked against exact IDs shown to the predictor. Shortened,
+fabricated, or concatenated IDs are retained as failures rather than normalized.
+For each claim and post-cutoff candidate, semantic attribution compares the claim,
+candidate text, and pre-cutoff evidence without revealing model, event, timestamp,
+citation, or outcome metadata. Candidate support is distinguished from dependence
+exclusive to the post-cutoff item.
+
+\paragraph{Revision.}
+Known-unavailable items are removed by the temporal operator. \sparse{} revision
+tests direct deletion. \backfill{} tests whether observed changes are partly due to
+reduced context size rather than removal itself. Backfill never uses the outcome or
+manual sentiment labels.
+
+\section{Data and Experimental Setup}
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabularx}{\columnwidth}{@{}lrrY@{}}
+\toprule
+Set & Items & Runs & Purpose \\
+\midrule
+Controlled injection & 10 cases & 30 & Premise and pipeline check \\
+Natural replay & 10 events & 30 & Archived-source stress test \\
+Attribution gold & 79 pairs & 79 & Claim--evidence evaluation \\
+Natural hard set & 82 pairs & -- & Frozen, currently unlabeled \\
+\bottomrule
+\end{tabularx}
+\caption{Evaluation assets. A run is one case/event evaluated by one model.}
+\label{tab:data}
+\end{table}
+
+The controlled set includes seven SEC-grounded cases and three semi-real cases, each
+with clean evidence and one post-cutoff item. The natural replay uses ten purposively
+selected events, archived primary-source documents, frozen lexical retrieval, and a
+top-$k$ of eight. Clean retrieval is bounded by the prediction cutoff; Unfiltered
+retrieval is bounded by outcome time. It is a constructed candidate-feed replay, not
+a preserved production search trace.
+
+We evaluate DeepSeek \texttt{deepseek-chat}, Zhipu
+\texttt{glm-4-flashx-250414}, and Qwen2.5-14B-Instruct GGUF Q4\_K\_M through
+llama.cpp, all at temperature zero. Provider-side determinism is not assumed.
+Prompts, retrieval policies, model outputs, retries, token usage, and malformed
+citations are retained. The attribution set was independently labeled by two humans
+and adjudicated by a coordinator. Binary evaluation excludes one uncertain item.
+
+\section{Results}
+
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular}{lrrrrrr}
+\toprule
+Study & Runs & Future cited & Initial flips & Sparse recovery & Backfill recovery & Revised drift \\
+\midrule
+Controlled injection & 30 & 28/30 & 12/30 & 12/12 & -- & 0/18 \\
+Natural replay & 30 & 27/30 & 13/30 & 11/13 & 13/13 & 1/17 vs. 0/17 \\
+\bottomrule
+\end{tabular}
+\caption{Forecast-audit results. Natural revised drift reports Sparse versus
+Backfilled on non-flipped runs. Exact counts are primary.}
+\label{tab:forecast}
+\end{table*}
+
+\subsection{Controlled Evidence Injection}
+
+Across 30 model-case runs and 210 calls, models cited the future item in 28/30 runs
+and changed category in 12/30. Removing temporally invalid evidence restored the
+Clean category in 12/12 changed runs (Wilson 95\% interval 75.7\%--100\%). Clean,
+contaminated, and audited outcome accuracy was 8/30, 18/30, and 8/30. The temporary
+increase is induced hindsight inflation, not valid forecasting performance.
+
+\subsection{Natural Point-in-Time Replay}
+
+Across 30 model-event runs and 120 retained predictions, future evidence was
+explicitly cited in 27/30 Unfiltered runs and changed direction in 13/30. Sparse
+deletion recovered 11/13. Backfill recovered 13/13 (Wilson 95\% interval
+77.2\%--100\%) and matched Clean in 30/30 runs (88.6\%--100\%). On 17 non-flipped
+runs, Sparse drifted once and Backfill never drifted.
+
+Backfill corrected three observed Sparse mismatches: DeepSeek on Intel, Qwen on
+Exxon, and Qwen on Capital One. However, Backfilled evidence sequences exactly
+matched Clean in 24/30 runs. The paired exact McNemar test gives $p=0.25$, so the
+sample does not establish a general Backfill advantage. Outcome accuracy was 11/30
+Clean, 16/30 Unfiltered, 11/30 Sparse, and 11/30 Backfilled.
+
+Citation validation found 30 invalid IDs across 11/90 base-condition outputs and
+eight invalid IDs across 3/30 Backfilled outputs. One Qwen event-level timeout was
+retained and successfully retried. These failures are part of the measured interface,
+not post-processing noise.
+
+\subsection{Claim--Evidence Attribution}
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{lrrr}
+\toprule
+Method & Precision & Recall & F1 \\
+\midrule
+Citation only & 0.909 & 0.976 & \textbf{0.941} \\
+Lexical overlap & 0.955 & 0.512 & 0.667 \\
+Embedding similarity & 1.000 & 0.341 & 0.509 \\
+Blinded LLM judge & 0.974 & 0.902 & 0.937 \\
+\bottomrule
+\end{tabular}
+\caption{Binary attribution on 78 decisive gold pairs. One uncertain pair is
+excluded.}
+\label{tab:attribution}
+\end{table}
+
+Citation-only attribution slightly exceeded the LLM judge on this controlled sample.
+The aggregate masks complementary failures: exact matching missed a semantically used
+future source whose chunk suffix was omitted, while the LLM judge produced a
+support-without-dependence false positive when the same fact was already available
+before cutoff. Annotator agreement on the original three-way semantic-dependence
+label was 77/79, with Cohen's $\kappa=0.952$.
+
+\section{Discussion}
+
+The results support auditability, not forecasting superiority. Post-cutoff evidence
+frequently changed predictions in both stress tests, and revision usually returned to
+the cutoff-safe category. Yet timestamp filtering is intentionally strong when
+availability is known exactly. Richer attribution matters when citations are
+malformed, claims paraphrase sources, timestamps are uncertain, or the same claim is
+supported on both sides of the cutoff.
+
+The Sparse/Backfill comparison exposes a measurement confound: deletion can alter
+context length, coverage, and rank distribution. Backfill removes three observed
+Sparse mismatches, but it often reconstructs the Clean input and does not achieve a
+significant paired advantage. It is therefore a diagnostic baseline, not a proven
+improvement.
+
+\section{Limitations and Ethics}
+
+Ten events and 30 model-event observations are too small for prevalence claims. Event
+selection is purposive and outcome-bounded. Controlled injections are easier than
+production retrieval, and the natural replay is not a preserved web search or host
+Agentic-RAG trace. The semantic gold set is controlled; the frozen natural hard set
+remains unlabeled. API aliases may change behind provider names, and temperature zero
+does not ensure deterministic serving. Availability does not imply truthfulness or
+relevance. Market outcomes are noisy and never determine evidence removal.
+
+This work is a reliability benchmark rather than investment advice or a trading
+system. Primary-source documents are retained for research reproducibility; future
+public releases should confirm document licenses and remove any data not redistributable
+under source terms.
+
+\section{Conclusion}
+
+\system{} operationalizes evidence-level point-in-time auditing for financial
+Agentic RAG. Its paired conditions reveal both leakage-driven forecast changes and
+revision-induced instability, while the attribution benchmark separates exact
+citation from semantic dependence. The current study is a controlled pilot. Larger
+natural event sets, frozen natural attribution labels, and host-system evaluations are
+needed before broader claims.
+
+\paragraph{Reproducibility.}
+The anonymous submission package includes frozen cases, retrieval manifests, prompts,
+raw outputs, error rows, analysis scripts, and tests. The public repository URL and
+author contribution statement will be inserted after blind review.
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}
