@@ -16,6 +16,20 @@ def read_csv(path: Path) -> list[dict[str, str]]:
 
 
 class PaperConsistencyTests(unittest.TestCase):
+    def test_author_order_affiliations_and_contributions_are_frozen(self):
+        ordered_authors = ["Ziyang Lu", "Junwei Chen", "Yating Zhang"]
+        positions = [PAPER.index(author) for author in ordered_authors]
+
+        self.assertEqual(positions, sorted(positions))
+        self.assertIn("The Hong Kong University of Science and Technology", PAPER)
+        self.assertIn("Johns Hopkins University", PAPER)
+        self.assertIn("South China Normal University", PAPER)
+        self.assertIn("Ziyang Lu led conceptualization", PAPER)
+        self.assertIn("Junwei", PAPER)
+        self.assertIn("curated the natural point-in-time corpus", PAPER)
+        self.assertIn("Yating Zhang", PAPER)
+        self.assertIn("claim-span refinement", PAPER)
+
     def test_all_citations_resolve_to_bibliography_entries(self):
         cited = set()
         for group in re.findall(r"\\cite\{([^}]+)\}", PAPER):

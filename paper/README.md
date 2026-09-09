@@ -9,10 +9,12 @@ Build from this directory with:
 make
 ```
 
-The author order is frozen as Ziyang Lu, Junwei Chen, and Yating Zhang. The repository
-URL remains omitted until the target venue's review and artifact rules are confirmed.
-Replace the article class with the selected venue template and confirm affiliations,
-contact details, and the contribution statement before submission.
+The author order and affiliations are frozen as Ziyang Lu (The Hong Kong University
+of Science and Technology), Junwei Chen (Johns Hopkins University), and Yating Zhang
+(South China Normal University). Contributions follow repository-visible work records.
+The repository URL remains omitted until the target venue's artifact rules are
+confirmed. Replace the article class with the selected venue template and confirm
+contact details before submission.
 
 Current evidence boundary:
 

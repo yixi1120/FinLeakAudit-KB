@@ -297,13 +297,14 @@ method-superiority result.
 
 # 10. Author Contributions
 
-Draft from repository-visible records, to be confirmed by every contributor before
-submission: Lu Ziyang coordinated the project, adjudicated annotation disagreements,
-and implemented and ran the current experiment pipeline. Zhang Yating completed
-Annotator A labels and independently verified the natural-source metadata. Chen Junwei
-completed Annotator B labels. Final author order, manuscript-writing roles, and any
-additional contributions must be agreed by the team rather than inferred from this
-draft.
+The author order is Lu Ziyang, Chen Junwei, and Zhang Yating. Lu Ziyang led
+conceptualization, methodology, software, experiments, formal analysis, visualization,
+annotation adjudication, writing, and project administration. Chen Junwei curated the
+natural point-in-time corpus, prepared source and timestamp metadata and retrieval
+units, and completed independent semantic annotation. Zhang Yating completed
+independent semantic annotation and claim-span refinement, and independently verified
+the natural-source metadata and timestamps. These roles are grounded in the repository
+history and frozen provenance records.
 
 # 11. Conclusion
 
