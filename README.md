@@ -22,8 +22,8 @@ The repository now includes a workshop-neutral two-column manuscript:
 - [compiled draft PDF](output/pdf/FinLeakAudit_workshop_draft_v1.pdf)
 
 Build it with `make` from `paper/`. The current draft is intentionally not tied to a
-venue template; contact details, repository disclosure, and venue formatting must be
-finalized before submission.
+venue template; repository disclosure and venue formatting must be finalized before
+submission.
 
 ## Research Problem
 

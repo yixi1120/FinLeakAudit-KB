@@ -24,6 +24,8 @@ class PaperConsistencyTests(unittest.TestCase):
         self.assertIn("The Hong Kong University of Science and Technology", PAPER)
         self.assertIn("Johns Hopkins University", PAPER)
         self.assertIn("South China Normal University", PAPER)
+        self.assertIn("Corresponding author", PAPER)
+        self.assertIn("louislu13822173792@163.com", PAPER)
         self.assertIn("Ziyang Lu led conceptualization", PAPER)
         self.assertIn("Junwei", PAPER)
         self.assertIn("curated the natural point-in-time corpus", PAPER)

@@ -12,9 +12,10 @@ make
 The author order and affiliations are frozen as Ziyang Lu (The Hong Kong University
 of Science and Technology), Junwei Chen (Johns Hopkins University), and Yating Zhang
 (South China Normal University). Contributions follow repository-visible work records.
+Ziyang Lu is the corresponding author using `louislu13822173792@163.com`.
 The repository URL remains omitted until the target venue's artifact rules are
-confirmed. Replace the article class with the selected venue template and confirm
-contact details before submission.
+confirmed. Replace the article class with the selected venue template before
+submission.
 
 Current evidence boundary:
 
