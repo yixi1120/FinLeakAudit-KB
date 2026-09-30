@@ -13,6 +13,7 @@ from config import ModelConfig  # noqa: E402
 from run_natural_experiment import prepare_event  # noqa: E402
 from run_natural_refill_baseline import (  # noqa: E402
     SOURCE_RESULTS,
+    build_novel_safe_refilled_evidence,
     build_refilled_evidence,
     read_source_results,
     run_refill_event,
@@ -58,6 +59,32 @@ class NaturalRefillBaselineTests(unittest.TestCase):
             [item["id"] for item in prepared["clean_evidence"]],
         )
 
+    def test_novel_safe_backfill_excludes_clean_additions(self):
+        prepared = prepare_event("natural_007", top_k=8)
+        refilled, added, metadata = build_novel_safe_refilled_evidence(
+            prepared, top_k=8
+        )
+        clean_ids = {item["id"] for item in prepared["clean_evidence"]}
+        sparse_ids = [item["id"] for item in prepared["audited_evidence"]]
+
+        self.assertTrue(metadata["novel_safe_backfill_complete"])
+        self.assertEqual(len(refilled), 8)
+        self.assertTrue(set(added).isdisjoint(clean_ids))
+        self.assertEqual(
+            [item["id"] for item in refilled[: len(sparse_ids)]], sparse_ids
+        )
+
+    def test_novel_safe_backfill_freezes_incomplete_event(self):
+        prepared = prepare_event("natural_001", top_k=8)
+        refilled, added, metadata = build_novel_safe_refilled_evidence(
+            prepared, top_k=8
+        )
+
+        self.assertFalse(metadata["novel_safe_backfill_complete"])
+        self.assertEqual(len(refilled), 5)
+        self.assertEqual(added, [])
+        self.assertEqual(metadata["novel_safe_eligible_candidate_count"], 0)
+
     def test_refill_event_adds_only_one_new_model_call(self):
         source_path = SOURCE_RESULTS["qwen"]
         source = read_source_results(source_path)["natural_007"]
@@ -84,6 +111,39 @@ class NaturalRefillBaselineTests(unittest.TestCase):
         self.assertFalse(
             result["metrics"]["backfilled_revision_drift_without_initial_flip"]
         )
+        json.dumps(result)
+
+    def test_novel_safe_refill_event_adds_only_one_new_model_call(self):
+        source_path = SOURCE_RESULTS["qwen"]
+        source = read_source_results(source_path)["natural_007"]
+        model = ModelConfig(
+            name="qwen",
+            base_url="http://example.invalid/v1",
+            api_key="none",
+            model="test-model",
+        )
+        output = {
+            "prediction": "UP",
+            "confidence": 0.7,
+            "rationale": [],
+        }
+
+        with patch("run_natural_refill_baseline.predict", return_value=output) as call:
+            result = run_refill_event(
+                "natural_007",
+                model,
+                source,
+                source_path,
+                top_k=8,
+                policy_key="novel_safe",
+            )
+
+        self.assertEqual(call.call_count, 1)
+        self.assertEqual(result["policy_key"], "novel_safe")
+        self.assertTrue(
+            result["revision_context"]["novel_safe_backfill_complete"]
+        )
+        self.assertFalse(result["revision_context"]["backfilled_matches_clean_sequence"])
         json.dumps(result)
 
 

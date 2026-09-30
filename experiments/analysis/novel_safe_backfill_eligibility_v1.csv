@@ -1,0 +1,11 @@
+event_id,ticker,top_k,sparse_count,backfill_needed,cutoff_safe_pool_count,novel_eligible_candidate_count,novel_added_count,novel_refilled_count,novel_safe_backfill_complete,added_evidence_ids
+natural_001,CRWD,8,5,3,8,0,0,5,False,
+natural_002,NVDA,8,6,2,12,4,2,8,True,natural_002_doc_001::chunk_002|natural_002_doc_004::chunk_002
+natural_003,NKE,8,6,2,8,0,0,6,False,
+natural_004,SBUX,8,6,2,9,1,1,7,False,natural_004_doc_001::chunk_002
+natural_005,INTC,8,6,2,10,2,2,8,True,natural_005_doc_013::chunk_001|natural_005_doc_001::chunk_002
+natural_006,XOM,8,6,2,15,7,2,8,True,natural_006_doc_002::chunk_001|natural_006_doc_011::chunk_001
+natural_007,COF,8,6,2,14,6,2,8,True,natural_007_doc_016::chunk_001|natural_007_doc_015::chunk_002
+natural_008,MSFT,8,6,2,8,0,0,6,False,
+natural_009,UNH,8,7,1,10,2,1,8,True,natural_009_doc_015::chunk_002
+natural_010,JBLU,8,6,2,10,2,2,8,True,natural_010_doc_003::chunk_002|natural_010_doc_001::chunk_002

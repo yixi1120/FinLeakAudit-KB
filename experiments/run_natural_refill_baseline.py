@@ -9,6 +9,7 @@ import json
 import sys
 import time
 import traceback
+from dataclasses import replace
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
@@ -20,6 +21,7 @@ from run_natural_experiment import (
     is_correct,
     predict,
     prepare_event,
+    retrieve_condition,
     resolve_events,
     validate_citations,
     validate_model_config,
@@ -32,7 +34,15 @@ SOURCE_RESULTS = {
     "zhipu": RESULTS_DIR / "zhipu_natural_pit_5event_v1_results.jsonl",
     "qwen": RESULTS_DIR / "qwen_natural_pit_5event_v1_results.jsonl",
 }
-POLICY = "remove_post_cutoff_then_rank_preserving_backfill_from_cutoff_top_k"
+STANDARD_POLICY = "remove_post_cutoff_then_rank_preserving_backfill_from_cutoff_top_k"
+NOVEL_SAFE_POLICY = (
+    "remove_post_cutoff_then_rank_preserving_backfill_excluding_clean_top_k"
+)
+POLICIES = {
+    "standard": STANDARD_POLICY,
+    "novel_safe": NOVEL_SAFE_POLICY,
+}
+POLICY = STANDARD_POLICY
 
 
 def read_source_results(path: Path) -> dict[str, dict]:
@@ -78,6 +88,72 @@ def build_refilled_evidence(prepared: dict, top_k: int) -> tuple[list[dict], lis
     return refilled, added_ids
 
 
+def build_novel_safe_refilled_evidence(
+    prepared: dict, top_k: int
+) -> tuple[list[dict], list[str], dict]:
+    """Backfill with ranked cutoff-safe evidence outside the Clean top-k."""
+    refilled = list(prepared["audited_evidence"])
+    existing_ids = {str(item["id"]) for item in refilled}
+    clean_ids = {str(item["id"]) for item in prepared["clean_evidence"]}
+    manifest = prepared["manifest"]
+    cutoff_safe_pool = retrieve_condition(
+        manifest,
+        as_of=manifest["prediction_cutoff"],
+        top_k=1_000_000,
+    )
+    eligible = [
+        evidence
+        for evidence in cutoff_safe_pool
+        if str(evidence["id"]) not in clean_ids
+        and str(evidence["id"]) not in existing_ids
+    ]
+    added_ids = []
+    for evidence in eligible:
+        if len(refilled) >= top_k:
+            break
+        evidence_id = str(evidence["id"])
+        refilled.append(evidence)
+        existing_ids.add(evidence_id)
+        added_ids.append(evidence_id)
+
+    future_ids = set(prepared["removed_evidence_ids"])
+    if existing_ids & future_ids:
+        raise ValueError("Novel-safe context contains post-cutoff evidence")
+    if len(existing_ids) != len(refilled):
+        raise ValueError("Novel-safe context contains duplicate evidence IDs")
+    if set(added_ids) & clean_ids:
+        raise ValueError("Novel-safe additions overlap the Clean top-k")
+
+    needed = max(0, top_k - len(prepared["audited_evidence"]))
+    metadata = {
+        "novel_safe_backfill_complete": len(refilled) == top_k,
+        "novel_safe_backfill_needed": needed,
+        "novel_safe_eligible_candidate_count": len(eligible),
+        "novel_safe_backfill_count": len(added_ids),
+        "novel_safe_clean_id_overlap": len(existing_ids & clean_ids),
+        "cutoff_safe_pool_count": len(cutoff_safe_pool),
+    }
+    return refilled, added_ids, metadata
+
+
+def build_policy_evidence(
+    prepared: dict, top_k: int, policy_key: str
+) -> tuple[list[dict], list[str], dict]:
+    if policy_key == "standard":
+        refilled, added_ids = build_refilled_evidence(prepared, top_k)
+        return refilled, added_ids, {
+            "novel_safe_backfill_complete": None,
+            "novel_safe_backfill_needed": None,
+            "novel_safe_eligible_candidate_count": None,
+            "novel_safe_backfill_count": None,
+            "novel_safe_clean_id_overlap": None,
+            "cutoff_safe_pool_count": None,
+        }
+    if policy_key == "novel_safe":
+        return build_novel_safe_refilled_evidence(prepared, top_k)
+    raise ValueError(f"Unknown backfill policy: {policy_key}")
+
+
 def source_predictions(source: dict) -> dict:
     return {
         condition: {
@@ -94,6 +170,7 @@ def run_refill_event(
     source: dict,
     source_path: Path,
     top_k: int,
+    policy_key: str = "standard",
 ) -> dict:
     if str(source["model"]) != model_config.name:
         raise ValueError(
@@ -103,7 +180,17 @@ def run_refill_event(
         raise ValueError(f"{event_id}: source top_k differs from refill top_k")
 
     prepared = prepare_event(event_id, top_k=top_k)
-    refilled, added_ids = build_refilled_evidence(prepared, top_k)
+    refilled, added_ids, policy_metadata = build_policy_evidence(
+        prepared, top_k, policy_key
+    )
+    if policy_key == "novel_safe" and not policy_metadata[
+        "novel_safe_backfill_complete"
+    ]:
+        raise ValueError(
+            f"{event_id}: novel-safe candidates cannot refill to top_k={top_k}; "
+            f"needed={policy_metadata['novel_safe_backfill_needed']} "
+            f"eligible={policy_metadata['novel_safe_eligible_candidate_count']}"
+        )
     refilled_prediction = predict(model_config, prepared["manifest"], refilled)
     citation_check = validate_citations(refilled_prediction, refilled)
     refilled_ids = [str(item["id"]) for item in refilled]
@@ -114,7 +201,11 @@ def run_refill_event(
     refill_drift = refilled_prediction["prediction"] != original["clean"]["prediction"]
 
     return {
-        "schema_version": "finleakaudit_natural_refill_result_v1",
+        "schema_version": (
+            "finleakaudit_natural_refill_result_v1"
+            if policy_key == "standard"
+            else "finleakaudit_natural_novel_safe_refill_result_v1"
+        ),
         "event_id": event_id,
         "case_id": event_id,
         "company": source["company"],
@@ -122,11 +213,13 @@ def run_refill_event(
         "model": source["model"],
         "model_id": source["model_id"],
         "temperature": source["temperature"],
+        "max_tokens": model_config.max_tokens,
         "prediction_cutoff": source["prediction_cutoff"],
         "forecast_horizon": source["forecast_horizon"],
         "outcome_label": source["outcome_label"],
         "top_k": top_k,
-        "policy": POLICY,
+        "policy": POLICIES[policy_key],
+        "policy_key": policy_key,
         "source_result": {
             "path": source_path.resolve().relative_to(ROOT).as_posix(),
             "sha256": file_sha256(source_path),
@@ -141,6 +234,7 @@ def run_refill_event(
             "added_evidence_ids": added_ids,
             "backfilled_matches_clean_sequence": refilled_ids == clean_ids,
             "backfilled_evidence": evidence_log(refilled),
+            **policy_metadata,
         },
         "audited_refill": refilled_prediction,
         "citation_validation": citation_check,
@@ -170,6 +264,7 @@ def run_with_retry(
     source: dict,
     source_path: Path,
     top_k: int,
+    policy_key: str,
     retries: int,
     retry_delay: float,
 ) -> tuple[Optional[dict], list[dict]]:
@@ -177,7 +272,12 @@ def run_with_retry(
     for attempt in range(1, retries + 2):
         try:
             result = run_refill_event(
-                event_id, model_config, source, source_path, top_k
+                event_id,
+                model_config,
+                source,
+                source_path,
+                top_k,
+                policy_key=policy_key,
             )
             result["attempt"] = attempt
             return result, errors
@@ -207,6 +307,8 @@ def main(argv: list[str]) -> int:
     parser.add_argument("--minimal", action="store_true")
     parser.add_argument("--limit", type=int)
     parser.add_argument("--top-k", type=int, default=8)
+    parser.add_argument("--max-tokens", type=int)
+    parser.add_argument("--policy", choices=sorted(POLICIES), default="standard")
     parser.add_argument("--source", type=Path)
     parser.add_argument("--output", type=Path)
     parser.add_argument("--errors", type=Path)
@@ -217,31 +319,44 @@ def main(argv: list[str]) -> int:
     args = parser.parse_args(argv)
 
     events = resolve_events(args.events, args.minimal, args.limit)
+    if args.dry_run:
+        for event_id in events:
+            prepared = prepare_event(event_id, top_k=args.top_k)
+            refilled, added, metadata = build_policy_evidence(
+                prepared, args.top_k, args.policy
+            )
+            clean_ids = [item["id"] for item in prepared["clean_evidence"]]
+            print(
+                f"{event_id}: sparse={len(prepared['audited_evidence'])} "
+                f"backfilled={len(refilled)} added={len(added)} "
+                f"matches_clean_sequence={clean_ids == [item['id'] for item in refilled]} "
+                f"novel_complete={metadata['novel_safe_backfill_complete']} "
+                f"novel_eligible={metadata['novel_safe_eligible_candidate_count']}"
+            )
+        return 0
+
     source_path = (args.source or SOURCE_RESULTS[args.model]).resolve()
     sources = read_source_results(source_path)
     missing = sorted(set(events) - set(sources))
     if missing:
         raise ValueError(f"Source results are missing events: {missing}")
 
-    if args.dry_run:
-        for event_id in events:
-            prepared = prepare_event(event_id, top_k=args.top_k)
-            refilled, added = build_refilled_evidence(prepared, args.top_k)
-            clean_ids = [item["id"] for item in prepared["clean_evidence"]]
-            print(
-                f"{event_id}: sparse={len(prepared['audited_evidence'])} "
-                f"backfilled={len(refilled)} added={len(added)} "
-                f"matches_clean_sequence={clean_ids == [item['id'] for item in refilled]}"
-            )
-        return 0
-
     model_config = MODELS[args.model]
     validate_model_config(args.model, model_config)
+    if args.max_tokens is not None:
+        if args.max_tokens <= 0:
+            raise ValueError("--max-tokens must be positive")
+        model_config = replace(model_config, max_tokens=args.max_tokens)
+    output_stem = (
+        "natural_refill_5event_v1"
+        if args.policy == "standard"
+        else "natural_novel_safe_refill_5event_v1"
+    )
     output_path = args.output or RESULTS_DIR / (
-        f"{args.model}_natural_refill_5event_v1_results.jsonl"
+        f"{args.model}_{output_stem}_results.jsonl"
     )
     error_path = args.errors or RESULTS_DIR / (
-        f"{args.model}_natural_refill_5event_v1_errors.jsonl"
+        f"{args.model}_{output_stem}_errors.jsonl"
     )
     if args.overwrite and output_path.exists():
         output_path.unlink()
@@ -255,13 +370,17 @@ def main(argv: list[str]) -> int:
             print(f"[{index}/{len(events)}] skipping {event_id} (already completed)")
             continue
         started = time.time()
-        print(f"[{index}/{len(events)}] backfilling {event_id} with {args.model}")
+        print(
+            f"[{index}/{len(events)}] {args.policy} backfilling "
+            f"{event_id} with {args.model}"
+        )
         result, errors = run_with_retry(
             event_id,
             model_config,
             sources[event_id],
             source_path,
             args.top_k,
+            args.policy,
             args.retries,
             args.retry_delay,
         )

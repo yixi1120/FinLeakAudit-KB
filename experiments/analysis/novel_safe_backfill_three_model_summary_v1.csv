@@ -1,0 +1,5 @@
+scope,model,n_model_events,initial_flip_count,nonflip_count,sparse_recovery_count,standard_recovery_count,novel_recovery_count,novel_recovery_rate,sparse_drift_count,standard_drift_count,novel_drift_count,sparse_matches_clean_count,standard_matches_clean_count,novel_matches_clean_count,novel_matches_clean_rate,standard_only_match_count,novel_only_match_count,standard_vs_novel_exact_mcnemar_p,novel_matches_standard_direction_count,novel_changed_sparse_direction_count,novel_clean_sequence_match_count,invalid_citation_output_count,invalid_citation_id_count,successful_output_tokens,successful_runtime_seconds
+all,all,18,6,12,4,6,4,0.6666666666666666,1,0,1,15,18,15,0.8333333333333334,3,0,0.25,15,1,0,3,13,128646,426.80199999999996
+model,deepseek,6,4,2,3,4,3,0.75,0,0,0,5,6,5,0.8333333333333334,1,0,1.0,5,1,0,0,0,42690,15.781
+model,zhipu,6,0,6,0,0,0,,0,0,0,6,6,6,1.0,0,0,,6,0,0,2,7,41835,40.788
+model,qwen,6,2,4,1,2,1,0.5,1,0,1,4,6,4,0.6666666666666666,2,0,0.5,4,0,0,1,6,44121,370.233

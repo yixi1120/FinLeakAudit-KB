@@ -326,6 +326,38 @@
 - LaTeX 经 `pdflatex -> bibtex -> pdflatex x2` 编译，引用全部解析；最终 PDF 逐页检查
   无重叠、截断、空白页或损坏表格。
 
+## 2026-09-15 — Novel-safe Backfill 消融决策
+
+- 十事件结果中 24/30 个 Standard Backfilled evidence sequence 与 Clean 完全相同，
+  因而 30/30 的方向一致不能单独证明回填方法具有一般优势。
+- 保留 Rank-Preserving Standard Backfill 作为主 baseline，因为它模拟正确执行 cutoff
+  filtering 后应返回的高排名安全证据；不强制排除 Clean top-k。
+- 新增 Novel-safe Backfill 作为计划中的鲁棒性消融：保留 Unfiltered 中幸存的安全证据，
+  但新增 evidence 必须来自 cutoff 前、且不在 Clean top-k 和 survivors 中的冻结候选。
+- Novel-safe 只用于判断恢复是否依赖重建 Clean 输入，不作为生产检索策略，也不用于
+  声称提高市场预测准确率。
+- 运行前必须冻结候选资格、排名、parent-document cap 和候选不足处理；当前状态为
+  `planned-not-run`。详细规则见
+  `wiki/experiments/natural_revision_refill_baseline_protocol_v1.md`。
+
+## 2026-09-30 — Novel-safe Backfill 三模型消融完成
+
+- 在模型调用前冻结 Novel-safe 资格：10 个自然事件中 6 个能在排除 Clean top-k 后使用
+  不同的 cutoff-safe evidence 补满 8 条；其余 4 个因候选不足冻结为 incomplete。
+- 在 6 个合格事件和 DeepSeek、Zhipu、Qwen 三个模型上完成 18 个 Novel-safe 调用；
+  原有 Clean、Unfiltered、Sparse 和 Standard Backfill 结果均未重跑或覆盖。
+- Clean 方向一致数为 Sparse 15/18、Standard 18/18、Novel-safe 15/18；6 个初始翻转的
+  恢复数分别为 4/6、6/6、4/6，12 个非翻转的 drift 分别为 1/12、0/12、1/12。
+- Standard-only match 为 3、Novel-only match 为 0，配对 exact McNemar `p=0.25`；
+  Novel-safe 与 Clean 完全同序列为 0/18。
+- Novel-safe 未复现 Standard 对 DeepSeek Intel、Qwen Exxon 和 Qwen Capital One 三处
+  Sparse mismatch 的修正，说明 revision 依赖回填内容和排序，不只依赖上下文数量。
+- Qwen `natural_007` 在 8192 上下文下因 8102-token prompt 连续产生 7 条截断 JSON
+  错误；错误全部保留。将 llama.cpp 上下文提高到 16384 后，在相同模型、prompt、
+  temperature 和 700-token 输出上限下完成调用；实验后服务已关闭。
+- 新增资格检查、Novel-safe policy、分析脚本、冻结 CSV、测试和正式实验报告；论文初稿
+  按约定未修改。
+
 ## 2026-08-25 — Semantic Attribution 双人标注与第三方裁决
 
 - Annotator A 与 Annotator B 分别完成同一批 79 条 claim-evidence pairs。
@@ -348,4 +380,5 @@
 - [x] 实现 evidence ablation（2026-07-12，DeepSeek/Zhipu 5-case pilot）
 - [x] 实现 semantic leakage detection（controlled attribution baseline + online smoke）
 - [x] 补充自然泄漏检测（Experiment B）实验设计并完成 10-event replay
+- [x] 实现并运行 Novel-safe Backfill 输入重合消融（2026-09-30，6 eligible events × 3 models）
 - [ ] 生成 contribution_matrix.md 和 baseline_matrix.md
