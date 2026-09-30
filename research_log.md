@@ -358,6 +358,14 @@
 - 新增资格检查、Novel-safe policy、分析脚本、冻结 CSV、测试和正式实验报告；论文初稿
   按约定未修改。
 
+## 2026-09-30 — Backfill Citation ID 门禁
+
+- 为之后的 Standard 与 Novel-safe Backfill 调用增加 evidence ID 白名单校验。
+- 无效 ID 输出最多接受两次定向纠错；仍未通过时记为不可重试的
+  `InvalidCitationError`，不进入正式结果。
+- 每条成功结果记录 citation 尝试次数和失败 ID；持久失败不会再触发外层整事件重跑。
+- 既有 18 条 Novel-safe 结果保持冻结，不用新门禁事后替换，论文初稿仍未修改。
+
 ## 2026-08-25 — Semantic Attribution 双人标注与第三方裁决
 
 - Annotator A 与 Annotator B 分别完成同一批 79 条 claim-evidence pairs。

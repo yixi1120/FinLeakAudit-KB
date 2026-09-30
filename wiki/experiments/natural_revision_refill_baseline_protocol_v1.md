@@ -224,6 +224,19 @@ Novel-safe 没有复现 Standard 对 DeepSeek Intel、Qwen Exxon 和 Qwen Capita
    模型共 18 个调用。
 5. 无论结果正负，保留所有失败与 citation-format errors。
 
+## Citation ID 完整性门禁
+
+从 2026-09-30 起，后续 Backfill 调用在写入正式结果前执行 evidence ID 白名单检查：
+
+1. 所有 `rationale[].evidence_ids[]` 必须逐字匹配本次输入中的完整 evidence ID；
+2. 首次出现缩写、变形或虚构 ID 时，向同一模型提供允许 ID 白名单并要求重新生成完整 JSON；
+3. 默认最多进行 2 次 citation correction，即单个预测最多调用 3 次；
+4. 三次均不合格时将该事件记为 `InvalidCitationError`，不得写入正式结果；
+5. citation correction 已经耗尽后不再触发外层整事件重跑，避免把同一失败放大为 9 次调用；
+6. 结果记录最终 citation validation、实际尝试次数和每次无效 ID，供成本与失败分析使用。
+
+该门禁只适用于之后的新调用。已经冻结的 18 条 Novel-safe 输出保留原貌，不进行事后替换。
+
 ## 命令
 
 ```bash
@@ -231,7 +244,8 @@ python3 experiments/run_natural_refill_baseline.py --model qwen --minimal --dry-
 
 python3 experiments/run_natural_refill_baseline.py \
   --model qwen \
-  --event natural_007
+  --event natural_007 \
+  --citation-retries 2
 ```
 
 本地 Qwen 服务只在实际模型调用期间启动，运行完成后立即关闭。

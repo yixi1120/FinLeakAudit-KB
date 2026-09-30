@@ -45,6 +45,10 @@ POLICIES = {
 POLICY = STANDARD_POLICY
 
 
+class InvalidCitationError(ValueError):
+    """Raised when a prediction still cites IDs outside the supplied evidence."""
+
+
 def read_source_results(path: Path) -> dict[str, dict]:
     if not path.exists():
         raise FileNotFoundError(path)
@@ -164,6 +168,54 @@ def source_predictions(source: dict) -> dict:
     }
 
 
+def predict_with_citation_guard(
+    model_config: ModelConfig,
+    manifest: dict,
+    evidence: list[dict],
+    citation_retries: int = 2,
+) -> tuple[dict, dict, dict]:
+    """Retry only invalid citations and reject outputs that never pass the whitelist."""
+    if citation_retries < 0:
+        raise ValueError("citation_retries must be non-negative")
+
+    allowed_ids = [str(item["id"]) for item in evidence]
+    invalid_attempts = []
+    correction = None
+    for attempt in range(1, citation_retries + 2):
+        prediction = predict(
+            model_config,
+            manifest,
+            evidence,
+            citation_correction=correction,
+        )
+        validation = validate_citations(prediction, evidence)
+        if validation["all_citations_valid"]:
+            return prediction, validation, {
+                "citation_attempts": attempt,
+                "citation_retry_count": attempt - 1,
+                "invalid_citation_attempts": invalid_attempts,
+            }
+
+        invalid_ids = validation["invalid_citation_ids"]
+        invalid_attempts.append(
+            {
+                "attempt": attempt,
+                "invalid_citation_ids": invalid_ids,
+            }
+        )
+        correction = (
+            "Citation validation correction: regenerate the entire JSON response. "
+            f"The previous response used invalid evidence IDs: {invalid_ids}. "
+            "Every evidence_ids value must exactly match one of these allowed IDs: "
+            f"{allowed_ids}. Do not shorten, alter, or invent IDs."
+        )
+
+    raise InvalidCitationError(
+        "Citation whitelist validation failed after "
+        f"{citation_retries + 1} attempts: {invalid_attempts}"
+    )
+
+
 def run_refill_event(
     event_id: str,
     model_config: ModelConfig,
@@ -171,6 +223,7 @@ def run_refill_event(
     source_path: Path,
     top_k: int,
     policy_key: str = "standard",
+    citation_retries: int = 2,
 ) -> dict:
     if str(source["model"]) != model_config.name:
         raise ValueError(
@@ -191,8 +244,12 @@ def run_refill_event(
             f"needed={policy_metadata['novel_safe_backfill_needed']} "
             f"eligible={policy_metadata['novel_safe_eligible_candidate_count']}"
         )
-    refilled_prediction = predict(model_config, prepared["manifest"], refilled)
-    citation_check = validate_citations(refilled_prediction, refilled)
+    refilled_prediction, citation_check, citation_retry = predict_with_citation_guard(
+        model_config,
+        prepared["manifest"],
+        refilled,
+        citation_retries=citation_retries,
+    )
     refilled_ids = [str(item["id"]) for item in refilled]
     clean_ids = [str(item["id"]) for item in prepared["clean_evidence"]]
     original = source_predictions(source)
@@ -238,6 +295,7 @@ def run_refill_event(
         },
         "audited_refill": refilled_prediction,
         "citation_validation": citation_check,
+        "citation_retry": citation_retry,
         "metrics": {
             "initial_clean_to_unfiltered_flip": initial_flip,
             "sparse_audited_matches_clean": not sparse_drift,
@@ -265,6 +323,7 @@ def run_with_retry(
     source_path: Path,
     top_k: int,
     policy_key: str,
+    citation_retries: int,
     retries: int,
     retry_delay: float,
 ) -> tuple[Optional[dict], list[dict]]:
@@ -278,10 +337,12 @@ def run_with_retry(
                 source_path,
                 top_k,
                 policy_key=policy_key,
+                citation_retries=citation_retries,
             )
             result["attempt"] = attempt
             return result, errors
         except Exception as exc:  # noqa: BLE001 - experiment errors must be logged.
+            citation_failure = isinstance(exc, InvalidCitationError)
             errors.append(
                 {
                     "event_id": event_id,
@@ -290,9 +351,12 @@ def run_with_retry(
                     "max_attempts": retries + 1,
                     "error_type": type(exc).__name__,
                     "error": str(exc),
+                    "retryable": not citation_failure,
                     "traceback": traceback.format_exc(limit=3),
                 }
             )
+            if citation_failure:
+                break
             if attempt <= retries:
                 delay = retry_delay * attempt
                 print(f"  attempt {attempt} failed: {exc}; retrying in {delay:.1f}s")
@@ -313,12 +377,15 @@ def main(argv: list[str]) -> int:
     parser.add_argument("--output", type=Path)
     parser.add_argument("--errors", type=Path)
     parser.add_argument("--retries", type=int, default=2)
+    parser.add_argument("--citation-retries", type=int, default=2)
     parser.add_argument("--retry-delay", type=float, default=3.0)
     parser.add_argument("--overwrite", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args(argv)
 
     events = resolve_events(args.events, args.minimal, args.limit)
+    if args.citation_retries < 0:
+        parser.error("--citation-retries must be non-negative")
     if args.dry_run:
         for event_id in events:
             prepared = prepare_event(event_id, top_k=args.top_k)
@@ -381,6 +448,7 @@ def main(argv: list[str]) -> int:
             source_path,
             args.top_k,
             args.policy,
+            args.citation_retries,
             args.retries,
             args.retry_delay,
         )

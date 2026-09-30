@@ -114,8 +114,15 @@ def prediction_case(manifest: dict) -> dict:
     }
 
 
-def predict(model_config: ModelConfig, manifest: dict, evidence: list[dict]) -> dict:
+def predict(
+    model_config: ModelConfig,
+    manifest: dict,
+    evidence: list[dict],
+    citation_correction: str | None = None,
+) -> dict:
     prompt = build_natural_prediction_prompt(prediction_case(manifest), evidence)
+    if citation_correction:
+        prompt = f"{prompt}\n\n{citation_correction}"
     return normalize_prediction(call_chat(model_config, prompt))
 
 

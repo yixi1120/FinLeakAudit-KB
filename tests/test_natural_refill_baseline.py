@@ -12,15 +12,111 @@ sys.path.insert(0, str(EXPERIMENTS))
 from config import ModelConfig  # noqa: E402
 from run_natural_experiment import prepare_event  # noqa: E402
 from run_natural_refill_baseline import (  # noqa: E402
+    InvalidCitationError,
     SOURCE_RESULTS,
     build_novel_safe_refilled_evidence,
     build_refilled_evidence,
+    predict_with_citation_guard,
     read_source_results,
     run_refill_event,
+    run_with_retry,
 )
 
 
 class NaturalRefillBaselineTests(unittest.TestCase):
+    def test_citation_guard_retries_with_exact_id_whitelist(self):
+        model = ModelConfig(
+            name="qwen",
+            base_url="http://example.invalid/v1",
+            api_key="none",
+            model="test-model",
+        )
+        evidence = [{"id": "doc_001::chunk_001", "text": "Evidence."}]
+        invalid = {
+            "prediction": "UP",
+            "confidence": 0.7,
+            "rationale": [
+                {"claim": "Claim", "evidence_ids": ["doc_001"], "direction": "supports UP"}
+            ],
+        }
+        valid = {
+            "prediction": "UP",
+            "confidence": 0.7,
+            "rationale": [
+                {
+                    "claim": "Claim",
+                    "evidence_ids": ["doc_001::chunk_001"],
+                    "direction": "supports UP",
+                }
+            ],
+        }
+
+        with patch(
+            "run_natural_refill_baseline.predict", side_effect=[invalid, valid]
+        ) as call:
+            prediction, validation, metadata = predict_with_citation_guard(
+                model, {}, evidence, citation_retries=1
+            )
+
+        self.assertEqual(prediction, valid)
+        self.assertTrue(validation["all_citations_valid"])
+        self.assertEqual(metadata["citation_retry_count"], 1)
+        self.assertEqual(call.call_count, 2)
+        correction = call.call_args_list[1].kwargs["citation_correction"]
+        self.assertIn("doc_001::chunk_001", correction)
+        self.assertIn("doc_001", correction)
+
+    def test_citation_guard_rejects_persistently_invalid_ids(self):
+        model = ModelConfig(
+            name="qwen",
+            base_url="http://example.invalid/v1",
+            api_key="none",
+            model="test-model",
+        )
+        evidence = [{"id": "allowed", "text": "Evidence."}]
+        invalid = {
+            "prediction": "UP",
+            "confidence": 0.7,
+            "rationale": [
+                {"claim": "Claim", "evidence_ids": ["invented"], "direction": "supports UP"}
+            ],
+        }
+
+        with patch("run_natural_refill_baseline.predict", return_value=invalid) as call:
+            with self.assertRaises(InvalidCitationError):
+                predict_with_citation_guard(model, {}, evidence, citation_retries=1)
+
+        self.assertEqual(call.call_count, 2)
+
+    def test_persistent_citation_failure_skips_outer_event_retry(self):
+        model = ModelConfig(
+            name="qwen",
+            base_url="http://example.invalid/v1",
+            api_key="none",
+            model="test-model",
+        )
+
+        with patch(
+            "run_natural_refill_baseline.run_refill_event",
+            side_effect=InvalidCitationError("invalid citations"),
+        ) as call:
+            result, errors = run_with_retry(
+                "natural_007",
+                model,
+                {},
+                Path("source.jsonl"),
+                8,
+                "novel_safe",
+                2,
+                2,
+                0,
+            )
+
+        self.assertIsNone(result)
+        self.assertEqual(call.call_count, 1)
+        self.assertEqual(len(errors), 1)
+        self.assertFalse(errors[0]["retryable"])
+
     def test_backfill_is_safe_unique_and_full_size(self):
         prepared = prepare_event("natural_007", top_k=8)
         refilled, added = build_refilled_evidence(prepared, top_k=8)
