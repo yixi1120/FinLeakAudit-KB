@@ -1,0 +1,48 @@
+{
+  "pdf": "paper/figures/finleakaudit_results.pdf",
+  "auditable": true,
+  "verdict": "REVIEW REQUIRED",
+  "page_count": 1,
+  "visible_text_box_count": 62,
+  "text_trace_count": 62,
+  "stroke_path_count": 112,
+  "filled_region_count": 82,
+  "image_region_count": 0,
+  "summary": {
+    "fail": 0,
+    "warn": 1,
+    "contained_fill_overlays": 10,
+    "contained_image_overlays": 0
+  },
+  "thresholds": {
+    "text_inset_pt": 0.6,
+    "min_overlap_ratio": 0.05,
+    "clipping_tolerance_pt": 0.5
+  },
+  "findings": [
+    {
+      "severity": "WARN",
+      "kind": "text-fill-edge",
+      "page": 1,
+      "message": "Text partially overlaps the edge of 1 filled region(s)",
+      "text": "F1 0.941",
+      "text_bbox": [
+        175.12986755371094,
+        185.9818878173828,
+        198.0060577392578,
+        191.78189086914062
+      ],
+      "other_text": null,
+      "other_bbox": [
+        71.62187194824219,
+        186.60655212402344,
+        266.58868408203125,
+        267.8038024902344
+      ],
+      "object_count": 1,
+      "object_indexes": [
+        50000
+      ]
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 # Paper Build
 
-This directory contains a workshop-neutral two-column draft. It is not yet formatted
-for a specific venue.
+This directory contains the AI4F 2026 submission draft. AI4F permits open-format PDF
+submissions and recommends, but does not require, ACM formatting.
 
 Build from this directory with:
 
@@ -12,10 +12,10 @@ make
 The author order and affiliations are frozen as Ziyang Lu (The Hong Kong University
 of Science and Technology), Junwei Chen (Johns Hopkins University), and Yating Zhang
 (South China Normal University). Contributions follow repository-visible work records.
-Ziyang Lu is the corresponding author using `louislu13822173792@163.com`.
-The repository URL remains omitted until the target venue's artifact rules are
-confirmed. Replace the article class with the selected venue template before
-submission.
+Ziyang Lu is the corresponding author using `zluca@connect.ust.hk`.
+The reproducible submission snapshot is tagged `ai4f-2026-submission-v1` and documented
+in [REPRODUCIBILITY.md](REPRODUCIBILITY.md). The manuscript uses a compact two-column
+article layout; conversion to ACM `sigconf` remains optional under the venue rules.
 
 Current evidence boundary:
 

@@ -25,7 +25,7 @@ class PaperConsistencyTests(unittest.TestCase):
         self.assertIn("Johns Hopkins University", PAPER)
         self.assertIn("South China Normal University", PAPER)
         self.assertIn("Corresponding author", PAPER)
-        self.assertIn("louislu13822173792@163.com", PAPER)
+        self.assertIn("zluca@connect.ust.hk", PAPER)
         self.assertIn("Ziyang Lu led conceptualization", PAPER)
         self.assertIn("Junwei", PAPER)
         self.assertIn("curated the natural point-in-time corpus", PAPER)
@@ -108,6 +108,14 @@ class PaperConsistencyTests(unittest.TestCase):
         self.assertIn("do not estimate real-world leakage prevalence", PAPER)
         self.assertIn("does not establish a general Backfill advantage", PAPER)
         self.assertNotRegex(PAPER, r"\b(?:TODO|TBD|PLACEHOLDER)\b")
+
+    def test_competitor_boundary_and_failure_modes_are_explicit(self):
+        self.assertIn("model or agent\nbehavior across periods", PAPER)
+        self.assertIn("intervenes\non its retrieved context", PAPER)
+        self.assertIn("Qwen described CrowdStrike", PAPER)
+        self.assertIn("support is not exclusive dependence", PAPER)
+        self.assertIn("DeepSeek--Intel", PAPER)
+        self.assertIn("ai4f-2026-submission-v1", PAPER)
 
 
 if __name__ == "__main__":

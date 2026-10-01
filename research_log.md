@@ -1,10 +1,25 @@
 # Research Log
 
+## 2026-10-01 — AI4F submission snapshot v1
+
+- 将通讯作者邮箱统一更新为 `zluca@connect.ust.hk`。
+- 使用冻结实验摘要生成并嵌入 protocol figure 与四面板 result figure；绘图源代码、
+  矢量文件和 QA 报告一并保留。
+- 在 Related Work 中明确区分 Profit Mirage / Look-Ahead-Bench 的模型或跨时期诊断，
+  与 FinLeakAudit 的检索证据级 availability--attribution--revision 链路。
+- 从保留日志中加入三类代表性失败：CrowdStrike citation ID 格式错误、Enphase
+  support-without-exclusive-dependence 误判，以及 Intel/Exxon/Capital One 的删除后失稳。
+- 新增 `paper/submission_manifest_ai4f_2026.json` 与哈希校验测试，固定标签名为
+  `ai4f-2026-submission-v1`。
+- 最终 PDF 为 6 页，SHA-256 为
+  `dcaa4a4236987c23049baee663878596ae54a55324bbcbff22f1d33b1a3ff9a1`；
+  103/103 项测试通过，逐页目检无裁切、重叠或未解析引用。
+
 ## 2026-09-10 — 作者单位与贡献声明冻结
 
 - 作者顺序确认为 Lu Ziyang、Chen Junwei、Zhang Yating。
 - 单位分别确认为香港科技大学、约翰斯霍普金斯大学和华南师范大学。
-- Lu Ziyang 使用 `louislu13822173792@163.com` 作为通讯作者邮箱。
+- Lu Ziyang 使用 `zluca@connect.ust.hk` 作为通讯作者邮箱。
 - 根据 Git 历史、标注 provenance 和团队验收记录，将工程、自然语料建设、独立语义
   标注、来源时间复核及协调裁决等贡献写入论文；尚未确认的邮箱和额外写作职责不作推断。
 
@@ -366,6 +381,19 @@
 - 每条成功结果记录 citation 尝试次数和失败 ID；持久失败不会再触发外层整事件重跑。
 - 既有 18 条 Novel-safe 结果保持冻结，不用新门禁事后替换，论文初稿仍未修改。
 
+## 2026-09-30 — AI4F 2026 投稿优先级切换
+
+- 将 ACM ICAIF 2026 Workshop AI4F 确认为当前投稿目标。其主题覆盖 financial agents、
+  evaluation and verification、RAG、governance and auditability，与 FinLeakAudit 高度匹配。
+- 官方页面存在日期冲突：AI4F 专页写 2026-10-07 AoE，ICAIF workshop 总页写
+  2026-10-01 AoE。团队采用 2026-10-01 AoE 作为首次完整上传的内部安全线，并计划向
+  `contact@ai4f.org` 核实最终关闭时间。
+- 当前四页 PDF 已逐页检查，无裁切、重叠、坏表格、缺失引用或空白页；正文在此检查点
+  保持不变。
+- 实验线下一步仍为扩充四个候选不足事件的 Novel-safe cutoff-safe evidence pool，但在
+  AI4F 初始投稿包安全上传前暂缓。
+- 新增投稿行动页：`wiki/writing/ai4f_2026_submission_plan.md`。
+
 ## 2026-08-25 — Semantic Attribution 双人标注与第三方裁决
 
 - Annotator A 与 Annotator B 分别完成同一批 79 条 claim-evidence pairs。
@@ -389,4 +417,6 @@
 - [x] 实现 semantic leakage detection（controlled attribution baseline + online smoke）
 - [x] 补充自然泄漏检测（Experiment B）实验设计并完成 10-event replay
 - [x] 实现并运行 Novel-safe Backfill 输入重合消融（2026-09-30，6 eligible events × 3 models）
+- [ ] 完成 AI4F 2026 OpenReview 初始投稿与作者确认
+- [ ] AI4F 投稿后扩充 4 个 Novel-safe 候选不足事件
 - [ ] 生成 contribution_matrix.md 和 baseline_matrix.md

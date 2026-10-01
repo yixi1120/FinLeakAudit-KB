@@ -21,9 +21,9 @@ The repository now includes a workshop-neutral two-column manuscript:
 - [checked BibTeX bibliography](paper/references.bib)
 - [compiled draft PDF](output/pdf/FinLeakAudit_workshop_draft_v1.pdf)
 
-Build it with `make` from `paper/`. The current draft is intentionally not tied to a
-venue template; repository disclosure and venue formatting must be finalized before
-submission.
+Build it with `make` from `paper/`. The AI4F submission snapshot is fixed at the Git
+tag `ai4f-2026-submission-v1`; frozen-input checksums and exact reproduction commands
+are listed in [paper/REPRODUCIBILITY.md](paper/REPRODUCIBILITY.md).
 
 ## Research Problem
 

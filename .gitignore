@@ -23,6 +23,8 @@ paper/*.blg
 paper/*.log
 paper/*.out
 paper/main.pdf
+paper/figures/*.alignment.svg
+paper/figures/*.collision-audit.pdf
 
 # Model files (large)
 *.gguf

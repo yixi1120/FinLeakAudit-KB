@@ -6,6 +6,7 @@
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{xcolor}
+\usepackage{graphicx}
 \usepackage[hidelinks]{hyperref}
 
 \newcolumntype{Y}{>{\raggedright\arraybackslash}X}
@@ -25,11 +26,12 @@ for Financial Agentic RAG}
 Ziyang Lu$^{1,*}$ \quad Junwei Chen$^{2}$ \quad Yating Zhang$^{3}$\\
 \scriptsize $^{1}$The Hong Kong University of Science and Technology \quad
 $^{2}$Johns Hopkins University \quad $^{3}$South China Normal University\\[-1pt]
-\scriptsize $^{*}$Corresponding author: \texttt{louislu13822173792@163.com}
+\scriptsize $^{*}$Corresponding author: \texttt{zluca@connect.ust.hk}
 }
 \date{}
 
 \begin{document}
+\raggedbottom
 \maketitle
 
 \begin{abstract}
@@ -100,14 +102,17 @@ forecasting systems; \system{} instead audits the evidence boundary of a host
 forecasting workflow.
 
 \paragraph{Temporal leakage in financial AI.}
-Profit Mirage studies leakage rooted in model memory and evaluates out-of-window
-generalization \cite{li2025profitmirage}. Look-Ahead-Bench evaluates look-ahead bias
-in practical point-in-time workflows \cite{benhenda2026lookahead}, and leakage-aware
-macro factor ranking explicitly distinguishes target timestamps from decision-time
-observability \cite{guan2026leakageaware}. OpenFinGym prevents runtime train--test
-leakage at the execution boundary \cite{zhang2026openfingym}. \system{} is
-complementary: it audits the availability and downstream use of individual retrieved
-items, then reruns the forecast after removal.
+Profit Mirage diagnoses memorization-driven leakage through counterfactual tests and
+out-of-window generalization \cite{li2025profitmirage}. Look-Ahead-Bench compares
+in-sample and out-of-sample agent performance using alpha decay
+\cite{benhenda2026lookahead}. Their reported unit of diagnosis is model or agent
+behavior across periods. \system{} instead holds the predictor fixed and intervenes
+on its retrieved context: it verifies when each item became available, links that
+item to generated claims, and tests whether removal changes or restores the forecast.
+The approaches are therefore complementary rather than competing forecasting
+benchmarks. Leakage-aware macro factor ranking distinguishes target timestamps from
+decision-time observability \cite{guan2026leakageaware}, while OpenFinGym prevents
+runtime train--test leakage at the execution boundary \cite{zhang2026openfingym}.
 
 \paragraph{Attribution, verification, and revision.}
 ALCE evaluates whether generated claims carry correct and complete citations
@@ -144,16 +149,15 @@ Leave-one-out reruns are reported as marginal sensitivity, not causal effects.
 
 \section{Audit Protocol}
 
-\begin{figure}[t]
+\begin{figure*}[t]
 \centering
-\fbox{\parbox{0.94\columnwidth}{\centering
-Retrieved evidence $\rightarrow$ point-in-time availability $\rightarrow$
-citation validation $\rightarrow$ claim--evidence attribution $\rightarrow$
-marginal ablation $\rightarrow$ forecast revision}}
-\caption{The audit pipeline. Predictor, auditor, and evaluator receive distinct
-views; outcome labels never enter prediction or removal decisions.}
+\includegraphics[width=0.98\textwidth]{figures/finleakaudit_pipeline.pdf}
+\caption{The FinLeakAudit protocol. A historical cutoff separates available from
+post-cutoff evidence. Paired predictor inputs isolate contamination and revision,
+while the auditor and evaluator receive distinct views. Outcome labels never enter
+prediction, evidence removal, or Backfill selection.}
 \label{fig:pipeline}
-\end{figure}
+\end{figure*}
 
 \paragraph{Availability and visibility.}
 The temporal operator receives timezone-aware timestamps and provenance. The
@@ -211,21 +215,18 @@ and adjudicated by a coordinator. Binary evaluation excludes one uncertain item.
 
 \section{Results}
 
-\begin{table*}[t]
+\begin{figure*}[t]
 \centering
-\small
-\begin{tabular}{lrrrrrr}
-\toprule
-Study & Runs & Future cited & Initial flips & Sparse recovery & Backfill recovery & Revised drift \\
-\midrule
-Controlled injection & 30 & 28/30 & 12/30 & 12/12 & -- & 0/18 \\
-Natural replay & 30 & 27/30 & 13/30 & 11/13 & 13/13 & 1/17 vs. 0/17 \\
-\bottomrule
-\end{tabular}
-\caption{Forecast-audit results. Natural revised drift reports Sparse versus
-Backfilled on non-flipped runs. Exact counts are primary.}
-\label{tab:forecast}
-\end{table*}
+\includegraphics[width=0.98\textwidth]{figures/finleakaudit_results.pdf}
+\caption{Audit and attribution results. \textbf{a}, Post-cutoff evidence citation
+and forecast-direction changes over 30 runs per study. \textbf{b}, Conditional
+recovery after revision; points show proportions and lines show Wilson 95\%
+intervals. \textbf{c}, Precision, recall, and F1 on 78 decisive claim--evidence
+pairs. \textbf{d}, Backfill interpretation: 24/30 Backfilled inputs exactly
+reconstructed Clean, and the paired exact McNemar test was not significant. Exact
+counts remain primary.}
+\label{fig:results}
+\end{figure*}
 
 \subsection{Controlled Evidence Injection}
 
@@ -256,24 +257,8 @@ not post-processing noise.
 
 \subsection{Claim--Evidence Attribution}
 
-\begin{table}[t]
-\centering
-\small
-\begin{tabular}{lrrr}
-\toprule
-Method & Precision & Recall & F1 \\
-\midrule
-Citation only & 0.909 & 0.976 & \textbf{0.941} \\
-Lexical overlap & 0.955 & 0.512 & 0.667 \\
-Embedding similarity & 1.000 & 0.341 & 0.509 \\
-Blinded LLM judge & 0.974 & 0.902 & 0.937 \\
-\bottomrule
-\end{tabular}
-\caption{Binary attribution on 78 decisive gold pairs. One uncertain pair is
-excluded.}
-\label{tab:attribution}
-\end{table}
-
+Citation-only, lexical-overlap, embedding-similarity, and blinded-LLM attribution
+achieved F1 scores of 0.941, 0.667, 0.509, and 0.937, respectively.
 Citation-only attribution slightly exceeded the LLM judge on this controlled sample.
 The aggregate masks complementary failures: exact matching missed a semantically used
 future source whose chunk suffix was omitted, while the LLM judge produced a
@@ -281,6 +266,33 @@ support-without-dependence false positive when the same fact was already availab
 before cutoff. Annotator agreement on the original three-way semantic-dependence
 label was 77/79, with Cohen's $\kappa=0.952$.
 
+\begin{table*}[t]
+\centering
+\small
+\begin{tabularx}{\textwidth}{@{}p{0.15\textwidth}p{0.27\textwidth}p{0.27\textwidth}Y@{}}
+\toprule
+Failure mode & Observed example & What a simple audit misses & Design consequence \\
+\midrule
+Malformed citation & Qwen described CrowdStrike's post-cutoff Falcon incident but
+omitted required chunk suffixes. & Exact-ID matching recorded no valid future
+citation although the rationale used the incident. & Evaluate citation validity and
+semantic dependence as separate operators. \\
+Redundant future support & A Zhipu Enphase claim cited post-cutoff shipment reductions,
+but the inventory-glut premise was already explicit before cutoff. & A blinded LLM
+judge labeled support as dependence, producing a false positive. & Compare each claim
+against both pre- and post-cutoff evidence; support is not exclusive dependence. \\
+Deletion-induced drift & Sparse deletion mismatched Clean for DeepSeek--Intel and
+Qwen--Exxon, and created a Qwen--Capital One non-flip drift. & Removing invalid items
+also changes context length and rank coverage. & Treat Backfill as a diagnostic
+control, not a proven improvement. \\
+\bottomrule
+\end{tabularx}
+\caption{Representative failure modes retained in the evaluation logs. The examples
+motivate separate availability, attribution, and revision-stability measurements.}
+\label{tab:failures}
+\end{table*}
+
+\clearpage
 \section{Discussion}
 
 The results support auditability, not forecasting superiority. Post-cutoff evidence
@@ -322,8 +334,9 @@ needed before broader claims.
 
 \paragraph{Reproducibility.}
 The project repository includes frozen cases, retrieval manifests, prompts, raw
-outputs, error rows, analysis scripts, and tests. A versioned repository URL will be
-included in the venue-specific submission metadata.
+outputs, error rows, analysis scripts, and tests. The AI4F submission snapshot is
+available in a \href{https://github.com/yixi1120/FinLeakAudit-KB/tree/ai4f-2026-submission-v1}{versioned public repository}; artifact checksums and reproduction commands are
+provided in its documentation.
 
 \paragraph{Author contributions.}
 Ziyang Lu led conceptualization, methodology, software, experiments, formal analysis,
