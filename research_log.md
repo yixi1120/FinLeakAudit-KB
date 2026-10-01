@@ -1,5 +1,14 @@
 # Research Log
 
+## 2026-10-02 — AI4F OpenReview 投稿字段核验
+
+- 通过 AI4F 官方页面和 OpenReview live submission invitation 交叉核验，确认截止
+  时间为 2026-10-08 11:59 UTC，即 2026-10-08 19:59 HKT。
+- 确认表单必填字段为 title、authors/author profiles、keywords、abstract 和 PDF，
+  TL;DR 为可选项；提交记录默认采用 CC BY 4.0。
+- 新增 `paper/openreview_submission_ai4f_2026.md`，固定可直接粘贴的题目、关键词、
+  TL;DR、摘要、PDF 哈希和人工确认清单，不改动 `ai4f-2026-submission-v1` 冻结标签。
+
 ## 2026-10-01 — AI4F submission snapshot v1
 
 - 将通讯作者邮箱统一更新为 `zluca@connect.ust.hk`。

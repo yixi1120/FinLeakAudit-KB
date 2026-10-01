@@ -18,22 +18,23 @@ Evidence source:
 - AI4F official call: https://ai4f.org/
 - Direct submission venue: https://openreview.net/group?id=ACM.org/ICAIF/2026/Workshop/AI4F
 
-# Date conflict and operating deadline
+# Submission deadline
 
-Two official pages currently disagree:
+The AI4F venue-specific page and live OpenReview submission invitation agree on the
+submission deadline:
 
 | Source | Submission deadline | Notification |
 |---|---|---|
 | AI4F venue-specific page | 2026-10-07 AoE | 2026-10-14 AoE |
-| ICAIF general workshop page | 2026-10-01 23:59 AoE | 2026-10-15 23:59 AoE |
+| OpenReview submission invitation | 2026-10-08 11:59 UTC | Not specified in form |
 
-Source for the general page: https://icaif2026.org/workshop.html
+These are the same closing instant: **2026-10-08 19:59 HKT**. The OpenReview
+invitation remains the operational source of truth for form availability. The ICAIF
+general workshop page previously displayed an earlier generic workshop date, but it
+does not override the workshop-specific page and live submission form.
 
-The venue-specific AI4F page and its direct OpenReview link are the more specific
-sources, but the team must not rely on that inference alone. The internal safe deadline
-is therefore **2026-10-01 AoE for creating and uploading an initial complete
-submission**, while `contact@ai4f.org` is asked to confirm whether revisions remain
-open until 2026-10-07 AoE.
+The team should still upload before the final day so author-profile problems can be
+fixed without deadline pressure.
 
 # Confirmed submission rules
 
@@ -43,6 +44,9 @@ open until 2026-10-07 AoE.
 - Non-archival workshop with no official proceedings.
 - At least one author must agree to serve as a reviewer and deliver reviews on time.
 - The author list should be treated as frozen at initial submission.
+- The live OpenReview form requires title, authors/author profiles, keywords,
+  abstract, and PDF; TL;DR is optional.
+- The live submission invitation assigns the submitted note a CC BY 4.0 license.
 - Accepted papers are invited to an in-person poster session in Milan on 2026-11-14;
   selected papers may receive a short oral slot.
 
@@ -76,15 +80,17 @@ pass. The compiled submission PDF SHA-256 is
 
 ## P0: initial upload
 
-- [ ] Ask `contact@ai4f.org` to resolve the 2026-10-01 versus 2026-10-07 deadline
-  conflict.
+- [x] Resolve the deadline against the live OpenReview invitation: 2026-10-08 19:59
+  HKT.
+- [x] Prepare the exact OpenReview fields in
+  `paper/openreview_submission_ai4f_2026.md`.
 - [ ] Confirm all three authors' OpenReview profiles, names, affiliations, and email
   addresses.
 - [ ] Freeze the three-author list and author order before initial submission.
 - [ ] Designate the required reviewer volunteer.
 - [ ] Designate an in-person presenter for Milan if accepted.
 - [ ] Create the AI4F OpenReview submission shell.
-- [ ] Upload the current complete PDF by the internal 2026-10-01 AoE safety deadline.
+- [ ] Upload the current complete PDF before 2026-10-08 19:59 HKT.
 - [ ] Save the OpenReview submission ID and uploaded-PDF checksum in this page.
 
 ## P1: final revision before the confirmed close
