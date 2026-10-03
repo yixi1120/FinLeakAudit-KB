@@ -1,8 +1,10 @@
 # AI4F 2026 OpenReview Submission Metadata
 
-Prepared on 2026-10-02 from the frozen manuscript tagged
-`ai4f-2026-submission-v1`. This file is a transcription aid for the submission
-form; it does not replace the frozen PDF or manifest.
+Prepared on 2026-10-02 and updated on 2026-10-03 for the four-author manuscript.
+The scientific results remain grounded in the snapshot tagged
+`ai4f-2026-submission-v1`; a new submission tag will be created after the fourth-author
+metadata and assigned deliverables are verified. This file is a transcription aid for
+the submission form; it does not replace the PDF or manifest.
 
 ## Venue
 
@@ -26,6 +28,7 @@ email used in OpenReview.
 2. Junwei Chen — Johns Hopkins University — OpenReview profile/email: **confirm**
 3. Yating Zhang — South China Normal University — OpenReview profile/email:
    **confirm**
+4. Minzhen Lai — Imperial College London — OpenReview profile/email: **confirm**
 
 ## Keywords
 
@@ -62,10 +65,10 @@ prevalence or demonstrate improved forecasting accuracy.
 
 ## PDF
 
-- File: `output/pdf/FinLeakAudit_workshop_draft_v1.pdf`
+- File: `output/pdf/FinLeakAudit_workshop_draft_v2.pdf`
 - Pages: 6
-- Size: 346560 bytes
-- SHA-256: `dcaa4a4236987c23049baee663878596ae54a55324bbcbff22f1d33b1a3ff9a1`
+- Size: 348166 bytes
+- SHA-256: `b7147c065889da58cb648d6028b9f86421367394d20e62c221be5ddca81e9d42`
 - Reproducibility tag:
   https://github.com/yixi1120/FinLeakAudit-KB/tree/ai4f-2026-submission-v1
 
@@ -73,6 +76,9 @@ prevalence or demonstrate improved forecasting accuracy.
 
 - [ ] Junwei Chen confirms his exact OpenReview profile or submission email.
 - [ ] Yating Zhang confirms her exact OpenReview profile or submission email.
+- [ ] Minzhen Lai confirms his exact email and OpenReview profile.
+- [ ] Minzhen Lai completes the assigned external reproduction, model-stratified
+  analysis, manuscript-to-artifact audit, and corresponding revision work.
 - [ ] All authors confirm spelling, affiliation, order, and the contribution statement.
 - [ ] One author explicitly agrees to serve as the required reviewer.
 - [ ] One author confirms that they can present in person in Milan if accepted.
@@ -81,14 +87,13 @@ prevalence or demonstrate improved forecasting accuracy.
 ## Final Form Check
 
 - [ ] Title matches this file and the PDF.
-- [ ] All three author profiles resolve to the intended people.
+- [ ] All four author profiles resolve to the intended people.
 - [ ] Keywords are entered as separate comma-delimited items.
-- [ ] Abstract matches the frozen PDF.
+- [ ] Abstract matches the four-author v2 PDF.
 - [ ] The six-page PDF uploads and previews correctly.
-- [ ] The submission confirmation page shows all three authors in the frozen order.
+- [ ] The submission confirmation page shows all four authors in the frozen order.
 - [ ] Record the OpenReview forum/submission ID below.
 - [ ] Download or re-open the uploaded PDF and verify its SHA-256 if OpenReview
   provides a downloadable copy.
 
 OpenReview submission ID: **pending**
-

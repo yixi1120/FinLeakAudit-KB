@@ -297,14 +297,18 @@ method-superiority result.
 
 # 10. Author Contributions
 
-The author order is Lu Ziyang, Chen Junwei, and Zhang Yating. Lu Ziyang led
-conceptualization, methodology, software, experiments, formal analysis, visualization,
-annotation adjudication, writing, and project administration. Chen Junwei curated the
-natural point-in-time corpus, prepared source and timestamp metadata and retrieval
-units, and completed independent semantic annotation. Zhang Yating completed
-independent semantic annotation and claim-span refinement, and independently verified
-the natural-source metadata and timestamps. These roles are grounded in the repository
-history and frozen provenance records.
+The provisional author order is Lu Ziyang, Chen Junwei, Zhang Yating, and Lai Minzhen.
+Lu Ziyang led conceptualization, methodology, software, core experiments and analysis,
+visualization, annotation adjudication, primary writing, and project administration.
+Chen Junwei curated the natural point-in-time corpus, prepared source and timestamp
+metadata and retrieval units, and completed independent semantic annotation. Zhang
+Yating completed independent semantic annotation and claim-span refinement, and
+independently verified the natural-source metadata and timestamps. Lai Minzhen is
+responsible for independent external reproduction, model-stratified robustness
+analysis, manuscript-to-artifact consistency auditing, corresponding manuscript
+revisions, and conference presentation preparation. The first three authors' completed
+roles are grounded in repository history and frozen provenance records; the fourth
+author's assigned work must be verified before the final submission freeze.
 
 # 11. Conclusion
 

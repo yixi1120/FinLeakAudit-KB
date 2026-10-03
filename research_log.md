@@ -1,5 +1,17 @@
 # Research Log
 
+## 2026-10-03 — Minzhen Lai 拟定为第四作者并分配独立工作包
+
+- 将 Minzhen Lai（Imperial College London）列为拟定第四作者，并分配独立外部复现、
+  model-by-event 分层分析、manuscript-to-artifact 一致性核验、对应论文修订和会议
+  展示准备。
+- 论文源文件、投稿元数据和一致性测试已同步为四作者版本；Minzhen 的邮箱、
+  OpenReview Profile ID 及工作交付仍须在最终提交前确认和验收。
+- 不追溯转让前三位作者已完成的历史贡献；现场出席或制作海报本身不构成作者资格。
+- 行动手册保存在
+  `wiki/writing/fourth_author_candidate_handoff_2026_10_03.md`，内部验收截止日为
+  2026-10-06。
+
 ## 2026-10-02 — AI4F OpenReview 投稿字段核验
 
 - 通过 AI4F 官方页面和 OpenReview live submission invitation 交叉核验，确认截止

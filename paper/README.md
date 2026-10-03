@@ -9,10 +9,14 @@ Build from this directory with:
 make
 ```
 
-The author order and affiliations are frozen as Ziyang Lu (The Hong Kong University
-of Science and Technology), Junwei Chen (Johns Hopkins University), and Yating Zhang
-(South China Normal University). Contributions follow repository-visible work records.
-Ziyang Lu is the corresponding author using `zluca@connect.ust.hk`.
+The provisional author order is Ziyang Lu (The Hong Kong University of Science and
+Technology), Junwei Chen (Johns Hopkins University), Yating Zhang (South China Normal
+University), and Minzhen Lai (Imperial College London). Minzhen Lai's assigned scope is
+independent external reproduction, model-stratified robustness analysis,
+manuscript-to-artifact consistency auditing, related manuscript revisions, and
+conference presentation preparation. Contributions must be verified against
+repository-visible work records before the final submission freeze. Ziyang Lu is the
+corresponding author using `zluca@connect.ust.hk`.
 The reproducible submission snapshot is tagged `ai4f-2026-submission-v1` and documented
 in [REPRODUCIBILITY.md](REPRODUCIBILITY.md). The manuscript uses a compact two-column
 article layout; conversion to ACM `sigconf` remains optional under the venue rules.
