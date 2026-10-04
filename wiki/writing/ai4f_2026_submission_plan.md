@@ -50,29 +50,22 @@ fixed without deadline pressure.
 - Accepted papers are invited to an in-person poster session in Milan on 2026-11-14;
   selected papers may receive a short oral slot.
 
-# Provisional four-author metadata
+# Frozen author metadata
 
 1. Ziyang Lu, The Hong Kong University of Science and Technology, first and
    corresponding author.
 2. Junwei Chen, Johns Hopkins University, second author.
 3. Yating Zhang, South China Normal University, third author.
-4. Minzhen Lai, Imperial College London, fourth author and designated external
-   reproduction, model-stratified analysis, artifact-consistency, and presentation
-   contributor.
 
 Before the initial OpenReview submission, all authors must confirm the spelling of
 their names, affiliations, email addresses, OpenReview profiles, author order, and
-contribution statement. Minzhen Lai must also complete and document the substantive
-work assigned in `fourth_author_candidate_handoff_2026_10_03.md`; conference attendance
-alone is not the basis of authorship. One author must explicitly volunteer as the
-required reviewer, and one author must confirm the ability to present in Milan if
-accepted.
+contribution statement. One author must explicitly volunteer as the required reviewer,
+and one author must confirm the ability to present in Milan if accepted.
 
 # Current manuscript readiness
 
 The current `paper/main.pdf` is a readable six-page, two-column, single-blind paper.
-All six pages were rendered and visually inspected again on 2026-10-03 after adding
-the provisional fourth-author metadata. No clipping,
+All six pages were rendered and visually inspected on 2026-10-01. No clipping,
 overlap, broken tables, unresolved citations, or blank pages were found. The paper now
 includes a protocol figure, a four-panel result figure, and a three-row failure-mode
 table grounded in retained experiment logs.
@@ -80,9 +73,8 @@ table grounded in retained experiment logs.
 The Related Work section explicitly separates evidence-level retrieval auditing from
 the model-memory and across-period diagnostics in Profit Mirage and Look-Ahead-Bench.
 The repository includes a machine-checkable frozen-input manifest, and all 103 tests
-pass. The current four-author draft is
-`output/pdf/FinLeakAudit_workshop_draft_v2.pdf`, SHA-256
-`b7147c065889da58cb648d6028b9f86421367394d20e62c221be5ddca81e9d42`.
+pass. The compiled submission PDF SHA-256 is
+`dcaa4a4236987c23049baee663878596ae54a55324bbcbff22f1d33b1a3ff9a1`.
 
 # Submission-critical checklist
 
@@ -92,10 +84,9 @@ pass. The current four-author draft is
   HKT.
 - [x] Prepare the exact OpenReview fields in
   `paper/openreview_submission_ai4f_2026.md`.
-- [ ] Confirm all four authors' OpenReview profiles, names, affiliations, and email
+- [ ] Confirm all three authors' OpenReview profiles, names, affiliations, and email
   addresses.
-- [ ] Verify Minzhen Lai's assigned substantive contribution and freeze the four-author
-  list and author order before initial submission.
+- [ ] Freeze the three-author list and author order before initial submission.
 - [ ] Designate the required reviewer volunteer.
 - [ ] Designate an in-person presenter for Milan if accepted.
 - [ ] Create the AI4F OpenReview submission shell.
