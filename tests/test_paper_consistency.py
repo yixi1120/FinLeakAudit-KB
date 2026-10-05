@@ -115,7 +115,7 @@ class PaperConsistencyTests(unittest.TestCase):
         self.assertIn("Qwen described CrowdStrike", PAPER)
         self.assertIn("support is not exclusive dependence", PAPER)
         self.assertIn("DeepSeek--Intel", PAPER)
-        self.assertIn("ai4f-2026-submission-v1", PAPER)
+        self.assertIn("ai4f-2026-submission-v2", PAPER)
 
 
 if __name__ == "__main__":

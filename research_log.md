@@ -1,5 +1,38 @@
 # Research Log
 
+## 2026-10-05 — AI4F 投稿稿 v2 P0 修订与模拟评审
+
+- 根据外部修改建议逐项核验仓库证据，完成论文 P0 修订：加入 189 篇候选文档、
+  201 个 retrieval units、195 个 active units 和 6 个 blocked units 的构成说明，
+  并增加十事件紧凑表。
+- 补充固定检索的抽取、分块、打分、版本限制、parent-source cap 和 tie-breaking；
+  明确当前 pilot 不评测自主 query reformulation、tool planning 或 multi-agent
+  coordination。
+- 将独立数据核验准确限定为冻结规则抽取的 139 条记录，披露 133 accept、1 reject、
+  5 needs-adjudication；没有声称全部 189 篇均经双人逐条核验。
+- 补充 model-event 非独立性、归因标签分布和 citation/LLM confusion counts；保留
+  Backfill 的 `24/30` 重建比例和 McNemar `p=0.25` 限制。
+- 新增内部模拟审稿 `wiki/writing/ai4f_2026_simulated_review_v2.md`，结论为
+  Weak Accept / 7 分、confidence 4/5；它不是实际录用预测。
+- 新版论文为 6 页，104 项测试全部通过，PDF metadata 已填写；最终上传 PDF
+  SHA-256 为 `b05485451a37193738e161ce061a3adce29f0d0803d5c45e5aa10e5b2c65aad1`。
+
+## 2026-10-05 — AI4F 三作者投稿包完成
+
+- 重新编译并逐页检查三作者论文，确认作者为 Ziyang Lu、Junwei Chen 和 Yating
+  Zhang；Minzhen Lai 和 Imperial College London 未出现在论文或投稿材料中。
+- 全部 103 项测试通过；最终上传 PDF 固定为
+  `output/ai4f_2026_submission/FinLeakAudit_AI4F_2026.pdf`，SHA-256 为
+  `dcaa4a4236987c23049baee663878596ae54a55324bbcbff22f1d33b1a3ff9a1`。
+- 建立集中投稿目录，包含 OpenReview 可复制字段、作者确认消息、上传前后清单和
+  checksum；未确认项仅剩两位合作者的 OpenReview profile、reviewer volunteer 和
+  远程展示政策回复。
+- 已由港科大邮箱向 `contact@ai4f.org` 询问 live remote presentation、无法现场
+  出席时是否仍完成正常评审，以及出席是否只影响最终 workshop program。
+- AI4F 组织者 Jacob Chanyeol Choi 于 2026-10-04 回复，明确所有录用论文必须现场
+  展示；回复未回答无法现场出席时是否仍保留审稿意见。该结论已写入投稿包的
+  `ORGANIZER_REPLY.md` 和最终清单。
+
 ## 2026-10-02 — AI4F OpenReview 投稿字段核验
 
 - 通过 AI4F 官方页面和 OpenReview live submission invitation 交叉核验，确认截止

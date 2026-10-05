@@ -1,7 +1,7 @@
 # AI4F 2026 Reproducibility Snapshot
 
 This document freezes the paper-facing FinLeakAudit pilot at Git tag
-`ai4f-2026-submission-v1`. The snapshot supports the claims in `paper/main.tex`; it
+`ai4f-2026-submission-v2`. The snapshot supports the claims in `paper/main.tex`; it
 does not claim that provider APIs are bitwise deterministic.
 
 ## Environment
@@ -56,7 +56,11 @@ SVG exports in `paper/figures/` are review and editing artifacts.
 .venv/bin/python -m unittest discover -s tests
 ```
 
-The submission snapshot expects 103 tests to pass. Model-provider aliases may change
+The submission snapshot expects 104 tests to pass. Model-provider aliases may change
 behind stable API names, so any new online run must record its date, model identifier,
 retry history, token use, and output as a new artifact rather than overwriting this
 snapshot.
+
+The v2 manifest also freezes the paper-facing corpus totals: 10 event manifests, 189
+candidate documents, 201 version-aware retrieval units, 195 active units, six blocked
+units, and the decision counts in the 139-record second-verifier batch.

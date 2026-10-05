@@ -72,9 +72,22 @@ table grounded in retained experiment logs.
 
 The Related Work section explicitly separates evidence-level retrieval auditing from
 the model-memory and across-period diagnostics in Profit Mirage and Look-Ahead-Bench.
-The repository includes a machine-checkable frozen-input manifest, and all 103 tests
-pass. The compiled submission PDF SHA-256 is
-`dcaa4a4236987c23049baee663878596ae54a55324bbcbff22f1d33b1a3ff9a1`.
+The repository includes a machine-checkable frozen-input and corpus manifest, and all
+104 tests pass. The v2 compiled submission PDF SHA-256 is
+`b05485451a37193738e161ce061a3adce29f0d0803d5c45e5aa10e5b2c65aad1`.
+
+On 2026-10-05, the revised consolidated upload package was prepared under
+`output/ai4f_2026_submission_v2/`. It contains the verified PDF, exact OpenReview
+copy-paste fields, checksums, collaborator confirmation messages, and the final
+submission checklist. The PDF was rendered and visually inspected again after the
+three-author rollback and P0 manuscript revision; all 104 tests pass.
+
+The team emailed `contact@ai4f.org` to request a written ruling on live remote
+presentation and review feedback if no author can travel to Milan. Jacob Chanyeol Choi
+replied on 2026-10-04 that in-person presentation is mandatory for all accepted papers.
+The reply did not address whether review feedback remains available if the team later
+cannot attend. This does not change the paper or the initial submission deadline, but
+an attending author is required to retain an accepted paper in the workshop program.
 
 # Submission-critical checklist
 
@@ -98,14 +111,14 @@ pass. The compiled submission PDF SHA-256 is
 - [x] Keep Backfill as a diagnostic baseline and retain the `p=0.25` negative result.
 - [x] Add the public versioned repository URL and verify anonymous access
   is not required under the single-blind policy.
-- [x] Run all 103 tests and rebuild the PDF from the frozen analysis inputs.
+- [x] Run all 104 tests and rebuild the PDF from the frozen analysis inputs.
 - [x] Re-render every final page and repeat the visual inspection.
 - [ ] Verify title, abstract, keywords, conflicts, author order, reviewer commitment,
   and any AI-assistance disclosure requested by the OpenReview form.
 
 ## P2: after submission
 
-- [x] Prepare the `ai4f-2026-submission-v1` reproducibility snapshot and tagged release.
+- [x] Prepare the `ai4f-2026-submission-v2` reproducibility snapshot and tagged release.
 - [ ] Prepare a poster outline and a ten-minute oral outline in case the paper is
   selected.
 - [ ] Expand the four incomplete Novel-safe candidate pools only after the submission

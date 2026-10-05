@@ -13,7 +13,7 @@ The author order and affiliations are frozen as Ziyang Lu (The Hong Kong Univers
 of Science and Technology), Junwei Chen (Johns Hopkins University), and Yating Zhang
 (South China Normal University). Contributions follow repository-visible work records.
 Ziyang Lu is the corresponding author using `zluca@connect.ust.hk`.
-The reproducible submission snapshot is tagged `ai4f-2026-submission-v1` and documented
+The reproducible submission snapshot is tagged `ai4f-2026-submission-v2` and documented
 in [REPRODUCIBILITY.md](REPRODUCIBILITY.md). The manuscript uses a compact two-column
 article layout; conversion to ACM `sigconf` remains optional under the venue rules.
 

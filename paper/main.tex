@@ -8,6 +8,10 @@
 \usepackage{xcolor}
 \usepackage{graphicx}
 \usepackage[hidelinks]{hyperref}
+\hypersetup{
+  pdftitle={FinLeakAudit: Evidence-Level Point-in-Time Auditing for Financial Agentic RAG},
+  pdfauthor={Ziyang Lu, Junwei Chen, Yating Zhang}
+}
 
 \newcolumntype{Y}{>{\raggedright\arraybackslash}X}
 
@@ -50,7 +54,7 @@ recovered 13/13 and matched the Clean direction in 30/30 runs. However, 24/30
 backfilled inputs were identical to Clean and the exact paired McNemar test was not
 significant ($p=0.25$). On 78 decisive human-labeled claim--evidence pairs,
 citation-only attribution achieved F1 0.941 and a blinded LLM judge achieved F1
-0.937. The results establish a reproducible audit pilot and expose concrete failure
+0.937. The results provide a reproducible audit pilot and expose concrete failure
 modes; they do not estimate real-world leakage prevalence or demonstrate improved
 forecasting accuracy.
 \end{abstract}
@@ -71,6 +75,11 @@ availability failures \cite{li2025profitmirage,benhenda2026lookahead,guan2026lea
 These works motivate a narrower question: when a retrieved item postdates the cutoff,
 can we trace whether the forecast used it, measure its marginal impact, and revise the
 forecast without silently changing the evaluation target?
+
+\system{} is designed as an audit layer for host Agentic RAG systems. The present
+pilot evaluates their retrieval-grounded forecasting interface under fixed retrieval;
+it does not exercise autonomous query reformulation, tool planning, or multi-agent
+coordination.
 
 We study four research questions:
 \begin{enumerate}
@@ -192,26 +201,84 @@ Set & Items & Runs & Purpose \\
 Controlled injection & 10 cases & 30 & Premise and pipeline check \\
 Natural replay & 10 events & 30 & Archived-source stress test \\
 Attribution gold & 79 pairs & 79 & Claim--evidence evaluation \\
-Natural hard set & 82 pairs & -- & Frozen, currently unlabeled \\
 \bottomrule
 \end{tabularx}
 \caption{Evaluation assets. A run is one case/event evaluated by one model.}
 \label{tab:data}
 \end{table}
 
-The controlled set includes seven SEC-grounded cases and three semi-real cases, each
-with clean evidence and one post-cutoff item. The natural replay uses ten purposively
-selected events, archived primary-source documents, frozen lexical retrieval, and a
-top-$k$ of eight. Clean retrieval is bounded by the prediction cutoff; Unfiltered
-retrieval is bounded by outcome time. It is a constructed candidate-feed replay, not
-a preserved production search trace.
+The controlled set includes seven cases whose pre- and post-cutoff text is paraphrased
+from verified SEC filings, and three semi-real cases with synthetic pre-cutoff context
+and a verified company or regulatory event source. Each case contains one designed
+post-cutoff item and serves as a stress test rather than a prevalence sample.
+
+\paragraph{Natural candidate-feed corpus.}
+The natural replay contains 189 candidate documents across ten real financial events,
+covering earnings and guidance, cybersecurity, management changes, acquisitions, and
+litigation. Version-aware extraction produced 201 retrieval units: 195 active units
+and six webpage units excluded because their historical content could not be verified
+reliably. A dynamic status page can produce several independently timestamped units,
+so unit and document counts need not match. Event queries and cutoffs were frozen
+before retrieval. Here, \emph{natural} denotes real events and source documents, not a
+preserved search-engine result page or host Agentic-RAG trace.
+
+\begin{table}[t]
+\centering
+\scriptsize
+\begin{tabularx}{\columnwidth}{@{}llYcr@{}}
+\toprule
+Event & Type & Cutoff basis & $h$ & D/U \\
+\midrule
+CrowdStrike & Cyber & Previous close & $+1$ & 18/24 \\
+NVIDIA & Earnings & Pre-release & $+1$ & 20/20 \\
+NIKE & Earnings & Pre-release & $+1$ & 19/19 \\
+Starbucks & Leadership & Pre-disclosure & $+3$ & 19/19 \\
+Intel & Leadership & Pre-disclosure & $+2$ & 19/19 \\
+Exxon Mobil & M\&A & Pre-disclosure & $+1$ & 19/19 \\
+Capital One & M\&A & Pre-disclosure & $+1$ & 20/20 \\
+Microsoft & M\&A & Pre-disclosure & $+1$ & 18/18 \\
+UnitedHealth & Cyber & Pre-disclosure & $+3$ & 18/18 \\
+JetBlue & Litigation & Pre-decision & $+2$ & 19/19 \\
+\bottomrule
+\end{tabularx}
+\caption{Natural candidate-feed corpus. Horizon $h$ is measured in trading-day
+closes; D/U gives candidate documents / active retrieval units.}
+\label{tab:natural-corpus}
+\end{table}
+
+\paragraph{Retrieval implementation.}
+HTML, XML, and PDF sources are deterministically extracted and split into chunks of at
+most 4,000 characters with 300-character overlap. At most three time-ordered units per
+parent source enter ranking. Frozen query terms are scored with log-scaled term
+frequency and inverse document frequency; chunk IDs break ties deterministically.
+The top-eight context admits at most two chunks per parent source. \clean{} retrieval
+is bounded by the prediction cutoff, whereas \unfiltered{} retrieval is bounded by the
+outcome time.
 
 We evaluate DeepSeek \texttt{deepseek-chat}, Zhipu
 \texttt{glm-4-flashx-250414}, and Qwen2.5-14B-Instruct GGUF Q4\_K\_M through
-llama.cpp, all at temperature zero. Provider-side determinism is not assumed.
-Prompts, retrieval policies, model outputs, retries, token usage, and malformed
-citations are retained. The attribution set was independently labeled by two humans
-and adjudicated by a coordinator. Binary evaluation excludes one uncertain item.
+llama.cpp, all at temperature zero. Natural runs were executed between August 19 and
+September 6, 2026; one Qwen timeout required a recorded second attempt. API aliases do
+not expose immutable serving checkpoints, and provider-side determinism is not
+assumed. Prompts, retrieval policies, model outputs, retries, token usage, and
+malformed citations are retained.
+
+\paragraph{Human verification and annotation.}
+One researcher prepared the source, timestamp, and retrieval-unit metadata. A second
+researcher independently reviewed 139 records selected by a frozen rule: every
+post-cutoff or unresolved record and a deterministic sample of at least 20\% of each
+event's pre-cutoff records. The review accepted 133 records, rejected one timestamp,
+and sent five to coordinator adjudication; all six non-accept outcomes were resolved
+before the replay was frozen. This is independent verification of the defined sample,
+not dual review of every candidate document.
+
+The attribution set contains 79 claim--post-cutoff-evidence pairs constructed from
+controlled-run model claims. Two humans labeled the blind batch without model, event,
+timestamp, citation, prediction-outcome, or automatic-audit metadata. The adjudicated
+gold set contains 41 positive, 37 negative, and one uncertain pair; the uncertain pair
+is excluded from binary evaluation. DeepSeek \texttt{deepseek-chat} is the blinded LLM
+judge and receives only the claim, pre-cutoff evidence, and candidate post-cutoff
+evidence.
 
 \section{Results}
 
@@ -224,7 +291,8 @@ recovery after revision; points show proportions and lines show Wilson 95\%
 intervals. \textbf{c}, Precision, recall, and F1 on 78 decisive claim--evidence
 pairs. \textbf{d}, Backfill interpretation: 24/30 Backfilled inputs exactly
 reconstructed Clean, and the paired exact McNemar test was not significant. Exact
-counts remain primary.}
+counts remain primary; Wilson intervals are descriptive because three models share
+each event and evidence pool.}
 \label{fig:results}
 \end{figure*}
 
@@ -244,6 +312,11 @@ deletion recovered 11/13. Backfill recovered 13/13 (Wilson 95\% interval
 77.2\%--100\%) and matched Clean in 30/30 runs (88.6\%--100\%). On 17 non-flipped
 runs, Sparse drifted once and Backfill never drifted.
 
+The 30 model-event observations are not independent because three models share each
+event, retrieval query, and evidence pool. We therefore treat exact counts as primary
+and Wilson intervals as descriptive summaries rather than event-independent
+inferential estimates.
+
 Backfill corrected three observed Sparse mismatches: DeepSeek on Intel, Qwen on
 Exxon, and Qwen on Capital One. However, Backfilled evidence sequences exactly
 matched Clean in 24/30 runs. The paired exact McNemar test gives $p=0.25$, so the
@@ -260,6 +333,8 @@ not post-processing noise.
 Citation-only, lexical-overlap, embedding-similarity, and blinded-LLM attribution
 achieved F1 scores of 0.941, 0.667, 0.509, and 0.937, respectively.
 Citation-only attribution slightly exceeded the LLM judge on this controlled sample.
+Its confusion counts were TP=40, FP=4, FN=1, and TN=33; the LLM judge produced TP=37,
+FP=1, FN=4, and TN=36.
 The aggregate masks complementary failures: exact matching missed a semantically used
 future source whose chunk suffix was omitted, while the LLM judge produced a
 support-without-dependence false positive when the same fact was already available
@@ -292,7 +367,6 @@ motivate separate availability, attribution, and revision-stability measurements
 \label{tab:failures}
 \end{table*}
 
-\clearpage
 \section{Discussion}
 
 The results support auditability, not forecasting superiority. Post-cutoff evidence
@@ -308,20 +382,28 @@ Sparse mismatches, but it often reconstructs the Clean input and does not achiev
 significant paired advantage. It is therefore a diagnostic baseline, not a proven
 improvement.
 
+In an institutional deployment, the protocol can operate at two boundaries: a
+pre-prediction gate that excludes evidence unavailable at the decision timestamp, and
+a post-generation audit that validates citations, traces semantic dependence, and
+triggers a controlled rerun. This complements model-level safety mechanisms without
+requiring changes to the host predictor.
+
 \section{Limitations and Ethics}
 
 Ten events and 30 model-event observations are too small for prevalence claims. Event
 selection is purposive and outcome-bounded. Controlled injections are easier than
 production retrieval, and the natural replay is not a preserved web search or host
-Agentic-RAG trace. The semantic gold set is controlled; the frozen natural hard set
-remains unlabeled. API aliases may change behind provider names, and temperature zero
-does not ensure deterministic serving. Availability does not imply truthfulness or
-relevance. Market outcomes are noisy and never determine evidence removal.
+Agentic-RAG trace. The study does not evaluate autonomous planning, query rewriting,
+tool selection, or multi-agent coordination. The semantic gold set is controlled; a
+separately frozen natural hard set remains unlabeled and is not used in paper claims.
+API aliases may change behind provider names, and temperature zero does not ensure
+deterministic serving. Availability does not imply truthfulness or relevance. Market
+outcomes are noisy and never determine evidence removal.
 
 This work is a reliability benchmark rather than investment advice or a trading
-system. Primary-source documents are retained for research reproducibility; future
-public releases should confirm document licenses and remove any data not redistributable
-under source terms.
+system. Reproducibility records preserve provenance and hashes. Source documents are
+redistributed only where source-specific terms permit; otherwise the release retains
+canonical URLs, timestamps, and license notes.
 
 \section{Conclusion}
 
@@ -335,8 +417,10 @@ needed before broader claims.
 \paragraph{Reproducibility.}
 The project repository includes frozen cases, retrieval manifests, prompts, raw
 outputs, error rows, analysis scripts, and tests. The AI4F submission snapshot is
-available in a \href{https://github.com/yixi1120/FinLeakAudit-KB/tree/ai4f-2026-submission-v1}{versioned public repository}; artifact checksums and reproduction commands are
-provided in its documentation.
+available in a \href{https://github.com/yixi1120/FinLeakAudit-KB/tree/ai4f-2026-submission-v2}{versioned public repository}; artifact checksums and reproduction commands are
+provided in its documentation. Source documents are redistributed only where their
+terms permit; otherwise the snapshot records canonical URLs, timestamps, hashes, and
+license notes.
 
 \paragraph{Author contributions.}
 Ziyang Lu led conceptualization, methodology, software, experiments, formal analysis,
@@ -344,7 +428,7 @@ visualization, annotation adjudication, writing, and project administration. Jun
 Chen curated the natural point-in-time corpus, prepared source and timestamp metadata
 and retrieval units, and completed independent semantic annotation. Yating Zhang
 completed independent semantic annotation and claim-span refinement, and independently
-verified the natural-source metadata and timestamps.
+verified the frozen 139-record sample of natural-source metadata and timestamps.
 
 \bibliographystyle{plain}
 \bibliography{references}
